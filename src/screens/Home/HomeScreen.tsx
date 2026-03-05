@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { GradientScreenView } from '@/components/Gradients';
@@ -8,9 +9,11 @@ import { usePushNotificationsRegisterRemoteNotification } from '@/hooks/usePushN
 import { useRefreshStateActions } from '@/realm/refreshManagerHooks';
 import { type NavigationProps } from '@/Routes';
 import { navigationStyle } from '@/utils/navigationStyle';
+import { runAfterUISync } from '@/utils/runAfterUISync';
 import { useIsOnline } from '@/utils/useConnectionManager';
 
 import { HomeActionButtons } from './components/HomeActionButtons';
+import { showRecentActivity } from './components/homeAssetPanelEventEmitter';
 import { HomeAssetsPanel } from './components/HomeAssetsPanel';
 import { HomeBalance } from './components/HomeBalance';
 import { HomeHeaderAccountSwitch } from './components/HomeHeaderAccountSwitch';
@@ -22,7 +25,7 @@ import { useInitWalletConnect } from '/modules/wallet-connect/hooks';
 
 const AUTO_REFRESH_INTERVAL = 120_000;
 
-export const HomeScreen = ({ navigation }: NavigationProps<'Home'>) => {
+export const HomeScreen = ({ navigation, route }: NavigationProps<'Home'>) => {
   const isOnline = useIsOnline();
   usePushNotificationsRegisterRemoteNotification();
   useInitWalletConnect();
@@ -44,6 +47,15 @@ export const HomeScreen = ({ navigation }: NavigationProps<'Home'>) => {
       clearInterval(interval);
     };
   }, [refreshAll]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (route.params?.showRecentActivity) {
+        runAfterUISync(() => showRecentActivity(), 2);
+        navigation.setParams({ showRecentActivity: undefined });
+      }
+    }, [navigation, route.params?.showRecentActivity]),
+  );
 
   return (
     <GradientScreenView>

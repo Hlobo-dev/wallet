@@ -46,7 +46,7 @@ export const DeleteAccountConfirmScreen = ({ route, navigation }: AccountNavigat
     <BottomSheet {...bottomSheetProps} snapPoints={['100%']}>
       <ModalNavigationHeader title={loc.deleteAccountConfirm.title} onClosePress={close} />
 
-      <View>
+      <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Label type="boldDisplay4" style={styles.label}>
             {loc.deleteAccountConfirm.header}
@@ -56,7 +56,7 @@ export const DeleteAccountConfirmScreen = ({ route, navigation }: AccountNavigat
           </Label>
         </View>
       </View>
-      <FloatingBottomContainer>
+      <FloatingBottomContainer noAbsolutePosition>
         <View style={styles.buttonContainer}>
           <Button text={loc.deleteAccountConfirm.cancel} onPress={close} style={styles.cancelButton} size="large" testID="ConfirmDeleteAccountCancelButton" />
           <Button

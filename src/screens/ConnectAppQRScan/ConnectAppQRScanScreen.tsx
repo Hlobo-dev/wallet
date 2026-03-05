@@ -2,8 +2,8 @@ import { BottomSheetFooter } from '@gorhom/bottom-sheet';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { PermissionStatus, useCameraPermissions } from 'expo-camera';
-import { useCallback, useEffect, useRef } from 'react';
+import { PermissionStatus } from 'expo-camera';
+import { useCallback, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Path, Svg } from 'react-native-svg';
@@ -14,6 +14,7 @@ import { CloseButton } from '@/components/CloseButton';
 import { FloatingBottomButtons } from '@/components/FloatingBottomButtons';
 import { GradientScreenView } from '@/components/Gradients';
 import { Label } from '@/components/Label';
+import { useCameraPermissionRequest } from '@/hooks/useCameraPermissionRequest';
 import { useRealm } from '@/realm/RealmContext';
 import { useWalletConnectTopicsMutations } from '@/realm/walletConnectTopics/useWalletConnectTopicsMutations';
 import { type NavigationProps, Routes } from '@/Routes';
@@ -40,7 +41,7 @@ export const ConnectAppQRScanScreen = ({ navigation, route }: NavigationProps<'C
   const { getSeed } = useSecuredKeychain();
   const { height } = useSafeAreaFrame();
   const bottomSheetModalRef = useRef<BottomSheetModalRef>(null);
-  const [permissionResponse, requestPermission] = useCameraPermissions();
+  const { permissionResponse } = useCameraPermissionRequest({ autoRequest: true });
   const { saveTopicToRealm } = useWalletConnectTopicsMutations();
 
   const handleData = useCallback(
@@ -70,10 +71,6 @@ export const ConnectAppQRScanScreen = ({ navigation, route }: NavigationProps<'C
   const handleBarCodeScanned = ({ data }: BarcodeScanningResult) => {
     handleData(data, false);
   };
-
-  useEffect(() => {
-    requestPermission();
-  }, [requestPermission]);
 
   useFocusEffect(
     useCallback(() => {

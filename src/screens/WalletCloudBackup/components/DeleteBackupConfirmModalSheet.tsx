@@ -18,7 +18,7 @@ export const DeleteBackupConfirmModalSheet = React.forwardRef<BottomSheetModalRe
   return (
     <BottomSheetModal ref={ref} snapPoints={['100%']}>
       <ModalNavigationHeader title={loc.walletCloudBackupError.deleteBackupConfirmation.header} onClosePress={onCancel} />
-      <View>
+      <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Label type="boldDisplay4" style={styles.label}>
             {loc.walletCloudBackupError.deleteBackupConfirmation.title}
@@ -29,6 +29,7 @@ export const DeleteBackupConfirmModalSheet = React.forwardRef<BottomSheetModalRe
         </View>
       </View>
       <FloatingBottomButtons
+        noAbsolutePosition
         primary={{
           text: loc.walletCloudBackupError.deleteBackupConfirmation.remove,
           onPress: onConfirm,
@@ -44,6 +45,9 @@ export const DeleteBackupConfirmModalSheet = React.forwardRef<BottomSheetModalRe
 });
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   headerContainer: {
     marginHorizontal: 24,
   },

@@ -7,8 +7,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { ExploreTabBar } from '@/components/ExploreTabBar';
 import { useGlobalState } from '@/components/GlobalState';
 
-import { useOnScanPress } from '@/hooks/useOnScanPress';
+import { useCameraPermissionRequest } from '@/hooks/useCameraPermissionRequest';
 import { Routes } from '@/Routes';
+import { showPermissionDeniedAlert } from '@/utils/cameraPermissions';
 
 import type { NavigationState } from '@react-navigation/native';
 
@@ -26,7 +27,16 @@ export const ExploreNavigator: FC = () => {
   const [canShowNav, setCanShowNav] = useState<boolean>(false);
   const [tabIndex, setTabIndex] = useState<number>(0);
 
-  const onScanPress = useOnScanPress();
+  const { requestPermission } = useCameraPermissionRequest();
+
+  const onScanPress = useCallback(async () => {
+    const granted = await requestPermission();
+    if (granted) {
+      navigation.navigate(Routes.ConnectAppQRScan);
+    } else {
+      showPermissionDeniedAlert();
+    }
+  }, [requestPermission, navigation]);
 
   const onWalletPress = useCallback(() => {
     navigation.navigate(Routes.Home);

@@ -1,11 +1,12 @@
-import { PermissionStatus, useCameraPermissions } from 'expo-camera';
-import { useEffect, useLayoutEffect } from 'react';
+import { PermissionStatus } from 'expo-camera';
+import { useLayoutEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Path, Svg } from 'react-native-svg';
 
 import { Camera } from '@/components/Camera';
 import { CloseButton } from '@/components/CloseButton';
 import { Label } from '@/components/Label';
+import { useCameraPermissionRequest } from '@/hooks/useCameraPermissionRequest';
 import type { NavigationProps } from '@/Routes';
 import { Routes } from '@/Routes';
 import { navigationStyle } from '@/utils/navigationStyle';
@@ -24,13 +25,15 @@ type UniversalSendParams = UniversalSendRouteParams & { routeBack: Routes.Univer
 export type SendQRScanRouteParams = SendParams | UniversalSendParams;
 
 export const SendQRScanScreen = ({ navigation, route }: NavigationProps<'SendQRScan'>) => {
-  const [permissionResponse, requestPermission] = useCameraPermissions();
+  const { permissionResponse } = useCameraPermissionRequest({ autoRequest: true });
 
   const handleBarCodeScanned = ({ data }: BarcodeScanningResult) => {
     if (route.params.routeBack === Routes.Send) {
-      navigation.navigate(Routes.Send, { ...route.params, qrCode: data });
+      const { routeBack: _routeBack, ...restParams } = route.params;
+      navigation.popTo(Routes.Send, { ...restParams, qrCode: data }, { merge: true });
     } else {
-      navigation.navigate(Routes.UniversalSend, { ...route.params, qrCode: data });
+      const { routeBack: _routeBack, ...restParams } = route.params;
+      navigation.popTo(Routes.UniversalSend, { ...restParams, qrCode: data }, { merge: true });
     }
   };
 
@@ -41,10 +44,6 @@ export const SendQRScanScreen = ({ navigation, route }: NavigationProps<'SendQRS
       });
     }
   }, [navigation, route.params.routeBack]);
-
-  useEffect(() => {
-    requestPermission();
-  }, [requestPermission]);
 
   return (
     <View style={styles.container}>

@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 const homeAssetPanelEmitter = new EventEmitter();
 enum HomeAssetPanelEmitter {
@@ -11,7 +11,7 @@ export const showRecentActivity = () => {
 };
 
 export const useHomeAssetPanelEmitterListener = (callback: () => void) => {
-  useEffect(() => {
+  useLayoutEffect(() => {
     homeAssetPanelEmitter.on(HomeAssetPanelEmitter.showRecentActivity, callback);
     return () => {
       homeAssetPanelEmitter.off(HomeAssetPanelEmitter.showRecentActivity, callback);

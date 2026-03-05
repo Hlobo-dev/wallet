@@ -83,7 +83,6 @@ export const BrowserContextProvider: React.FC<PropsWithChildren<BrowserContextPr
       setShouldDisplayWebView(false);
     }
 
-    setUrl(navState.url);
     setNavigationState({
       canNavigateBack: navState.canGoBack,
       canNavigateForward: navState.canGoForward,
@@ -121,6 +120,8 @@ export const BrowserContextProvider: React.FC<PropsWithChildren<BrowserContextPr
     if (!eventIsErrorEvent(nativeEvent) && nativeEvent.title.toLowerCase() !== 'webpage not available') {
       resetError();
     }
+
+    setUrl(nativeEvent.url);
   };
 
   const onLoadError = () => {

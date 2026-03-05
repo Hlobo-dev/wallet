@@ -210,6 +210,7 @@ const styles = StyleSheet.create({
     gap: 16,
     marginHorizontal: 24,
     marginTop: 24,
+    marginBottom: 12,
   },
 });
 
