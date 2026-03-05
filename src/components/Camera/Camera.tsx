@@ -15,16 +15,15 @@ export const Camera: FC<CameraViewProps> = props => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    type Listener = Parameters<typeof navigation.addListener<'beforeRemove'>>[1];
-    const listener: Listener = e => {
+    const unsubscribe = navigation.addListener('beforeRemove', e => {
       e.preventDefault();
       if (cameraVisible) {
         setCameraVisible(false);
         runAfterUISync(() => navigation.dispatch(e.data.action));
       }
-    };
-    navigation.addListener('beforeRemove', listener);
-    return () => navigation.removeListener('beforeRemove', listener);
+    });
+
+    return unsubscribe;
   }, [cameraVisible, navigation]);
 
   return cameraVisible ? <CameraView {...props} style={StyleSheet.absoluteFill} barcodeScannerSettings={{ barcodeTypes: ['qr'] }} /> : null;

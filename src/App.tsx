@@ -5,7 +5,7 @@ import type { PropsWithChildren } from 'react';
 import type React from 'react';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { LogBox, Platform, StatusBar, StyleSheet, Text, type TextProps, UIManager } from 'react-native';
@@ -15,6 +15,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { queryClient } from '@/api/base/fetchClient';
 import { LongPressOverlay, LongPressProvider } from '@/components/LongPress';
 import { useSecureAppLock } from '@/hooks/useSecureAppLock';
+import { navigationRef } from '@/navigation/navigationRef';
 import { RealmQueueProvider } from '@/realm/hooks/useRealmQueue';
 import { SecuredRealmProvider } from '@/realm/SecuredRealmProvider';
 import { AppInBackground } from '@/screens/AppInBackground';
@@ -80,7 +81,6 @@ const onJSError = (error: unknown) => handleError(error, 'ERROR_CONTEXT_PLACEHOL
 
 const App = () => {
   const [migrationCompleted, setMigrationCompleted] = useState(false);
-  const navigationRef = createNavigationContainerRef();
   const [currentRouteName] = useState<string | undefined>(undefined);
 
   const appState = useAppState();

@@ -79,7 +79,7 @@ export const WalletCloudBackupDeleteScreen = ({ navigation }: NavigationProps<'S
     <>
       <BottomSheet {...bottomSheetProps} snapPoints={['100%']}>
         <ModalNavigationHeader title={loc.walletCloudBackupDelete.title} onClosePress={close} />
-        <View>
+        <View style={styles.container}>
           <View style={styles.headerContainer}>
             <Label type="boldDisplay4" style={styles.label}>
               {loc.walletCloudBackupDelete.header}
@@ -93,6 +93,7 @@ export const WalletCloudBackupDeleteScreen = ({ navigation }: NavigationProps<'S
           </View>
         </View>
         <FloatingBottomButtons
+          noAbsolutePosition
           primary={{
             disabled: !allChecked,
             text: loc.walletCloudBackupDelete.delete,
@@ -140,6 +141,9 @@ WalletCloudBackupDeleteScreen.navigationOptions = navigationStyle({
 });
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   headerContainer: {
     marginHorizontal: 24,
   },

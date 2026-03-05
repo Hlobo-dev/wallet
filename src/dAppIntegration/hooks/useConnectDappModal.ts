@@ -42,7 +42,7 @@ export const useConnectDappModal = () => {
           appMetadata: {
             url: baseUrl,
             icon: pageInfo?.iconUrl,
-            name: pageInfo?.title ?? domain,
+            name: domain,
           },
           networkIDs: networkIds,
           requiredNetworkIDs: [],

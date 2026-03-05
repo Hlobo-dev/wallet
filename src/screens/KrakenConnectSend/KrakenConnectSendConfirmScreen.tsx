@@ -7,12 +7,12 @@ import { serializeError } from 'serialize-error';
 import type { KrakenAssetSupported, KrakenWithdrawFee, KrakenWithdrawMethod } from '@/api/krakenConnect/types';
 import { ExpandableSheet, type ExpandableSheetMethods } from '@/components/Sheets';
 import { TransactionConfirmationFooter } from '@/components/Transaction';
+import { resetToHome } from '@/navigation/navigationRef';
 import { type WalletType } from '@/onChain/wallets/registry';
 import { getTokenIdFromChainIdAndAssetId } from '@/onChain/wallets/utils/ChainAgnostic';
 import { useTokensMutations } from '@/realm/tokens';
 import { TRANSACTION_STATUS_KRAKEN_CONNECT, getCombinedTransactionId } from '@/realm/transactions';
 import { useWalletByType } from '@/realm/wallets/useWalletByType';
-import { showRecentActivity } from '@/screens/Home/components/homeAssetPanelEventEmitter';
 import { getkBtcAssetId, isBtcOnEvm } from '@/screens/KrakenConnectSend/utils';
 import { useReceiveAddress } from '@/screens/Receive/hooks';
 import { hapticFeedback } from '@/utils/hapticFeedback';
@@ -114,11 +114,7 @@ export const KrakenConnectSendConfirmScreen = ({ route, navigation }: KrakenConn
   const fee = useMemo(() => feeWithToken?.fee || '', [feeWithToken]);
 
   const onDismiss = useCallback(() => {
-    if (isSuccess) {
-      showRecentActivity();
-      navigation.getParent()?.goBack();
-      navigation.navigate('Home');
-    } else {
+    if (!isSuccess) {
       navigation.goBack();
     }
   }, [isSuccess, navigation]);
@@ -128,6 +124,7 @@ export const KrakenConnectSendConfirmScreen = ({ route, navigation }: KrakenConn
   const onSucceed = useCallback(() => {
     setTimeout(() => {
       sheetRef.current?.close();
+      resetToHome({ showRecentActivity: true });
     }, DELAY_TIMEOUT_TO_SHOW_SUCCESS_STATE);
   }, [sheetRef]);
 

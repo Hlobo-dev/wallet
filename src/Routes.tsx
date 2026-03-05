@@ -80,7 +80,7 @@ export type RouteProps = ExcludeRealmObjectsFromRouteParams<
     TriggeredPushPrompt: TriggeredPushPromptParams | undefined;
     WalletConnectExplainer: undefined;
     GlobalActivity: undefined;
-    Home: undefined;
+    Home: { showRecentActivity?: boolean } | undefined;
     KrakenConnectTransfer: undefined;
     KrakenConnectSendStack: NavigatorScreenParams<KrakenConnectSendStackParams>;
     Language: undefined;
