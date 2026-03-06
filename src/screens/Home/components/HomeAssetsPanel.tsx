@@ -122,14 +122,6 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
       items.push({ index: 0, key: SectionName.Assets, data: tokensDataSource });
     }
 
-    if (nftsCollection && Object.keys(nftsCollection)?.length > 0) {
-      items.push({ index: 1, key: SectionName.Collection, data: nftsCollection });
-    }
-
-    if (!nftsCollection || (nftsCollection && Object.keys(nftsCollection)?.length === 0)) {
-      items.push({ index: 1, key: SectionName.EmptyCollections, data: [] });
-    }
-
     if (!isDefiPositionPending) {
       const hasDefiPositions = earnDefiPositions && earnDefiPositions.length > 0;
       const section: SectionListData<SectionItem, Sections> = hasDefiPositions
@@ -137,6 +129,14 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
         : { index: 2, key: SectionName.DefiEarnNoPositions, data: [] };
 
       items.push(section);
+    }
+
+    if (nftsCollection && Object.keys(nftsCollection)?.length > 0) {
+      items.push({ index: 1, key: SectionName.Collection, data: nftsCollection });
+    }
+
+    if (!nftsCollection || (nftsCollection && Object.keys(nftsCollection)?.length === 0)) {
+      items.push({ index: 1, key: SectionName.EmptyCollections, data: [] });
     }
 
     return items;

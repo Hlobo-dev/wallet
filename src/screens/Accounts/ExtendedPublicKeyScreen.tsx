@@ -1,6 +1,7 @@
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetFooter, type BottomSheetFooterProps, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useIsFocused } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 import { StyleSheet, View } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
@@ -32,7 +33,7 @@ export const ExtendedPublicKeyScreen = ({ route, navigation }: NavigationProps<'
   const { bottomSheetProps, close } = useBottomSheetScreenProps(navigation);
   const sheetIndex = useSharedValue(0);
 
-  const copyXpub = () => {
+  const copyXpub = useCallback(() => {
     if (xpub) {
       Clipboard.setString(xpub);
       showToast({
@@ -40,12 +41,22 @@ export const ExtendedPublicKeyScreen = ({ route, navigation }: NavigationProps<'
         text: loc.advancedAccountInfo.xpubCopied,
       });
     }
-  };
+  }, [xpub]);
+
+  const renderFooter = useCallback(
+    (props: BottomSheetFooterProps) => (
+      <BottomSheetFooter {...props}>
+        <FloatingBottomButtons primary={{ text: loc.extendedPublicKey.copyXpub, onPress: copyXpub }} />
+      </BottomSheetFooter>
+    ),
+    [copyXpub],
+  );
+
   const { width } = useSafeAreaFrame();
   const qrCodeSize = width - 96;
 
   return (
-    <BottomSheet dismissible={useIsFocused()} animatedIndex={sheetIndex} snapPoints={['100%']} {...bottomSheetProps}>
+    <BottomSheet dismissible={useIsFocused()} animatedIndex={sheetIndex} snapPoints={['100%']} {...bottomSheetProps} footerComponent={renderFooter}>
       <ModalNavigationHeader onClosePress={close} title={<Header />} />
       <BottomSheetScrollView style={styles.scrollView}>
         <View style={styles.container}>
@@ -62,7 +73,6 @@ export const ExtendedPublicKeyScreen = ({ route, navigation }: NavigationProps<'
           <AddressDisplay address={xpub} boldPrefix hasSpaces anyNumberOfLines />
         </View>
       </BottomSheetScrollView>
-      <FloatingBottomButtons primary={{ text: loc.extendedPublicKey.copyXpub, onPress: copyXpub }} />
     </BottomSheet>
   );
 };
