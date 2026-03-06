@@ -18,7 +18,7 @@ const getTokenMetadataDefaultFetch = async (token: InternalBalance, harmony: Def
   const isMetadataComplete = (metadata?: TokenMetadata): metadata is TokenMetadata => !!metadata?.symbol && !!metadata?.label;
 
   let metadata = token.metadata;
-  if (!isMetadataComplete(metadata)) {
+  if (!isMetadataComplete(metadata) || !metadata?.reputation) {
     try {
       const response = await harmony.GET('/v1/tokenMetadata', {
         params: { query: { token: token.token } },
@@ -149,7 +149,7 @@ export class HarmonyTransport<TTransaction, TTransactionRequest, TWalletState, T
     for (const ch of chunks) {
       const tokenPromises = ch.map(async token => {
         let metadata = token.metadata;
-        if (!isMetadataComplete(metadata)) {
+        if (!isMetadataComplete(metadata) || !metadata?.reputation) {
           // @ts-expect-error AssetReputation undefined vs null
           metadata = await getMetadataFunc(token, harmony);
         }
