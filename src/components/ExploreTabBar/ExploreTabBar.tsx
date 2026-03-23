@@ -16,53 +16,51 @@ import { useTheme } from '@/theme/themes';
 import type { ExploreTabBarProps, TabData } from './ExploreTabBar.types';
 
 const TabBarSizes = {
-  width: 212,
+  baseWidth: 212,
+  extraWidthPerTab: 56,
   height: 64,
   radius: 70,
   bottomOffset: 22,
 };
 
-const tabCount = 3;
-
 const svgHitSlop = { top: 16, bottom: 16, left: 0, right: 0 };
 
-const getGlowXPosition = (tabIndex: number): number => {
-  return TabBarSizes.radius * ((tabIndex % tabCount) - 1);
+const getTabBarWidth = (tabCount: number): number => {
+  return TabBarSizes.baseWidth + Math.max(0, tabCount - 3) * TabBarSizes.extraWidthPerTab;
+};
+
+const getGlowXPosition = (tabIndex: number, tabCount: number): number => {
+  const tabBarWidth = getTabBarWidth(tabCount);
+  const usableWidth = tabBarWidth - TabBarSizes.height;
+  const spacing = usableWidth / (tabCount - 1);
+  return spacing * tabIndex - usableWidth / 2;
 };
 
 export const ExploreTabBar: FC<ExploreTabBarProps> = ({
-  leftIconName,
-  centerIconName,
-  rightIconName,
-  onTabLeftPress,
-  onTabCenterPress,
-  onTabRightPress,
+  tabs,
   activeTab = 0,
   showTabs,
 }) => {
   const { colors } = useTheme();
-  const glowX = useSharedValue(getGlowXPosition(activeTab));
+  const tabCount = tabs.length;
+  const tabBarWidth = getTabBarWidth(tabCount);
+  const glowX = useSharedValue(getGlowXPosition(activeTab, tabCount));
   const insets = useSafeAreaInsets();
-  const tabs: TabData[] = [
-    { name: leftIconName, onPress: onTabLeftPress },
-    { name: centerIconName, onPress: onTabCenterPress },
-    { name: rightIconName, onPress: onTabRightPress },
-  ];
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [{ translateX: withSpring(glowX.value) }],
   }));
 
   useEffect(() => {
-    glowX.value = getGlowXPosition(activeTab);
-  }, [activeTab, glowX]);
+    glowX.value = getGlowXPosition(activeTab, tabCount);
+  }, [activeTab, glowX, tabCount]);
 
   if (!showTabs) {
     return null;
   }
 
   return (
-    <View style={[styles.container, { bottom: Math.max(insets.bottom, TabBarSizes.bottomOffset) }]} pointerEvents="box-none" testID="ExploreTabBar">
-      <Animated.View style={styles.animatedContainer} entering={FadeInDown.duration(150)} exiting={FadeOutDown.duration(150)}>
+    <View style={[styles.container, { width: tabBarWidth, bottom: Math.max(insets.bottom, TabBarSizes.bottomOffset), transform: [{ translateX: tabBarWidth / -2 }] }]} pointerEvents="box-none" testID="ExploreTabBar">
+      <Animated.View style={[styles.animatedContainer, { width: tabBarWidth }]} entering={FadeInDown.duration(150)} exiting={FadeOutDown.duration(150)}>
         {Platform.OS === 'ios' ? (
           <BlurView
             blurType="ultraThinMaterialDark"
@@ -74,7 +72,7 @@ export const ExploreTabBar: FC<ExploreTabBarProps> = ({
           <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.blurBackgroundAndroid }]} pointerEvents="none" />
         )}
         <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-          <GradientItemBackground style={styles.background} />
+          <GradientItemBackground style={[styles.background, { width: tabBarWidth }]} />
         </View>
         <View style={styles.iconContainer}>
           {tabs.map((tab: TabData, index: number) => {
@@ -85,7 +83,7 @@ export const ExploreTabBar: FC<ExploreTabBarProps> = ({
           })}
         </View>
         <View pointerEvents="none">
-          <Animated.Image source={require('./assets/glow.png')} style={[styles.glow, animatedStyles]} resizeMode="contain" />
+          <Animated.Image source={require('./assets/glow.png')} style={[styles.glow, { width: tabBarWidth }, animatedStyles]} resizeMode="contain" />
         </View>
       </Animated.View>
     </View>
@@ -95,36 +93,31 @@ export const ExploreTabBar: FC<ExploreTabBarProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    width: TabBarSizes.width,
     height: TabBarSizes.height,
     zIndex: 1,
     elevation: 100,
     bottom: TabBarSizes.bottomOffset,
     left: '50%',
     backgroundColor: 'transparent',
-    transform: [{ translateX: TabBarSizes.width / -2 }],
   },
   animatedContainer: {
-    width: TabBarSizes.width,
     height: TabBarSizes.height,
     borderRadius: TabBarSizes.radius,
     overflow: 'hidden',
   },
   background: {
-    width: TabBarSizes.width,
     height: TabBarSizes.height,
     borderRadius: TabBarSizes.radius,
     opacity: 0.5,
   },
   iconContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    paddingHorizontal: TabBarSizes.height / 2,
+    paddingHorizontal: 24,
     height: TabBarSizes.height,
   },
   glow: {
-    width: TabBarSizes.width,
     position: 'absolute',
     bottom: -40,
   },

@@ -1,12 +1,7 @@
 import type { IconName } from '../SvgIcon';
 
 export type ExploreTabBarProps = {
-  onTabLeftPress: () => void;
-  leftIconName: IconName;
-  onTabCenterPress: () => void;
-  centerIconName: IconName;
-  onTabRightPress: () => void;
-  rightIconName: IconName;
+  tabs: TabData[];
   activeTab?: number;
   showTabs?: boolean;
 };

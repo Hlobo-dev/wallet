@@ -48,6 +48,10 @@ export const ExploreNavigator: FC = () => {
     setShowNavTabs(true);
   }, [navigation, setShowNavTabs]);
 
+  const onChatPress = useCallback(() => {
+    navigation.navigate(Routes.Chat);
+  }, [navigation]);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('state', event => {
       setCurrentRoute(getRouteFromState(event?.data?.state));
@@ -59,17 +63,24 @@ export const ExploreNavigator: FC = () => {
     const isAllowed = ALLOWED_ROUTES.map((s: string) => s).includes(currentRoute);
     setCanShowNav(isAllowed);
     setShowNavTabs(isAllowed);
-    setTabIndex(currentRoute === Routes.Home ? 0 : 1);
+
+    const routeToTabIndex: Record<string, number> = {
+      [Routes.Home]: 0,
+      [Routes.Explore]: 1,
+      [Routes.ExploreSubpage]: 1,
+      [Routes.Chat]: 2,
+    };
+    setTabIndex(routeToTabIndex[currentRoute] ?? 0);
   }, [currentRoute, setShowNavTabs]);
 
   return (
     <ExploreTabBar
-      leftIconName="wallet"
-      centerIconName="compass"
-      rightIconName="scan-walletConnect"
-      onTabLeftPress={onWalletPress}
-      onTabCenterPress={onExplorePress}
-      onTabRightPress={onScanPress}
+      tabs={[
+        { name: 'wallet', onPress: onWalletPress },
+        { name: 'compass', onPress: onExplorePress },
+        { name: 'comment', onPress: onChatPress },
+        { name: 'scan-walletConnect', onPress: onScanPress },
+      ]}
       activeTab={tabIndex}
       showTabs={showNavTabs && canShowNav}
     />

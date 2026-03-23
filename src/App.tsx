@@ -15,6 +15,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { queryClient } from '@/api/base/fetchClient';
 import { LongPressOverlay, LongPressProvider } from '@/components/LongPress';
 import { useSecureAppLock } from '@/hooks/useSecureAppLock';
+import { hideSplashScreen } from '@/utils/hideSplashScreen';
 import { navigationRef } from '@/navigation/navigationRef';
 import { RealmQueueProvider } from '@/realm/hooks/useRealmQueue';
 import { SecuredRealmProvider } from '@/realm/SecuredRealmProvider';
@@ -32,6 +33,8 @@ import { GlobalStateProvider } from './components/GlobalState';
 import { MenuProvider } from './components/Menu';
 import { ToastManager } from './components/Toast';
 import NavigationStack from './Navigation';
+import { NubleAuthProvider } from './providers/NubleAuthProvider';
+import { NubleAuthGate } from './providers/NubleAuthGate';
 import { SecuredKeychainProvider } from './secureStore/SecuredKeychainProvider';
 import { SuperDarkTheme } from './theme/themes';
 
@@ -70,10 +73,11 @@ if (Platform.OS === 'android') {
 }
 
 const AppLockGuard: React.FC<PropsWithChildren> = ({ children }) => {
-  const { appUnlocked } = useSecureAppLock();
-  if (!appUnlocked) {
-    return null;
-  }
+  // TODO: re-enable biometric lock once login flow is verified
+  // const { appUnlocked } = useSecureAppLock();
+  // if (!appUnlocked) {
+  //   return null;
+  // }
   return <>{children}</>;
 };
 
@@ -89,6 +93,8 @@ const App = () => {
     const performMigrations = async () => {
       await runMigrations();
       setMigrationCompleted(true);
+      // Since we bypassed biometric lock, hide the native splash after migrations
+      hideSplashScreen();
     };
     performMigrations();
   }, []);
@@ -101,34 +107,38 @@ const App = () => {
     <AppLockGuard>
       <GestureHandlerRootView style={styles.container}>
         <SafeAreaProvider>
-          <NavigationContainer ref={navigationRef} theme={SuperDarkTheme}>
-            <UnencryptedRealmProvider>
-              <SecuredRealmProvider>
-                <GlobalStateProvider>
-                  <RealmQueueProvider>
-                    <QueryClientProvider client={queryClient}>
-                      <ErrorBoundary onError={onJSError}>
-                        <LongPressProvider>
-                          <MenuProvider>
-                            <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-                            <BottomSheetModalProvider>
-                              <SecuredKeychainProvider>
-                                <NavigationStack />
-                                <ExploreNavigator />
-                              </SecuredKeychainProvider>
-                            </BottomSheetModalProvider>
-                          </MenuProvider>
-                          <LongPressOverlay />
-                        </LongPressProvider>
-                      </ErrorBoundary>
-                      <ToastManager currentRouteName={currentRouteName as any} />
-                      <AppInBackground appState={appState} />
-                    </QueryClientProvider>
-                  </RealmQueueProvider>
-                </GlobalStateProvider>
-              </SecuredRealmProvider>
-            </UnencryptedRealmProvider>
-          </NavigationContainer>
+          <NubleAuthProvider>
+            <NubleAuthGate>
+              <NavigationContainer ref={navigationRef} theme={SuperDarkTheme}>
+                <UnencryptedRealmProvider>
+                  <SecuredRealmProvider>
+                    <GlobalStateProvider>
+                      <RealmQueueProvider>
+                        <QueryClientProvider client={queryClient}>
+                          <ErrorBoundary onError={onJSError}>
+                            <LongPressProvider>
+                              <MenuProvider>
+                                <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+                                <BottomSheetModalProvider>
+                                  <SecuredKeychainProvider>
+                                    <NavigationStack />
+                                    <ExploreNavigator />
+                                  </SecuredKeychainProvider>
+                                </BottomSheetModalProvider>
+                              </MenuProvider>
+                              <LongPressOverlay />
+                            </LongPressProvider>
+                          </ErrorBoundary>
+                          <ToastManager currentRouteName={currentRouteName as any} />
+                          <AppInBackground appState={appState} />
+                        </QueryClientProvider>
+                      </RealmQueueProvider>
+                    </GlobalStateProvider>
+                  </SecuredRealmProvider>
+                </UnencryptedRealmProvider>
+              </NavigationContainer>
+            </NubleAuthGate>
+          </NubleAuthProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </AppLockGuard>

@@ -53,6 +53,7 @@ export type RouteProps = ExcludeRealmObjectsFromRouteParams<
     AppDetails: AppDetailsParams;
     Browser: BrowserParams;
     AppLock: undefined;
+    Chat: undefined;
     WhatsNewSwaps: undefined;
     WhatsNewAvaxLinea: undefined;
     WhatsNewBrowserExplore: undefined;
@@ -124,6 +125,7 @@ export enum Routes {
   AdvancedSettings = 'AdvancedSettings',
   AppDetails = 'AppDetails',
   Browser = 'Browser',
+  Chat = 'Chat',
   WhatsNewBrowserExplore = 'WhatsNewBrowserExplore',
   WhatsNewAvaxLinea = 'WhatsNewAvaxLinea',
   WhatsNewSwaps = 'WhatsNewSwaps',

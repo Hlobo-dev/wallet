@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { View } from 'react-native';
 
-import { iconsControl } from '@/utils/storybook';
-
 import { ExploreTabBar } from './ExploreTabBar';
 
 import type { ExploreTabBarProps } from './ExploreTabBar.types';
@@ -13,35 +11,25 @@ const ExploreTabBarMeta: Meta<typeof ExploreTabBar> = {
   title: 'ExploreTabBar',
   component: ExploreTabBar,
   args: {
-    leftIconName: 'wallet',
-    centerIconName: 'compass',
-    rightIconName: 'scan-walletConnect',
+    tabs: [
+      { name: 'wallet', onPress: () => {} },
+      { name: 'compass', onPress: () => {} },
+      { name: 'comment', onPress: () => {} },
+      { name: 'scan-walletConnect', onPress: () => {} },
+    ],
     showTabs: true,
-  },
-  argTypes: {
-    leftIconName: iconsControl,
-    centerIconName: iconsControl,
-    rightIconName: iconsControl,
   },
   render: function Render(args: ExploreTabBarProps) {
     const [activeTab, setActiveTab] = useState(0);
-    const { leftIconName, centerIconName, rightIconName, showTabs = true } = args;
+    const tabs = (args.tabs ?? []).map((tab, index) => ({
+      ...tab,
+      onPress: () => setActiveTab(index),
+    }));
     return (
       <ExploreTabBar
-        leftIconName={leftIconName}
-        centerIconName={centerIconName}
-        rightIconName={rightIconName}
-        onTabLeftPress={() => {
-          setActiveTab(0);
-        }}
-        onTabCenterPress={() => {
-          setActiveTab(1);
-        }}
-        onTabRightPress={() => {
-          setActiveTab(2);
-        }}
+        tabs={tabs}
         activeTab={activeTab}
-        showTabs={showTabs}
+        showTabs={args.showTabs}
       />
     );
   },
