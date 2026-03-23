@@ -1346,7 +1346,7 @@ const s = StyleSheet.create({
   scrollContent: { paddingBottom: 120 },
 
   /* hero */
-  hero: { alignItems: 'center', paddingTop: 8, paddingBottom: 20 },
+  hero: { alignItems: 'center', paddingTop: 160, paddingBottom: 32 },
   logoWrap: {
     width: 80, height: 80, borderRadius: 40,
     backgroundColor: 'rgba(117,56,245,0.12)',
@@ -1357,7 +1357,7 @@ const s = StyleSheet.create({
   subtitle: { fontSize: 14, color: 'rgba(255,255,255,0.55)', textAlign: 'center', lineHeight: 20, paddingHorizontal: 32 },
 
   /* tabs */
-  tabs: { maxHeight: 44, marginBottom: 4 },
+  tabs: { maxHeight: 44, marginBottom: 12 },
   tabsInner: { paddingHorizontal: 16, gap: 8 },
   tab: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.06)' },
   tabOn: { backgroundColor: 'rgba(255,255,255,0.14)' },
@@ -1365,7 +1365,7 @@ const s = StyleSheet.create({
   tabLabelOn: { color: '#FFF' },
 
   /* market card */
-  card: { marginHorizontal: 16, marginTop: 8, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 16, overflow: 'hidden' },
+  card: { marginHorizontal: 16, marginTop: 4, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 16, overflow: 'hidden' },
   loader: { paddingVertical: 40, alignItems: 'center' },
   row: {
     flexDirection: 'row', alignItems: 'center',
