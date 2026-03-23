@@ -60,7 +60,7 @@ export const Basic: Story = {
         icon: 'walletconnect',
       },
       {
-        title: 'Select Kraken Wallet',
+        title: 'Select Nuble Wallet',
         icon: 'kraken',
       },
     ],

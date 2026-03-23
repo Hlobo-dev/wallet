@@ -1,7 +1,7 @@
 {
   "_": {
     "add": "Hinzufügen",
-    "appName": "Kraken Wallet",
+    "appName": "Nuble Wallet",
     "balance": "Guthaben {0}",
     "cancel": "Abbrechen",
     "confirm": "Bestätigen",
@@ -185,7 +185,7 @@
     "buttonText": "Hört sich gut an",
     "part1": "Deine Wallet unterstützt nun {boldBlastNetwork}. Ethereum L2 mit nativer Rendite für ETH und Stablecoins.",
     "part2": "Mit dieser Integration haben wir den Weg dafür bereitet, schnell weitere Level-2-Netzwerke hinzufügen zu können, und gleichzeitig weiterhin die sicherste Erfahrung mit mobilen Wallets zu bieten.",
-    "title": "Kraken Wallet heißt Blast herzlich willkommen!"
+    "title": "Nuble Wallet heißt Blast herzlich willkommen!"
   },
   "broadcast": {
     "sent": "Gesendet"
@@ -213,11 +213,11 @@
     "searchOnChain": "On-Chain suchen"
   },
   "browserExploreWelcome": {
-    "body": "Gehe heute den nächsten Schritt auf deiner Krypto-Reise. Du kannst nun dezentrale Anwendungen (DApps) entdecken und dich mit ihnen verbinden, ohne deine Kraken Wallet verlassen zu müssen.",
+    "body": "Gehe heute den nächsten Schritt auf deiner Krypto-Reise. Du kannst nun dezentrale Anwendungen (DApps) entdecken und dich mit ihnen verbinden, ohne deine Nuble Wallet verlassen zu müssen.",
     "buttonText": "Hört sich gut an",
     "part1": "Verwende die neuen Menü-Optionen unten auf deinem Bildschirm, um auf die Seite „Entdecken“ zuzugreifen",
     "part2": "Erkunde beliebte DApps und neue On-Chain-Features, oder nutze die Suchleiste für alles Weitere",
-    "part3": "Verbinde dich ganz leicht mit DApps und nimm Transaktionen vor, ohne die Kraken Wallet verlassen zu müssen",
+    "part3": "Verbinde dich ganz leicht mit DApps und nimm Transaktionen vor, ohne die Nuble Wallet verlassen zu müssen",
     "title": "Die On-Chain-Welt erwartet dich"
   },
   "bugTracking": {
@@ -701,7 +701,7 @@
       },
       "lockWallet": "Wallet sperren",
       "privacy": "Datenschutz",
-      "version": "Kraken Wallet-Erweiterung {0}",
+      "version": "Nuble Wallet-Erweiterung {0}",
       "walletSettings": "Wallet-Einstellungen"
     },
     "skip": "Überspr.",
@@ -1090,7 +1090,7 @@
     "import_wallet": "Importieren",
     "intro_pages": {
       "1": {
-        "subtitle": "Kraken Wallet",
+        "subtitle": "Nuble Wallet",
         "text": "Sei Eigentümer deiner Kryptowährung, entdecke Blockchains und sichere deine finanzielle Zukunft.",
         "title": "Willkommen bei"
       },
@@ -1146,7 +1146,7 @@
   },
   "onboardingImportMethod": {
     "methodICloud": {
-      "desc": "Aus einem iCloud-Backup erstellen, dass du für Kraken Wallet erstellt hast",
+      "desc": "Aus einem iCloud-Backup erstellen, dass du für Nuble Wallet erstellt hast",
       "title": "Aus iCloud importieren"
     },
     "methodManual": {
@@ -1515,7 +1515,7 @@
   },
   "storeReview": {
     "alertMessage": "Wir würden gerne wissen, ob du bei uns ein gutes Benutzererlebnis hast.",
-    "alertTitle": "Gefällt dir die Kraken Wallet App?",
+    "alertTitle": "Gefällt dir die Nuble Wallet App?",
     "nagativeAlertTitle": "Es tut uns leid, dass dir diese App nicht gefällt.",
     "negativeAlertMessage": "Möchtest du uns verraten, wie wir dein Benutzererlebnis verbessern können?",
     "notReally": "Nicht wirklich",
@@ -1567,7 +1567,7 @@
         "title": "Bridge-Kosten"
       },
       "krakenFee": {
-        "hint": "Bei Kraken Wallet werden keine Gebühren für Swaps fällig. Wir bieten diesen Service kostenlos an, um die Akzeptanz von Krypto und Blockchain-Technologie zu fördern.",
+        "hint": "Bei Nuble Wallet werden keine Gebühren für Swaps fällig. Wir bieten diesen Service kostenlos an, um die Akzeptanz von Krypto und Blockchain-Technologie zu fördern.",
         "title": "Kraken Gebühr",
         "value": "KOSTENLOS"
       },
@@ -2028,7 +2028,7 @@
       "title": "Kein Passkey gefunden"
     },
     "supportHint": {
-      "link": "Support von Kraken Wallet ↗",
+      "link": "Support von Nuble Wallet ↗",
       "regular": "Wenn sich das Problem damit nicht beheben lässt, wende dich bitte an den ",
       "regularWithManualBackup": "Wenn sich das Problem damit nicht beheben lässt, importiere deine Secret Recovery Phrase aus 12 bis 24 Wörtern oder wende dich zur Unterstützung an den "
     },
@@ -2103,7 +2103,7 @@
     "thirdPage": {
       "buttonText": "Fortfahren",
       "description1": "Tippe auf „WalletConnect“",
-      "description2": "Wähle „Kraken Wallet“ aus",
+      "description2": "Wähle „Nuble Wallet“ aus",
       "subtitle": "Anstatt zu scannen:",
       "title": "Wenn du Web3-Apps auf deinem Telefon verwendest,"
     }

@@ -1,7 +1,7 @@
 {
   "_": {
     "add": "Toevoegen",
-    "appName": "Kraken Wallet",
+    "appName": "Nuble Wallet",
     "balance": "Saldo {0}",
     "cancel": "Annuleren",
     "confirm": "Bevestigen",
@@ -185,7 +185,7 @@
     "buttonText": "Klinkt goed",
     "part1": "Je wallet ondersteunt nu de {boldBlastNetwork}. De Ethereum L2 met native yield voor ETH en stablecoins.",
     "part2": "Met deze integratie zorgen we op korte tijd voor meer Level 2-netwerken en behouden we de veiligste mobiele wallet-ervaring.",
-    "title": "Kraken Wallet verwelkomt Blast!"
+    "title": "Nuble Wallet verwelkomt Blast!"
   },
   "broadcast": {
     "sent": "Verzonden"
@@ -213,11 +213,11 @@
     "searchOnChain": "Onchain zoeken"
   },
   "browserExploreWelcome": {
-    "body": "Neem vandaag nog de volgende stap in je cryptoreis. Je kunt nu gedecentraliseerde apps (dapps) ontdekken en er verbinding mee maken zonder je Kraken Wallet te verlaten.",
+    "body": "Neem vandaag nog de volgende stap in je cryptoreis. Je kunt nu gedecentraliseerde apps (dapps) ontdekken en er verbinding mee maken zonder je Nuble Wallet te verlaten.",
     "buttonText": "Klinkt goed",
     "part1": "Gebruik de nieuwe menu-opties onderaan je scherm om naar de pagina Explore (Ontdekken) te gaan",
     "part2": "Ontdek populaire dapps en nieuwe onchain-mogelijkheden, of gebruik de zoekbalk voor meer",
-    "part3": "Gemakkelijk verbinding maken met dapps en transacties uitvoeren zonder ooit de Kraken Wallet-app te verlaten",
+    "part3": "Gemakkelijk verbinding maken met dapps en transacties uitvoeren zonder ooit de Nuble Wallet-app te verlaten",
     "title": "Ontdek de onchain-wereld"
   },
   "bugTracking": {
@@ -225,7 +225,7 @@
     "content": "Observability stelt ons in staat om je wallet-ervaring te controleren en te verbeteren door essentiële gegevens te verzamelen. Dit helpt ons om problemen te identificeren, prestaties te optimaliseren en ervoor te zorgen dat je wallet soepel draait. Jouw gegevens zijn geanonimiseerd en beveiligd! ",
     "disallow": "Niet toestaan",
     "skip": "Later vragen",
-    "title": "Help ons Kraken Wallet te verbeteren"
+    "title": "Help ons Nuble Wallet te verbeteren"
   },
   "coins": {
     "allNetworks": "Alle netwerken",
@@ -381,8 +381,8 @@
     "request_approval": "Goedkeuringsverzoek voor transacties",
     "see_balance": "Je saldo en activiteit bekijken",
     "unsupportedNetwork": "Niet ondersteund netwerk",
-    "unsupportedNetworkDescription": "Deze app gebruikt het {unsupportedNetwork}-netwerk dat op dit moment niet ondersteund wordt. Kraken Wallet ondersteunt momenteel apps op de Ethereum-, Polygon-, OP Mainnet-, Arbitrum- en Solana-netwerken.",
-    "unsupportedNetworksDescription": "Deze app gebruikt {unsupportedNetworks}-netwerken die op dit moment niet ondersteund worden. Kraken Wallet ondersteunt momenteel apps op de Ethereum-, Polygon-, OP Mainnet-, Arbitrum- en Solana-netwerken."
+    "unsupportedNetworkDescription": "Deze app gebruikt het {unsupportedNetwork}-netwerk dat op dit moment niet ondersteund wordt. Nuble Wallet ondersteunt momenteel apps op de Ethereum-, Polygon-, OP Mainnet-, Arbitrum- en Solana-netwerken.",
+    "unsupportedNetworksDescription": "Deze app gebruikt {unsupportedNetworks}-netwerken die op dit moment niet ondersteund worden. Nuble Wallet ondersteunt momenteel apps op de Ethereum-, Polygon-, OP Mainnet-, Arbitrum- en Solana-netwerken."
   },
   "connectedApps": {
     "app_details": {
@@ -701,7 +701,7 @@
       },
       "lockWallet": "Wallet vergrendelen",
       "privacy": "Privacy",
-      "version": "Kraken Wallet-uitbreiding {0}",
+      "version": "Nuble Wallet-uitbreiding {0}",
       "walletSettings": "Wallet-instellingen"
     },
     "skip": "Overslaan",
@@ -844,7 +844,7 @@
       "transferFee": "Overboekingskosten",
       "transferringTo": "Overboeken naar",
       "unsupportedAssets": "Niet-ondersteunde assets",
-      "unsupportedAssetsDescription": "{assets} worden momenteel niet ondersteund door Kraken Wallet"
+      "unsupportedAssetsDescription": "{assets} worden momenteel niet ondersteund door Nuble Wallet"
     },
     "transferCta": {
       "body": "Verbind je Kraken-account om snel crypto over te zetten",
@@ -1090,7 +1090,7 @@
     "import_wallet": "Importeren",
     "intro_pages": {
       "1": {
-        "subtitle": "Kraken Wallet",
+        "subtitle": "Nuble Wallet",
         "text": "Word crypto-eigenaar, ontdek blockchains en stel jouw financiële toekomst veilig.",
         "title": "Welkom bij"
       },
@@ -1101,7 +1101,7 @@
       },
       "3": {
         "subtitle": "blockchains",
-        "text": "Kraken Wallet ondersteunt Bitcoin, Ethereum, Polygon, Doge en meer. ",
+        "text": "Nuble Wallet ondersteunt Bitcoin, Ethereum, Polygon, Doge en meer. ",
         "title": "Ontdek meer"
       },
       "4": {
@@ -1146,7 +1146,7 @@
   },
   "onboardingImportMethod": {
     "methodICloud": {
-      "desc": "Importeren vanuit een iCloud-back-up die je hebt gemaakt voor Kraken Wallet",
+      "desc": "Importeren vanuit een iCloud-back-up die je hebt gemaakt voor Nuble Wallet",
       "title": "Importeren vanuit iCloud"
     },
     "methodManual": {
@@ -1221,7 +1221,7 @@
   "onboardingOutro": {
     "button": "Geef akkoord en ga verder",
     "caption": "Deze wallet ondersteunt Bitcoin, Ethereum, Polygon, Solana, en meer.",
-    "footer": "Door verder te gaan, ga je akkoord met de Kraken Wallet servicevoorwaarden\n",
+    "footer": "Door verder te gaan, ga je akkoord met de Nuble Wallet servicevoorwaarden\n",
     "termsOfService": "servicevoorwaarden",
     "title": "Jouw wallet is klaar"
   },
@@ -1515,7 +1515,7 @@
   },
   "storeReview": {
     "alertMessage": "We horen graag of je een geweldige ervaring hebt.",
-    "alertTitle": "Geniet je van de Kraken Wallet App?",
+    "alertTitle": "Geniet je van de Nuble Wallet App?",
     "nagativeAlertTitle": "Het spijt ons dat je geen plezier beleeft aan deze app.",
     "negativeAlertMessage": "Wil je ons laten weten hoe we je ervaring kunnen verbeteren?",
     "notReally": "Niet echt",
@@ -1567,7 +1567,7 @@
         "title": "Bridge cost"
       },
       "krakenFee": {
-        "hint": "Kraken Wallet brengt geen kosten in rekening voor swaps. We bieden deze dienst gratis aan om de adoptie van crypto- en blockchaintechnologie te ondersteunen.",
+        "hint": "Nuble Wallet brengt geen kosten in rekening voor swaps. We bieden deze dienst gratis aan om de adoptie van crypto- en blockchaintechnologie te ondersteunen.",
         "title": "Kosten bij Kraken",
         "value": "GRATIS"
       },
@@ -1903,7 +1903,7 @@
     "backupWithICloudCompleted": "Back-up gemaakt met iCloud",
     "caption": "Als je geen back-up van je wallet maakt, bestaat het risico dat je jouw crypto verliest. We hebben geen toegang tot je herstelzin en kunnen niet helpen deze te herstellen zonder een back-up.",
     "explainer": {
-      "desc": "Het verliezen van een geheime herstelzin is een typische manier waarop mensen hun crypto verliezen. Kraken Wallet minimaliseert dit risico door meer dan één veilige back-upmethode aan te bieden.",
+      "desc": "Het verliezen van een geheime herstelzin is een typische manier waarop mensen hun crypto verliezen. Nuble Wallet minimaliseert dit risico door meer dan één veilige back-upmethode aan te bieden.",
       "title": "Herstelbaarheid verhogen om de kans op verlies te verkleinen"
     },
     "iCloudDescCompletedShort": "Versleutelde geheime herstelzin",
@@ -2028,7 +2028,7 @@
       "title": "Geen passkey gevonden"
     },
     "supportHint": {
-      "link": "Kraken Wallet Support",
+      "link": "Nuble Wallet Support",
       "regular": "Als dat je probleem niet oplost, kun je hulp krijgen door te gaan naar ",
       "regularWithManualBackup": "Als dat je probleem niet oplost, kun je je geheime herstelzin van 12-24 woorden importeren of hulp krijgen door te gaan naar "
     },
@@ -2103,7 +2103,7 @@
     "thirdPage": {
       "buttonText": "Doorgaan",
       "description1": "Tik op WalletConnect",
-      "description2": "Kraken Wallet selecteren",
+      "description2": "Nuble Wallet selecteren",
       "subtitle": "In plaats van te scannen:",
       "title": "Wanneer je Web3-apps op jouw telefoon gebruikt"
     }

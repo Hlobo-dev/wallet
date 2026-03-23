@@ -1,7 +1,7 @@
 {
   "_": {
     "add": "Añadir",
-    "appName": "Kraken Wallet",
+    "appName": "Nuble Wallet",
     "balance": "Balance {0}",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
@@ -185,7 +185,7 @@
     "buttonText": "Me gusta",
     "part1": "Tu monedero ahora es compatible con la {boldBlastNetwork}. El Ethereum L2 con rendimiento nativo para ETH y criptomonedas estables.",
     "part2": "Con esta integración, hemos preparado las condiciones para añadir rápidamente más redes de Nivel 2, manteniendo al mismo tiempo la experiencia de monedero móvil más segura.",
-    "title": "¡Kraken Wallet da la bienvenida a Blast!"
+    "title": "¡Nuble Wallet da la bienvenida a Blast!"
   },
   "broadcast": {
     "sent": "Enviado"
@@ -213,11 +213,11 @@
     "searchOnChain": "Buscar onchain"
   },
   "browserExploreWelcome": {
-    "body": "Da hoy mismo el siguiente paso en tu andadura criptográfica. Puedes descubrir aplicaciones descentralizadas (DApp) y conectarte a ellas sin salir de Kraken Wallet.",
+    "body": "Da hoy mismo el siguiente paso en tu andadura criptográfica. Puedes descubrir aplicaciones descentralizadas (DApp) y conectarte a ellas sin salir de Nuble Wallet.",
     "buttonText": "Me gusta",
     "part1": "Usa el nuevo menú de opciones situado en la parte inferior de tu pantalla para acceder a la página Explorar",
     "part2": "Descubre las DApp populares y nuevas oportunidades on-chain o usa la barra de búsquedas para obtener más información",
-    "part3": "Conéctate de forma sencilla a varias DApp y realiza transacciones sin salir de la aplicación Kraken Wallet",
+    "part3": "Conéctate de forma sencilla a varias DApp y realiza transacciones sin salir de la aplicación Nuble Wallet",
     "title": "Descubre el mundo on-chain"
   },
   "bugTracking": {
@@ -225,7 +225,7 @@
     "content": "La capacidad de observación nos permite supervisar y mejorar tu experiencia con el monedero mediante la recopilación de datos esenciales. De este modo, podemos identificar problemas, optimizar el rendimiento y garantizar que tu monedero funcione correctamente. ¡Tus datos son anónimos y están seguros! ",
     "disallow": "No permitir",
     "skip": "Pregúnteme más tarde",
-    "title": "Ayúdanos a mejorar Kraken Wallet"
+    "title": "Ayúdanos a mejorar Nuble Wallet"
   },
   "coins": {
     "allNetworks": "Todas las redes",
@@ -381,8 +381,8 @@
     "request_approval": "Solicitar aprobación para transacciones",
     "see_balance": "Ver sus balances y actividad",
     "unsupportedNetwork": "Red no admitida",
-    "unsupportedNetworkDescription": "Esta aplicación usa la red {unsupportedNetwork} que no se admite en este momento. Kraken Wallet admite actualmente las aplicaciones de las redes Ethereum, Polygon, OP Mainnet, Arbitrum y Solana.",
-    "unsupportedNetworksDescription": "Esta aplicación usa las redes {unsupportedNetworks} que no se admiten en este momento. Kraken Wallet admite actualmente las aplicaciones de las redes Ethereum, Polygon, OP Mainnet, Arbitrum y Solana."
+    "unsupportedNetworkDescription": "Esta aplicación usa la red {unsupportedNetwork} que no se admite en este momento. Nuble Wallet admite actualmente las aplicaciones de las redes Ethereum, Polygon, OP Mainnet, Arbitrum y Solana.",
+    "unsupportedNetworksDescription": "Esta aplicación usa las redes {unsupportedNetworks} que no se admiten en este momento. Nuble Wallet admite actualmente las aplicaciones de las redes Ethereum, Polygon, OP Mainnet, Arbitrum y Solana."
   },
   "connectedApps": {
     "app_details": {
@@ -701,7 +701,7 @@
       },
       "lockWallet": "Bloquear monedero",
       "privacy": "Privacidad",
-      "version": "Extensión {0} de Kraken Wallet",
+      "version": "Extensión {0} de Nuble Wallet",
       "walletSettings": "Configuración del monedero"
     },
     "skip": "Omitir",
@@ -844,7 +844,7 @@
       "transferFee": "Comisión de transferencia",
       "transferringTo": "Transfiriendo a",
       "unsupportedAssets": "Activos no compatibles",
-      "unsupportedAssetsDescription": "Kraken Wallet no admite actualmente {assets}"
+      "unsupportedAssetsDescription": "Nuble Wallet no admite actualmente {assets}"
     },
     "transferCta": {
       "body": "Conecta tu cuenta de Kraken para transferir criptomonedas rápidamente",
@@ -1090,7 +1090,7 @@
     "import_wallet": "Importar",
     "intro_pages": {
       "1": {
-        "subtitle": "Kraken Wallet",
+        "subtitle": "Nuble Wallet",
         "text": "Adquiera criptomonedas, descubra blockchains y proteja su futuro financiero.",
         "title": "Le damos la bienvenida a"
       },
@@ -1101,7 +1101,7 @@
       },
       "3": {
         "subtitle": "blockchains",
-        "text": "Kraken Wallet admite Bitcoin, Ethereum, Polygon, Doge y muchas más. ",
+        "text": "Nuble Wallet admite Bitcoin, Ethereum, Polygon, Doge y muchas más. ",
         "title": "Explorar más"
       },
       "4": {
@@ -1146,7 +1146,7 @@
   },
   "onboardingImportMethod": {
     "methodICloud": {
-      "desc": "Importar desde una copia de seguridad de iCloud que hayas creado para Kraken Wallet",
+      "desc": "Importar desde una copia de seguridad de iCloud que hayas creado para Nuble Wallet",
       "title": "Importar desde iCloud"
     },
     "methodManual": {
@@ -1515,7 +1515,7 @@
   },
   "storeReview": {
     "alertMessage": "Nos gustaría saber si tu experiencia está siendo buena.",
-    "alertTitle": "¿Te gusta la aplicación de Kraken Wallet?",
+    "alertTitle": "¿Te gusta la aplicación de Nuble Wallet?",
     "nagativeAlertTitle": "Sentimos que tu experiencia en la aplicación no esté siendo positiva.",
     "negativeAlertMessage": "¿Te gustaría contarnos cómo podríamos mejorarla?",
     "notReally": "No realmente",
@@ -1567,7 +1567,7 @@
         "title": "Coste de puente"
       },
       "krakenFee": {
-        "hint": "Kraken Wallet no cobra ninguna comisión por los swaps. Ofrecemos este servicio de forma gratuita para apoyar la adopción de la tecnología de criptomonedas y blockchain.",
+        "hint": "Nuble Wallet no cobra ninguna comisión por los swaps. Ofrecemos este servicio de forma gratuita para apoyar la adopción de la tecnología de criptomonedas y blockchain.",
         "title": "Comisión de Kraken",
         "value": "GRATIS"
       },
@@ -1903,7 +1903,7 @@
     "backupWithICloudCompleted": "Copia de seguridad con iCloud",
     "caption": "Si no haces una copia de seguridad de tu monedero, te arriesgas a perder tus criptomonedas. No tenemos acceso a tu frase de recuperación y no podemos ayudarte a recuperarlas sin una copia de seguridad.",
     "explainer": {
-      "desc": "Perder una frase secreta de recuperación es una forma habitual en la que la gente pierde sus criptomonedas. Kraken Wallet minimiza este riesgo al ofrecer más de un método seguro de copia de seguridad.",
+      "desc": "Perder una frase secreta de recuperación es una forma habitual en la que la gente pierde sus criptomonedas. Nuble Wallet minimiza este riesgo al ofrecer más de un método seguro de copia de seguridad.",
       "title": "Aumento de las posibilidades de recuperación para reducir la probabilidad de pérdidas"
     },
     "iCloudDescCompletedShort": "Frase de recuperación secreta cifrada",
@@ -2028,7 +2028,7 @@
       "title": "No se ha encontrado ninguna clave de paso"
     },
     "supportHint": {
-      "link": "Servicio de Atención al cliente de Kraken Wallet ↗",
+      "link": "Servicio de Atención al cliente de Nuble Wallet ↗",
       "regular": "Si eso no resuelve tu problema, puedes obtener ayuda visitando ",
       "regularWithManualBackup": "Si eso no resuelve tu problema, puedes importar tu frase secreta de recuperación de 12-24 palabras u obtener ayuda visitando "
     },
@@ -2103,7 +2103,7 @@
     "thirdPage": {
       "buttonText": "Continuar",
       "description1": "Toca en WalletConnect",
-      "description2": "Selecciona Kraken Wallet",
+      "description2": "Selecciona Nuble Wallet",
       "subtitle": "No hace falta escanear:",
       "title": "A la hora de usar aplicaciones Web3 en tu teléfono"
     }

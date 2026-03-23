@@ -8003,9 +8003,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-wallet/eslint-config@file:plugins/eslint-config::locator=superwallet%40workspace%3A.":
+"@web3-wallet/eslint-config@file:plugins/eslint-config::locator=nublewallet%40workspace%3A.":
   version: 1.0.0
-  resolution: "@web3-wallet/eslint-config@file:plugins/eslint-config#plugins/eslint-config::hash=6aa668&locator=superwallet%40workspace%3A."
+  resolution: "@web3-wallet/eslint-config@file:plugins/eslint-config#plugins/eslint-config::hash=ef3a39&locator=nublewallet%40workspace%3A."
   dependencies:
     "@react-native/eslint-config": 0.74.84
     "@typescript-eslint/eslint-plugin": 7.17.0
@@ -8025,7 +8025,7 @@ __metadata:
     prettier: 3.3.3
   peerDependencies:
     eslint: ">=8.1.0"
-  checksum: 33f02526be0ef1a85b546fe3a0392d6abedb995b19ca0e09f807acc47e41ee31f8cda0a4083bdfbb8c0f544d0646b1a2e4b9a9f0299ac03e7fc1a19dced8864c
+  checksum: 08bc56a72962ac66e0f3a2d8bfbd6258ed4da26e370f49f5250d0fdaabb6a7781650bddac0ee7df648f366eef103c2d2fe2372dca0f2f0c80a514a243982b656
   languageName: node
   linkType: hard
 
@@ -8766,9 +8766,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-error-context@file:plugins/babel-plugin-error-context::locator=superwallet%40workspace%3A.":
+"babel-plugin-error-context@file:plugins/babel-plugin-error-context::locator=nublewallet%40workspace%3A.":
   version: 1.0.0
-  resolution: "babel-plugin-error-context@file:plugins/babel-plugin-error-context#plugins/babel-plugin-error-context::hash=a3b96b&locator=superwallet%40workspace%3A."
+  resolution: "babel-plugin-error-context@file:plugins/babel-plugin-error-context#plugins/babel-plugin-error-context::hash=a3b96b&locator=nublewallet%40workspace%3A."
   checksum: 01895e5bceb626cce944e18e29c40307da0101b9c624a865f20e3b0d6bbf874f6e0526463679a0c8755d039eb04386ad1a058353040e649a589cbcb05022a853
   languageName: node
   linkType: hard
@@ -15712,10 +15712,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kraken-wallet-cryptoicons@file:assets/kraken-wallet-cryptoicons::locator=superwallet%40workspace%3A.":
+"kraken-wallet-cryptoicons@file:assets/kraken-wallet-cryptoicons::locator=nublewallet%40workspace%3A.":
   version: 1.0.0
-  resolution: "kraken-wallet-cryptoicons@file:assets/kraken-wallet-cryptoicons#assets/kraken-wallet-cryptoicons::hash=5fff0b&locator=superwallet%40workspace%3A."
-  checksum: 58dca3844605c4b7f8695777a2bf349a92671aed9fe06cef8469cb02d634629851b90e0b4902dba4720d5e21c7abd4bf78e54b74c817df97141047532c3de7d1
+  resolution: "kraken-wallet-cryptoicons@file:assets/kraken-wallet-cryptoicons#assets/kraken-wallet-cryptoicons::hash=906708&locator=nublewallet%40workspace%3A."
+  checksum: ca503586a1f9035fd8526990b41bbb1ad8d2f52e41ac042aa49c8fd98679596a4904d4cc599996a7c70922cd8c0e49a248075fdcd038d0eb2b2c17253ba0f420
   languageName: node
   linkType: hard
 
@@ -15725,10 +15725,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"kraken-wallet-network-icons@file:assets/kraken-wallet-network-icons::locator=superwallet%40workspace%3A.":
+"kraken-wallet-network-icons@file:assets/kraken-wallet-network-icons::locator=nublewallet%40workspace%3A.":
   version: 1.0.0
-  resolution: "kraken-wallet-network-icons@file:assets/kraken-wallet-network-icons#assets/kraken-wallet-network-icons::hash=e188bd&locator=superwallet%40workspace%3A."
-  checksum: 8c2cd4eec885fd560f181bb853d76c4e34c79bd6e1ec67f95fc8d3eba44cf79e4f5db1de511977166fa5fa5581dadb85781d5c537dccef8ac6e91d0f64837c1d
+  resolution: "kraken-wallet-network-icons@file:assets/kraken-wallet-network-icons#assets/kraken-wallet-network-icons::hash=016210&locator=nublewallet%40workspace%3A."
+  checksum: 4e8567d18e89042f7b12c6e9baeb4d39045eac9c1afabf2e32ce51552e2ded16391f3a5611aa91557b45dd82461033bffd4be2e6b8d2ecd0d9717c556953dad2
   languageName: node
   linkType: hard
 
@@ -17533,6 +17533,160 @@ __metadata:
   checksum: 5fee7ff309727763689cfad844d979aedd2204a817fbaaf0e1603794a7c20db28548d7b024692f953557df6ce4a0ee4ae46cd8ebd9b36cfb300b9226b567c479
   languageName: node
   linkType: hard
+
+"nublewallet@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "nublewallet@workspace:."
+  dependencies:
+    "@babel/core": 7.26.0
+    "@babel/preset-env": 7.22.5
+    "@babel/runtime": 7.28.4
+    "@bitcoinerlab/secp256k1": 1.1.1
+    "@commitlint/cli": 19.3.0
+    "@commitlint/config-conventional": 19.2.2
+    "@ethereumjs/wallet": 2.0.3
+    "@ethersproject/bytes": 5.7.0
+    "@ethersproject/shims": 5.7.0
+    "@gorhom/bottom-sheet": 5.2.6
+    "@jest/globals": 29.7.0
+    "@metamask/eth-sig-util": 4.0.1
+    "@metamask/react-native-webview": 14.5.0
+    "@noble/curves": 1.4.2
+    "@noble/hashes": 1.4.0
+    "@react-native-async-storage/async-storage": 2.2.0
+    "@react-native-clipboard/clipboard": 1.16.3
+    "@react-native-community/blur": 4.4.1
+    "@react-native-community/cli": 18.0.0
+    "@react-native-community/cli-platform-android": 18.0.0
+    "@react-native-community/cli-platform-ios": 18.0.0
+    "@react-native-community/datetimepicker": 8.4.1
+    "@react-native-community/netinfo": 11.4.1
+    "@react-native-community/slider": 4.5.6
+    "@react-native-masked-view/masked-view": 0.3.2
+    "@react-native/babel-preset": 0.79.7
+    "@react-native/gradle-plugin": 0.79.7
+    "@react-native/metro-config": 0.79.7
+    "@react-native/typescript-config": 0.79.7
+    "@react-navigation/elements": 2.2.6
+    "@react-navigation/native": 7.0.15
+    "@react-navigation/native-stack": 7.2.1
+    "@realm/react": 0.11.0
+    "@reown/walletkit": 1.0.0
+    "@shopify/flash-list": 1.8.3
+    "@shopify/react-native-skia": 2.3.7
+    "@solana/spl-token": 0.3.8
+    "@solana/web3.js": 1.91.7
+    "@storybook/addon-ondevice-actions": 7.6.20
+    "@storybook/addon-ondevice-controls": 7.6.20
+    "@storybook/preview-api": 7.6.20
+    "@storybook/react-native": 7.6.20
+    "@tanstack/react-query": 5.51.9
+    "@taquito/signer": 12.1.0
+    "@taquito/utils": 12.1.0
+    "@testing-library/react-native": 13.3.3
+    "@types/bip21": 2.0.3
+    "@types/create-hash": 1.2.6
+    "@types/jest": 29.5.6
+    "@types/lodash": 4.17.5
+    "@types/react": 19.0.0
+    "@types/react-test-renderer": 19.0.0
+    "@types/tiny-secp256k1": 1.0.0
+    "@walletconnect/core": 2.17.1
+    "@walletconnect/react-native-compat": 2.17.1
+    "@walletconnect/types": 2.17.1
+    "@web3-wallet/eslint-config": "file:plugins/eslint-config"
+    argon2: 0.30.3
+    assert: 2.1.0
+    babel-jest: 29.7.0
+    babel-plugin-error-context: "file:plugins/babel-plugin-error-context"
+    babel-plugin-inline-import: 3.0.0
+    babel-plugin-module-resolver: 4.1.0
+    babel-plugin-transform-inline-environment-variables: 0.4.4
+    big-integer: 1.6.51
+    bignumber.js: 9.1.1
+    bip21: 2.0.3
+    bip32: 3.0.1
+    bip39: 3.1.0
+    bitcoinjs-lib: 6.1.3
+    bs58: 5.0.0
+    bs58check: 2.1.0
+    buffer: 6.0.3
+    buffer-reverse: 1.0.1
+    coinselect: 3.1.13
+    create-hash: 1.2.0
+    crypto-browserify: 3.12.0
+    date-fns: 2.30.0
+    ecpair: 2.0.1
+    ed25519-hd-key: 1.3.0
+    electrum-client: "github:BlueWallet/rn-electrum-client#1bfe3cc4249d5440b816baac942b0cfa921eebf9"
+    eslint: 8.57.0
+    ethereumjs-util: 7.1.5
+    ethers: 6.7.0
+    eventemitter3: 5.0.1
+    events: 3.3.0
+    expo: 53.0.23
+    expo-camera: 16.1.11
+    expo-local-authentication: 14.0.1
+    expo-notifications: 0.32.12
+    expo-screen-capture: 8.0.8
+    expo-store-review: 9.0.8
+    husky: 8.0.3
+    jest: 29.7.0
+    jest-html-reporters: 3.1.4
+    jest-junit: 14.0.1
+    kraken-wallet-cryptoicons: "file:assets/kraken-wallet-cryptoicons"
+    kraken-wallet-network-icons: "file:assets/kraken-wallet-network-icons"
+    lint-staged: 15.4.1
+    lodash: 4.17.21
+    lottie-react-native: 7.2.5
+    node-fetch: 3.3.1
+    openapi-fetch: 0.7.4
+    openapi-typescript: 6.5.3
+    patch-package: 6.5.1
+    prettier: 3.3.3
+    process: 0.11.10
+    react: 19.0.0
+    react-icomoon: 2.5.7
+    react-localization: 1.0.19
+    react-native: 0.79.7
+    react-native-argon2: 2.0.1
+    react-native-bootsplash: 6.3.11
+    react-native-config: 1.5.1
+    react-native-default-preference: 1.4.4
+    react-native-device-info: 14.0.1
+    react-native-fast-image: 8.6.3
+    react-native-fs: 2.20.0
+    react-native-gesture-handler: 2.26.0
+    react-native-get-random-values: 1.11.0
+    react-native-haptic-feedback: 1.14.0
+    react-native-keychain: 8.1.2
+    react-native-localize: 2.2.6
+    react-native-password-strength-meter: 0.0.5
+    react-native-qrcode-svg: 6.2.0
+    react-native-reanimated: 3.19.3
+    react-native-safe-area-context: 5.5.2
+    react-native-screens: 4.9.1
+    react-native-share: 12.2.0
+    react-native-svg: 15.14.0
+    react-native-svg-transformer: 1.1.0
+    react-native-tcp-socket: 6.0.6
+    react-native-url-polyfill: 1.3.0
+    react-test-renderer: 19.0.0
+    realm: 12.14.2
+    rn-nodeify: 10.3.0
+    serialize-error: 11.0.1
+    storybook: 7.6.20
+    stream-browserify: 3.0.0
+    tiny-secp256k1: 1.1.6
+    tweetnacl: 1.0.3
+    type-coverage: 2.27.1
+    type-fest: 4.20.1
+    typescript: 5.5.2
+    typescript-coverage-report: 1.0.0
+    victory-native: 41.20.1
+    zod: 3.23.8
+  languageName: unknown
+  linkType: soft
 
 "nullthrows@npm:^1.1.1":
   version: 1.1.1
@@ -21182,160 +21336,6 @@ __metadata:
   checksum: c6853db5240b4920f47b3c864dd1e23ede6819ea399ad29a65387d746374f6958c5f1c5b7e5bb152d9db117a74973e5005056d9bb83c24e26f18ec6bfae4a718
   languageName: node
   linkType: hard
-
-"superwallet@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "superwallet@workspace:."
-  dependencies:
-    "@babel/core": 7.26.0
-    "@babel/preset-env": 7.22.5
-    "@babel/runtime": 7.28.4
-    "@bitcoinerlab/secp256k1": 1.1.1
-    "@commitlint/cli": 19.3.0
-    "@commitlint/config-conventional": 19.2.2
-    "@ethereumjs/wallet": 2.0.3
-    "@ethersproject/bytes": 5.7.0
-    "@ethersproject/shims": 5.7.0
-    "@gorhom/bottom-sheet": 5.2.6
-    "@jest/globals": 29.7.0
-    "@metamask/eth-sig-util": 4.0.1
-    "@metamask/react-native-webview": 14.5.0
-    "@noble/curves": 1.4.2
-    "@noble/hashes": 1.4.0
-    "@react-native-async-storage/async-storage": 2.2.0
-    "@react-native-clipboard/clipboard": 1.16.3
-    "@react-native-community/blur": 4.4.1
-    "@react-native-community/cli": 18.0.0
-    "@react-native-community/cli-platform-android": 18.0.0
-    "@react-native-community/cli-platform-ios": 18.0.0
-    "@react-native-community/datetimepicker": 8.4.1
-    "@react-native-community/netinfo": 11.4.1
-    "@react-native-community/slider": 4.5.6
-    "@react-native-masked-view/masked-view": 0.3.2
-    "@react-native/babel-preset": 0.79.7
-    "@react-native/gradle-plugin": 0.79.7
-    "@react-native/metro-config": 0.79.7
-    "@react-native/typescript-config": 0.79.7
-    "@react-navigation/elements": 2.2.6
-    "@react-navigation/native": 7.0.15
-    "@react-navigation/native-stack": 7.2.1
-    "@realm/react": 0.11.0
-    "@reown/walletkit": 1.0.0
-    "@shopify/flash-list": 1.8.3
-    "@shopify/react-native-skia": 2.3.7
-    "@solana/spl-token": 0.3.8
-    "@solana/web3.js": 1.91.7
-    "@storybook/addon-ondevice-actions": 7.6.20
-    "@storybook/addon-ondevice-controls": 7.6.20
-    "@storybook/preview-api": 7.6.20
-    "@storybook/react-native": 7.6.20
-    "@tanstack/react-query": 5.51.9
-    "@taquito/signer": 12.1.0
-    "@taquito/utils": 12.1.0
-    "@testing-library/react-native": 13.3.3
-    "@types/bip21": 2.0.3
-    "@types/create-hash": 1.2.6
-    "@types/jest": 29.5.6
-    "@types/lodash": 4.17.5
-    "@types/react": 19.0.0
-    "@types/react-test-renderer": 19.0.0
-    "@types/tiny-secp256k1": 1.0.0
-    "@walletconnect/core": 2.17.1
-    "@walletconnect/react-native-compat": 2.17.1
-    "@walletconnect/types": 2.17.1
-    "@web3-wallet/eslint-config": "file:plugins/eslint-config"
-    argon2: 0.30.3
-    assert: 2.1.0
-    babel-jest: 29.7.0
-    babel-plugin-error-context: "file:plugins/babel-plugin-error-context"
-    babel-plugin-inline-import: 3.0.0
-    babel-plugin-module-resolver: 4.1.0
-    babel-plugin-transform-inline-environment-variables: 0.4.4
-    big-integer: 1.6.51
-    bignumber.js: 9.1.1
-    bip21: 2.0.3
-    bip32: 3.0.1
-    bip39: 3.1.0
-    bitcoinjs-lib: 6.1.3
-    bs58: 5.0.0
-    bs58check: 2.1.0
-    buffer: 6.0.3
-    buffer-reverse: 1.0.1
-    coinselect: 3.1.13
-    create-hash: 1.2.0
-    crypto-browserify: 3.12.0
-    date-fns: 2.30.0
-    ecpair: 2.0.1
-    ed25519-hd-key: 1.3.0
-    electrum-client: "github:BlueWallet/rn-electrum-client#1bfe3cc4249d5440b816baac942b0cfa921eebf9"
-    eslint: 8.57.0
-    ethereumjs-util: 7.1.5
-    ethers: 6.7.0
-    eventemitter3: 5.0.1
-    events: 3.3.0
-    expo: 53.0.23
-    expo-camera: 16.1.11
-    expo-local-authentication: 14.0.1
-    expo-notifications: 0.32.12
-    expo-screen-capture: 8.0.8
-    expo-store-review: 9.0.8
-    husky: 8.0.3
-    jest: 29.7.0
-    jest-html-reporters: 3.1.4
-    jest-junit: 14.0.1
-    kraken-wallet-cryptoicons: "file:assets/kraken-wallet-cryptoicons"
-    kraken-wallet-network-icons: "file:assets/kraken-wallet-network-icons"
-    lint-staged: 15.4.1
-    lodash: 4.17.21
-    lottie-react-native: 7.2.5
-    node-fetch: 3.3.1
-    openapi-fetch: 0.7.4
-    openapi-typescript: 6.5.3
-    patch-package: 6.5.1
-    prettier: 3.3.3
-    process: 0.11.10
-    react: 19.0.0
-    react-icomoon: 2.5.7
-    react-localization: 1.0.19
-    react-native: 0.79.7
-    react-native-argon2: 2.0.1
-    react-native-bootsplash: 6.3.11
-    react-native-config: 1.5.1
-    react-native-default-preference: 1.4.4
-    react-native-device-info: 14.0.1
-    react-native-fast-image: 8.6.3
-    react-native-fs: 2.20.0
-    react-native-gesture-handler: 2.26.0
-    react-native-get-random-values: 1.11.0
-    react-native-haptic-feedback: 1.14.0
-    react-native-keychain: 8.1.2
-    react-native-localize: 2.2.6
-    react-native-password-strength-meter: 0.0.5
-    react-native-qrcode-svg: 6.2.0
-    react-native-reanimated: 3.19.3
-    react-native-safe-area-context: 5.5.2
-    react-native-screens: 4.9.1
-    react-native-share: 12.2.0
-    react-native-svg: 15.14.0
-    react-native-svg-transformer: 1.1.0
-    react-native-tcp-socket: 6.0.6
-    react-native-url-polyfill: 1.3.0
-    react-test-renderer: 19.0.0
-    realm: 12.14.2
-    rn-nodeify: 10.3.0
-    serialize-error: 11.0.1
-    storybook: 7.6.20
-    stream-browserify: 3.0.0
-    tiny-secp256k1: 1.1.6
-    tweetnacl: 1.0.3
-    type-coverage: 2.27.1
-    type-fest: 4.20.1
-    typescript: 5.5.2
-    typescript-coverage-report: 1.0.0
-    victory-native: 41.20.1
-    zod: 3.23.8
-  languageName: unknown
-  linkType: soft
 
 "supports-color@npm:^5.3.0":
   version: 5.5.0

@@ -87,6 +87,7 @@ GEM
       rake (>= 12.0.0, < 14.0.0)
     domain_name (0.6.20240107)
     dotenv (2.8.1)
+    drb (2.2.3)
     emoji_regex (3.2.3)
     escape (0.0.4)
     ethon (0.16.0)
@@ -111,13 +112,13 @@ GEM
     faraday-em_synchrony (1.0.1)
     faraday-excon (1.1.0)
     faraday-httpclient (1.0.1)
-    faraday-multipart (1.1.1)
+    faraday-multipart (1.2.0)
       multipart-post (~> 2.0)
     faraday-net_http (1.0.2)
     faraday-net_http_persistent (1.2.0)
     faraday-patron (1.0.0)
     faraday-rack (1.0.0)
-    faraday-retry (1.0.3)
+    faraday-retry (1.0.4)
     faraday_middleware (1.2.1)
       faraday (~> 1.0)
     fastimage (2.4.0)
@@ -163,14 +164,6 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.4.1)
       xcpretty-travis-formatter (>= 0.0.3, < 2.0.0)
-    fastlane-plugin-android_version_manage (0.1.6)
-    fastlane-plugin-bundletool (1.0.9)
-    fastlane-plugin-firebase_app_distribution (0.7.4)
-      google-apis-firebaseappdistribution_v1 (~> 0.3.0)
-    fastlane-plugin-get_version_name (0.2.2)
-    fastlane-plugin-increment_version_code (0.4.3)
-    fastlane-plugin-versioning_android (0.1.1)
-    fastlane-plugin-versioning_ios (0.1.0)
     fastlane-sirp (1.0.0)
       sysrandom (~> 1.0)
     ffi (1.16.3)
@@ -187,8 +180,6 @@ GEM
       representable (~> 3.0)
       retriable (>= 2.0, < 4.a)
       rexml
-    google-apis-firebaseappdistribution_v1 (0.3.0)
-      google-apis-core (>= 0.11.0, < 2.a)
     google-apis-iamcredentials_v1 (0.17.0)
       google-apis-core (>= 0.11.0, < 2.a)
     google-apis-playcustomapp_v1 (0.13.0)
@@ -229,7 +220,9 @@ GEM
     logger (1.7.0)
     mini_magick (4.13.2)
     mini_mime (1.1.5)
-    minitest (5.18.0)
+    minitest (6.0.2)
+      drb (~> 2.0)
+      prism (~> 1.5)
     molinillo (0.8.0)
     multi_json (1.17.0)
     multipart-post (2.4.1)
@@ -242,6 +235,7 @@ GEM
     optparse (0.6.0)
     os (1.1.4)
     plist (3.7.2)
+    prism (1.9.0)
     public_suffix (4.0.7)
     rake (13.3.0)
     representable (3.2.0)
@@ -298,13 +292,6 @@ DEPENDENCIES
   activesupport (>= 6.1.7.5, != 7.1.0)
   cocoapods (>= 1.13, != 1.15.1, != 1.15.0)
   fastlane (~> 2.228.0)
-  fastlane-plugin-android_version_manage
-  fastlane-plugin-bundletool
-  fastlane-plugin-firebase_app_distribution
-  fastlane-plugin-get_version_name
-  fastlane-plugin-increment_version_code
-  fastlane-plugin-versioning_android
-  fastlane-plugin-versioning_ios
 
 RUBY VERSION
    ruby 3.0.6p216
