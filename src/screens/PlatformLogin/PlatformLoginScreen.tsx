@@ -15,6 +15,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Animated,
   Dimensions,
   Image,
@@ -28,7 +29,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -274,17 +274,20 @@ const AuthSheet: React.FC<{
   const translateY = slide.interpolate({ inputRange: [0, 1], outputRange: [600, 0] });
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={StyleSheet.absoluteFill}>
-        <Pressable style={s.backdrop} onPress={onClose} />
+    <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
+      <Pressable style={s.backdrop} onPress={() => { Keyboard.dismiss(); onClose(); }} />
+      <KeyboardAvoidingView
+        style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        pointerEvents="box-none"
+      >
         <Animated.View
-          style={[s.sheet, { transform: [{ translateY }], paddingBottom: insets.bottom + 16 }]}
+          style={[s.sheet, { transform: [{ translateY }], paddingBottom: insets.bottom + 16, position: 'relative' }]}
         >
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-            <View style={s.handle} />
-            <Text style={s.sheetTitle}>
-              {mode === 'login' ? 'Sign in' : 'Create account'}
-            </Text>
+          <View style={s.handle} />
+          <Text style={s.sheetTitle}>
+            {mode === 'login' ? 'Sign in' : 'Create account'}
+          </Text>
 
             {mode === 'register' && (
               <View style={s.nameRow}>
@@ -318,13 +321,26 @@ const AuthSheet: React.FC<{
             </View>
 
             <View style={s.socialRow}>
-              <Pressable style={s.socialBtn}>
-                <Text style={s.socialIcon}>🍎</Text>
-                <Text style={s.socialLabel}>Apple</Text>
+              <Pressable
+                style={({ pressed }) => [s.socialBtn, pressed && { opacity: 0.6 }]}
+                onPress={() => Alert.alert('Google Sign-In', 'Google authentication coming soon!')}
+              >
+                <Svg width={18} height={18} viewBox="0 0 24 24">
+                  <Path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <Path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <Path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                  <Path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                </Svg>
+                <Text style={s.socialLabel}>Sign in with Google</Text>
               </Pressable>
-              <Pressable style={s.socialBtn}>
-                <Text style={s.socialIcon}>G</Text>
-                <Text style={s.socialLabel}>Google</Text>
+              <Pressable
+                style={({ pressed }) => [s.socialBtn, pressed && { opacity: 0.6 }]}
+                onPress={() => Alert.alert('Apple Sign-In', 'Apple authentication coming soon!')}
+              >
+                <Svg width={18} height={18} viewBox="0 0 24 24" fill="#d1d5db">
+                  <Path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+                </Svg>
+                <Text style={s.socialLabel}>Sign in with Apple</Text>
               </Pressable>
             </View>
 
@@ -334,10 +350,9 @@ const AuthSheet: React.FC<{
                 <Text style={s.toggleLink}>{mode === 'login' ? 'Sign up' : 'Sign in'}</Text>
               </Text>
             </TouchableOpacity>
-          </KeyboardAvoidingView>
         </Animated.View>
+      </KeyboardAvoidingView>
       </View>
-    </TouchableWithoutFeedback>
   );
 };
 
@@ -1269,16 +1284,20 @@ export const PlatformLoginScreen: React.FC = () => {
       </View>
 
       <ScrollView style={s.scroll} contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* ── Hero ── */}
-        <View style={s.hero}>
+        {/* ── Logo (independent position) ── */}
+        <View style={s.logoSection}>
           <View style={s.logoWrap}>
-            <Svg width={40} height={40} viewBox="0 0 52 52" fill="none">
+            <Svg width={56} height={56} viewBox="0 0 52 52" fill="none">
               <Line x1={26} y1={8} x2={26} y2={44} stroke="#818cf7" strokeWidth={5} strokeLinecap="round" />
               <Line x1={10} y1={17} x2={42} y2={35} stroke="#818cf7" strokeWidth={5} strokeLinecap="round" />
               <Line x1={10} y1={35} x2={42} y2={17} stroke="#818cf7" strokeWidth={5} strokeLinecap="round" />
               <Circle cx={26} cy={26} r={5} fill="#6366f1" />
             </Svg>
           </View>
+        </View>
+
+        {/* ── Hero text ── */}
+        <View style={s.hero}>
           <Text style={s.title}>Welcome to Nuble</Text>
           <Text style={s.subtitle}>
             Create your account or sign in to an existing{'\n'}account to build and manage your portfolio.
@@ -1346,9 +1365,10 @@ const s = StyleSheet.create({
   scrollContent: { paddingBottom: 120 },
 
   /* hero */
-  hero: { alignItems: 'center', paddingTop: 160, paddingBottom: 32 },
+  logoSection: { alignItems: 'center', paddingTop: 30, paddingBottom: 0 },
+  hero: { alignItems: 'center', paddingTop: 14, paddingBottom: 80 },
   logoWrap: {
-    width: 80, height: 80, borderRadius: 40,
+    width: 110, height: 110, borderRadius: 55,
     backgroundColor: 'rgba(117,56,245,0.12)',
     justifyContent: 'center', alignItems: 'center',
     marginBottom: 14,
@@ -1425,19 +1445,18 @@ const s = StyleSheet.create({
   },
   sheetError: { color: '#FF6B6B', fontSize: 14, textAlign: 'center', marginBottom: 12 },
   sheetSubmit: { backgroundColor: '#7538F5', borderRadius: 24, paddingVertical: 16, alignItems: 'center', marginTop: 4 },
-  sheetSubmitOff: { opacity: 0.5 },
+  sheetSubmitOff: { opacity: 0.35 },
   sheetSubmitText: { color: '#FFF', fontSize: 17, fontWeight: '600' },
   divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
   dividerLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: 'rgba(255,255,255,0.15)' },
   dividerText: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginHorizontal: 12 },
   socialRow: { flexDirection: 'row', gap: 12 },
   socialBtn: {
-    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 24, paddingVertical: 14,
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
+    backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12, paddingVertical: 14,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
   },
-  socialIcon: { fontSize: 18 },
-  socialLabel: { color: '#FFF', fontSize: 15, fontWeight: '500' },
+  socialLabel: { color: '#d1d5db', fontSize: 14, fontWeight: '500' },
   toggle: { paddingVertical: 16, alignItems: 'center' },
   toggleText: { color: 'rgba(255,255,255,0.5)', fontSize: 14 },
   toggleLink: { color: '#7538F5', fontWeight: '600' },
