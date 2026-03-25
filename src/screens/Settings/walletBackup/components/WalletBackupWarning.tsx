@@ -53,7 +53,7 @@ export const WalletBackupWarning = ({ style, showDismissable = true }: Props) =>
       <CardWarning
         title={loc.walletBackup.backupYourWallet}
         description={loc.walletBackup.backupYourWalletDescription}
-        type="negative"
+        type="normal"
         buttonText={loc.walletBackup.backup}
         onPress={navigateToBackup}
         style={[styles.container, style]}

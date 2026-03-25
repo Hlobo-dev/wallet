@@ -1200,9 +1200,9 @@
     "verifiedInfoKraken": "Tokens listed here are currently available on the Kraken exchange."
   },
   "walletBackup": {
-    "backupYourWallet": "Back up your wallet",
-    "backupYourWalletDescription": "Make sure you can recover your crypto if you lose your device or switch to another wallet.",
-    "backup": "Back up",
+    "backupYourWallet": "Connect your accounts",
+    "backupYourWalletDescription": "Link your brokerage accounts for trading or add wealth accounts to track your full portfolio in one place.",
+    "backup": "Connect",
     "cloudWarning": {
       "title": "Cloud backup recommended",
       "desc": "Ensure you can recover your wallet even if you lose your secret recovery phrase",
