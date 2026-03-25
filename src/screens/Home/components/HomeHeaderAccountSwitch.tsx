@@ -9,7 +9,7 @@ import { useGlobalState } from '@/components/GlobalState';
 import { Label } from '@/components/Label';
 import { SvgIcon } from '@/components/SvgIcon';
 import { Touchable } from '@/components/Touchable';
-import { DEFAULT_ACCOUNT_NAME, useAccountById, useCurrentAccountNumber } from '@/realm/accounts';
+import { DEFAULT_ACCOUNT_NAME, normalizeAccountName, useAccountById, useCurrentAccountNumber } from '@/realm/accounts';
 
 import { AccountSwitchSheet } from './AccountSwitchSheet';
 
@@ -25,7 +25,7 @@ export const HomeHeaderAccountSwitch = () => {
     bottomSheetModalRef.current?.present();
   };
 
-  const name = (account?.isValid() && account.accountCustomName) || DEFAULT_ACCOUNT_NAME;
+  const name = normalizeAccountName(account?.isValid() ? account.accountCustomName : undefined);
 
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
     setIsTruncated(event.nativeEvent.lines.length > 1);

@@ -59,12 +59,12 @@
     "declinedRequest": "User declined the request"
   },
   "accountSwitch": {
-    "wallets": "Wallets",
+    "wallets": "Accounts",
     "manage": "Manage",
-    "createWallet": "Create wallet",
-    "createWalletSuccess": "Wallet created successfully",
-    "createWalletError": "The wallet was not created, please try again",
-    "creatingNewWallet": "Creating new wallet",
+    "createWallet": "Create account",
+    "createWalletSuccess": "Account created successfully",
+    "createWalletError": "The account was not created, please try again",
+    "creatingNewWallet": "Creating new account",
     "menu": {
       "edit": "Customize",
       "connected_apps": "Connected apps",

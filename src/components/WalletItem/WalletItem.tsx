@@ -10,6 +10,7 @@ import { type ContextMenuItem, Menu } from '@/components/Menu';
 import { Touchable } from '@/components/Touchable';
 import { useBalanceDisplay } from '@/hooks/useBalanceDisplay';
 import type { RealmAccount } from '@/realm/accounts';
+import { normalizeAccountName } from '@/realm/accounts';
 import { useIsAccountConnected } from '@/realm/krakenConnect/useIsAccountConnected';
 import { useAppCurrency } from '@/realm/settings';
 import { Routes } from '@/Routes';
@@ -50,7 +51,8 @@ export const WalletItem = ({
   const navigation = useNavigation();
   const { currency } = useAppCurrency();
 
-  const { accountCustomName, accountNumber, balance } = account;
+  const { accountCustomName: rawName, accountNumber, balance } = account;
+  const accountCustomName = normalizeAccountName(rawName);
   const isAccountConnectedWithExchange = useIsAccountConnected(accountNumber);
 
   const containerBackgroundColor = isCurrentAccount ? colors.dark25 : undefined;
