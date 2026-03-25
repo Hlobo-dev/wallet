@@ -1204,14 +1204,14 @@
     "backupYourWalletDescription": "Link your brokerage accounts for trading or add wealth accounts to track your full portfolio in one place.",
     "backup": "Connect",
     "cloudWarning": {
-      "title": "Cloud backup recommended",
-      "desc": "Ensure you can recover your wallet even if you lose your secret recovery phrase",
-      "button": "Back up with iCloud"
+      "title": "Brokerage connection recommended",
+      "desc": "Connect your brokerage account for live trading access",
+      "button": "Connect brokerage"
     },
     "manualWarning": {
-      "title": "Manual backup recommended",
-      "desc": "Ensure you can recover your wallet even if you lose your iCloud account access.",
-      "button": "Back up manually"
+      "title": "Wealth account recommended",
+      "desc": "Add a wealth account to track your full portfolio in one place.",
+      "button": "Connect wealth account"
     },
     "secretRecoveryPhrase": "Your secret recovery phrase",
     "tapHereToView": "Tap here to view",
@@ -1325,21 +1325,21 @@
     }
   },
   "walletBackupSelection": {
-    "title": "Back up",
-    "subtitle": "your wallet",
-    "titleWithSubtitle": "Back up your wallet",
-    "prompt": "Make sure you can always access your wallet even if you lose your device.",
-    "caption": "If you don't backup your wallet, you put yourself at risk of losing your crypto. We have no access to your recovery phrase and can't help you recover it without a backup.",
-    "backupWithICloud": "Back up with iCloud",
-    "backupWithICloudCompleted": "Backed up with iCloud",
-    "iCloudDescLong": "Encrypt with a passkey and store on iCloud",
-    "iCloudDescShort": "Encrypt and store on iCloud",
-    "iCloudDescCompletedShort": "Encrypted secret recovery phrase",
-    "backupManually": "Back up manually",
-    "backupManuallyCompleted": "Backed up manually",
-    "manualBackupDescLong": "Save by hand in a safe place of your choice",
-    "manualBackupDescShort": "Save in a safe place of your choice",
-    "manualBackupDescShortCompleted": "I've saved it in a safe place",
+    "title": "Connect",
+    "subtitle": "your Accounts",
+    "titleWithSubtitle": "Connect your Accounts",
+    "prompt": "Link your brokerage and wealth accounts to manage everything in one place.",
+    "caption": "Connect your brokerage account for live trading or add wealth accounts to track your full portfolio across all platforms.",
+    "backupWithICloud": "Connect your brokerage for trading",
+    "backupWithICloudCompleted": "Brokerage connected",
+    "iCloudDescLong": "Link your brokerage account for live trading",
+    "iCloudDescShort": "Brokerage account for trading",
+    "iCloudDescCompletedShort": "Brokerage account connected",
+    "backupManually": "Connect your wealth account for tracking",
+    "backupManuallyCompleted": "Wealth account connected",
+    "manualBackupDescLong": "Add a wealth account to track your full portfolio",
+    "manualBackupDescShort": "Wealth account for tracking",
+    "manualBackupDescShortCompleted": "Wealth account connected",
     "tooltip": {
       "iCloud": "An iCloud backup ensures you can still recover your wallet if you lose your secret recovery phrase.",
       "manual": "A manual backup ensures you can still recover your wallet if you lose iCloud access or misplace your device."
