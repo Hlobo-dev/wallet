@@ -1229,7 +1229,7 @@
   "walletCloudBackup": {
     "secureYourBackup": "Secure your backup",
     "passkeyDescription": "To create your backup, encrypt it with a passkey. This ensures no-one but you can restore the backup. (Encryption ensures that even Apple can't see it)",
-    "createPasskey": "Create a passkey",
+    "createPasskey": "Connect a brokerage",
     "hints": {
       "part1": "More secure than standard passwords",
       "part2": "Encrypted using biometrics or security device",

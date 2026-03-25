@@ -45,7 +45,10 @@ export const OnboardingBackupPromptScreenWithOptions = ({ navigation }: Onboardi
     navigation.navigate(Routes.OnboardingWalletCloudBackup, {
       origin: Routes.OnboardingBackupPrompt,
     });
-  const navigateToManualBackup = () => navigation.navigate(Routes.OnboardingBackup);
+  const navigateToManualBackup = () =>
+    navigation.navigate(Routes.OnboardingWalletCloudBackup, {
+      origin: Routes.OnboardingBackupPrompt,
+    });
 
   const handleBackAction = useCallback(async () => {
     await wipeStorage();

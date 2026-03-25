@@ -13,12 +13,15 @@ export const BackButton: React.FC<Omit<IconButtonProps, 'name'>> = props => {
     return null;
   }
 
-  return <IconButton containerStyle={styles.backButton} name="chevron-left" size={20} onPress={navigation.goBack} testID="GoBackButton" {...props} />;
+  return <IconButton containerStyle={styles.backButton} name="chevron-left" size={20} onPress={navigation.goBack} testID="GoBackButton" style={styles.icon} {...props} />;
 };
 
 const styles = StyleSheet.create({
   backButton: {
     marginRight: Platform.select({ android: 8, default: 2 }),
+  },
+  icon: {
+    paddingRight: 2,
   },
 });
 
