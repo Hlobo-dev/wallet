@@ -3,7 +3,11 @@ export {
   platformRegister,
   platformRefreshToken,
   platformGetMe,
+  platformGetMeFromOAuth,
   exchangePlatformTokenForChatToken,
+  getOAuthURL,
+  parseOAuthCallbackURL,
+  OAUTH_CALLBACK_SCHEME,
   PlatformAuthError,
 } from './platformAuthService';
 

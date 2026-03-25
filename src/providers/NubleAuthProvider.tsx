@@ -18,10 +18,15 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Keychain, { ACCESSIBLE } from 'react-native-keychain';
+import * as WebBrowser from 'expo-web-browser';
 
 import {
   exchangePlatformTokenForChatToken,
+  getOAuthURL,
+  OAUTH_CALLBACK_SCHEME,
+  parseOAuthCallbackURL,
   platformGetMe,
+  platformGetMeFromOAuth,
   platformLogin,
   platformRefreshToken,
   platformRegister,
@@ -81,6 +86,21 @@ interface NubleAuthContextValue {
   login: (email: string, password: string) => Promise<void>;
   /** Create a new account. Throws PlatformAuthError on failure. */
   register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  /**
+   * Start OAuth login with Google or Apple.
+   * Opens an in-app WebView modal for authentication.
+   */
+  loginWithOAuth: (provider: 'google' | 'apple') => void;
+  /** True while waiting for an OAuth callback from the browser. */
+  isOAuthLoading: boolean;
+  /** The currently active OAuth provider (shows the WebView modal), or null. */
+  oauthProvider: 'google' | 'apple' | null;
+  /** Called by the WebView modal when tokens are received. */
+  handleOAuthSuccess: (tokens: AuthTokens) => Promise<void>;
+  /** Called by the WebView modal on error. */
+  handleOAuthError: (error: string) => void;
+  /** Dismiss the OAuth WebView modal. */
+  dismissOAuth: () => void;
   /** Clear all credentials and return to the login screen. */
   logout: () => Promise<void>;
   /**
@@ -241,6 +261,77 @@ export const NubleAuthProvider: React.FC<React.PropsWithChildren> = ({ children 
     [persistSession],
   );
 
+  // ── OAuth (Google / Apple) — embedded WebView approach ──────────────
+
+  const [isOAuthLoading, setIsOAuthLoading] = useState(false);
+  const [oauthProvider, setOAuthProvider] = useState<'google' | 'apple' | null>(null);
+
+  /**
+   * Called by the OAuth WebView modal when tokens are received.
+   * The modal intercepts the `nublewallet://oauth/callback` redirect,
+   * parses tokens, and passes them here.
+   */
+  const handleOAuthSuccess = useCallback(
+    async (oauthTokens: AuthTokens) => {
+      setOAuthProvider(null);
+      setIsOAuthLoading(true);
+      try {
+        const oauthUser = await platformGetMeFromOAuth(oauthTokens.accessToken);
+        const session: PlatformSession = {
+          user: oauthUser,
+          tokens: oauthTokens,
+        };
+        await persistSession(session);
+      } catch {
+        // Failed to fetch user profile — still store tokens
+        await persistTokens(oauthTokens);
+      }
+      setIsOAuthLoading(false);
+    },
+    [persistSession, persistTokens],
+  );
+
+  const handleOAuthError = useCallback((_error: string) => {
+    setOAuthProvider(null);
+    setIsOAuthLoading(false);
+  }, []);
+
+  /** Opens the system auth browser for the given provider (ASWebAuthenticationSession on iOS). */
+  const loginWithOAuth = useCallback(
+    async (provider: 'google' | 'apple') => {
+      setOAuthProvider(provider);
+      setIsOAuthLoading(true);
+      try {
+        const url = getOAuthURL(provider);
+        // ASWebAuthenticationSession on iOS — Google allows this (unlike embedded WebViews)
+        const result = await WebBrowser.openAuthSessionAsync(url, 'nublewallet://oauth/callback');
+
+        if (result.type === 'success' && result.url) {
+          const parsed = parseOAuthCallbackURL(result.url);
+          if (parsed.tokens) {
+            await handleOAuthSuccess(parsed.tokens);
+            return;
+          }
+          if (parsed.error) {
+            handleOAuthError(parsed.error);
+            return;
+          }
+        }
+        // User cancelled or dismissed
+        setOAuthProvider(null);
+        setIsOAuthLoading(false);
+      } catch (e: any) {
+        handleOAuthError(e?.message || 'OAuth failed');
+      }
+    },
+    [handleOAuthSuccess, handleOAuthError],
+  );
+
+  const dismissOAuth = useCallback(() => {
+    setOAuthProvider(null);
+    setIsOAuthLoading(false);
+  }, []);
+
   // ── Logout ─────────────────────────────────────────────────────────────
 
   const logout = useCallback(async () => {
@@ -315,11 +406,17 @@ export const NubleAuthProvider: React.FC<React.PropsWithChildren> = ({ children 
       user,
       login,
       register,
+      loginWithOAuth,
+      isOAuthLoading,
+      oauthProvider,
+      handleOAuthSuccess,
+      handleOAuthError,
+      dismissOAuth,
       logout,
       getChatToken,
       getAccessToken,
     }),
-    [isReady, user, tokens, login, register, logout, getChatToken, getAccessToken],
+    [isReady, user, tokens, login, register, loginWithOAuth, isOAuthLoading, oauthProvider, handleOAuthSuccess, handleOAuthError, dismissOAuth, logout, getChatToken, getAccessToken],
   );
 
   return (

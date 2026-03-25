@@ -81,6 +81,7 @@
     "expo-notifications": "0.32.12",
     "expo-screen-capture": "8.0.8",
     "expo-store-review": "9.0.8",
+    "expo-web-browser": "~14.2.0",
     "jest-junit": "14.0.1",
     "lodash": "4.17.21",
     "lottie-react-native": "7.2.5",

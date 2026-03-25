@@ -15,12 +15,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Animated,
   Dimensions,
   Image,
   Keyboard,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -212,6 +212,11 @@ const MarketRow: React.FC<{ coin: CoinData }> = React.memo(({ coin }) => {
   );
 });
 
+// ─── OAuth ──────────────────────────────────────────────────────────────────
+// OAuth is handled by expo-web-browser (ASWebAuthenticationSession on iOS)
+// which opens a system browser sheet. Google allows this unlike embedded WebViews.
+// The flow is managed entirely by NubleAuthProvider.loginWithOAuth().
+
 // ─── Auth Bottom Sheet ──────────────────────────────────────────────────────
 
 const AuthSheet: React.FC<{
@@ -221,7 +226,7 @@ const AuthSheet: React.FC<{
   onToggleMode: () => void;
 }> = ({ visible, mode, onClose, onToggleMode }) => {
   const insets = useSafeAreaInsets();
-  const { login, register } = useNubleAuth();
+  const { login, register, loginWithOAuth, isOAuthLoading } = useNubleAuth();
   const slide = useRef(new Animated.Value(0)).current;
 
   const [email, setEmail] = useState('');
@@ -245,7 +250,8 @@ const AuthSheet: React.FC<{
   const valid =
     mode === 'login'
       ? email.trim().length > 0 && password.length >= 6
-      : email.trim().length > 0 && password.length >= 6 && firstName.trim().length > 0;
+      : email.trim().length > 0 && password.length >= 8 && firstName.trim().length > 0 &&
+        /[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password) && /[@$!%*?&]/.test(password);
 
   const submit = useCallback(async () => {
     if (!valid || loading) { return; }
@@ -258,9 +264,11 @@ const AuthSheet: React.FC<{
       } else {
         await register(email, password, firstName.trim(), lastName.trim());
       }
-    } catch (e) {
-      if (e instanceof PlatformAuthError) {
+    } catch (e: any) {
+      if (e instanceof PlatformAuthError || e?.name === 'PlatformAuthError') {
         setError(e.message);
+      } else if (e instanceof Error) {
+        setError(e.message || 'Unable to connect. Check your network and try again.');
       } else {
         setError('Unable to connect. Check your network and try again.');
       }
@@ -274,30 +282,59 @@ const AuthSheet: React.FC<{
   const translateY = slide.interpolate({ inputRange: [0, 1], outputRange: [600, 0] });
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
+      onRequestClose={onClose}
+    >
+      <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
       <Pressable style={s.backdrop} onPress={() => { Keyboard.dismiss(); onClose(); }} />
       <KeyboardAvoidingView
         style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={0}
         pointerEvents="box-none"
       >
         <Animated.View
-          style={[s.sheet, { transform: [{ translateY }], paddingBottom: insets.bottom + 16, position: 'relative' }]}
+          style={[s.sheet, { transform: [{ translateY }], paddingBottom: insets.bottom + 16, position: 'relative', maxHeight: Dimensions.get('window').height * 0.9 }]}
         >
           <View style={s.handle} />
+          <ScrollView
+            bounces={false}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+
+          {/* Title + subtitle — matches VibeTradining */}
           <Text style={s.sheetTitle}>
-            {mode === 'login' ? 'Sign in' : 'Create account'}
+            {mode === 'login' ? 'Welcome back' : 'Create account'}
+          </Text>
+          <Text style={s.sheetSubtitle}>
+            {mode === 'login' ? 'Sign in to your account' : 'Get started with Nuble'}
           </Text>
 
             {mode === 'register' && (
               <View style={s.nameRow}>
-                <TextInput style={[s.input, s.nameInput]} placeholder="First name" placeholderTextColor="#666" value={firstName} onChangeText={setFirstName} autoCapitalize="words" editable={!loading} />
-                <TextInput style={[s.input, s.nameInput]} placeholder="Last name" placeholderTextColor="#666" value={lastName} onChangeText={setLastName} autoCapitalize="words" editable={!loading} />
+                <View style={[s.nameInput]}>
+                  <Text style={s.inputLabel}>First name</Text>
+                  <TextInput style={s.input} placeholder="Enter your first name" placeholderTextColor="#4a4e5e" value={firstName} onChangeText={setFirstName} autoCapitalize="words" editable={!loading} />
+                </View>
+                <View style={[s.nameInput]}>
+                  <Text style={s.inputLabel}>Last name</Text>
+                  <TextInput style={s.input} placeholder="Enter your last name" placeholderTextColor="#4a4e5e" value={lastName} onChangeText={setLastName} autoCapitalize="words" editable={!loading} />
+                </View>
               </View>
             )}
 
-            <TextInput style={s.input} placeholder="Email address" placeholderTextColor="#666" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} autoComplete="email" editable={!loading} />
-            <TextInput style={s.input} placeholder="Password" placeholderTextColor="#666" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete={mode === 'login' ? 'password' : 'new-password'} editable={!loading} />
+            <Text style={s.inputLabel}>Email</Text>
+            <TextInput style={s.input} placeholder="Enter your email" placeholderTextColor="#4a4e5e" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} autoComplete="email" editable={!loading} />
+
+            <Text style={s.inputLabel}>Password</Text>
+            <TextInput style={s.input} placeholder="Enter your password" placeholderTextColor="#4a4e5e" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete={mode === 'login' ? 'password' : 'new-password'} editable={!loading} />
+            {mode === 'register' && (
+              <Text style={s.passwordHint}>Min 8 chars, uppercase, lowercase, number &amp; special (@$!%*?&amp;)</Text>
+            )}
 
             {error && <Text style={s.sheetError}>{error}</Text>}
 
@@ -308,22 +345,26 @@ const AuthSheet: React.FC<{
               activeOpacity={0.8}
             >
               {loading ? (
-                <ActivityIndicator size="small" color="#fff" />
+                <ActivityIndicator size="small" color="#0d0a14" />
               ) : (
-                <Text style={s.sheetSubmitText}>{mode === 'login' ? 'Sign in' : 'Create account'}</Text>
+                <Text style={s.sheetSubmitText}>{mode === 'login' ? 'Sign In' : 'Create Account'}</Text>
               )}
             </TouchableOpacity>
 
             <View style={s.divider}>
               <View style={s.dividerLine} />
-              <Text style={s.dividerText}>or</Text>
+              <Text style={s.dividerText}>Or continue with</Text>
               <View style={s.dividerLine} />
             </View>
 
             <View style={s.socialRow}>
               <Pressable
-                style={({ pressed }) => [s.socialBtn, pressed && { opacity: 0.6 }]}
-                onPress={() => Alert.alert('Google Sign-In', 'Google authentication coming soon!')}
+                style={({ pressed }) => [s.socialBtn, pressed && { opacity: 0.6 }, (isOAuthLoading || loading) && { opacity: 0.5 }]}
+                onPress={() => {
+                  Keyboard.dismiss();
+                  loginWithOAuth('google');
+                }}
+                disabled={isOAuthLoading || loading}
               >
                 <Svg width={18} height={18} viewBox="0 0 24 24">
                   <Path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -331,16 +372,20 @@ const AuthSheet: React.FC<{
                   <Path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                   <Path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                 </Svg>
-                <Text style={s.socialLabel}>Sign in with Google</Text>
+                <Text style={s.socialLabel}>{isOAuthLoading ? 'Connecting...' : 'Sign in with Google'}</Text>
               </Pressable>
               <Pressable
-                style={({ pressed }) => [s.socialBtn, pressed && { opacity: 0.6 }]}
-                onPress={() => Alert.alert('Apple Sign-In', 'Apple authentication coming soon!')}
+                style={({ pressed }) => [s.socialBtn, pressed && { opacity: 0.6 }, (isOAuthLoading || loading) && { opacity: 0.5 }]}
+                onPress={() => {
+                  Keyboard.dismiss();
+                  loginWithOAuth('apple');
+                }}
+                disabled={isOAuthLoading || loading}
               >
                 <Svg width={18} height={18} viewBox="0 0 24 24" fill="#d1d5db">
                   <Path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
                 </Svg>
-                <Text style={s.socialLabel}>Sign in with Apple</Text>
+                <Text style={s.socialLabel}>{isOAuthLoading ? 'Connecting...' : 'Sign in with Apple'}</Text>
               </Pressable>
             </View>
 
@@ -350,9 +395,11 @@ const AuthSheet: React.FC<{
                 <Text style={s.toggleLink}>{mode === 'login' ? 'Sign up' : 'Sign in'}</Text>
               </Text>
             </TouchableOpacity>
+          </ScrollView>
         </Animated.View>
       </KeyboardAvoidingView>
       </View>
+    </Modal>
   );
 };
 
@@ -549,7 +596,7 @@ const curr = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#1A1A3E',
+    backgroundColor: '#0d0a14',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 0,
@@ -580,11 +627,13 @@ const curr = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: '#171621',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 14,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#1a1e2e',
   },
   flagImage: {
     width: 40,
@@ -603,11 +652,11 @@ const curr = StyleSheet.create({
   rowCode: {
     fontSize: 13,
     fontWeight: '500',
-    color: 'rgba(255,255,255,0.45)',
+    color: '#6b7280',
   },
   rowDivider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: '#1a1e2e',
   },
 });
 
@@ -697,10 +746,12 @@ const thm = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: '#171621',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 14,
+    borderWidth: 1,
+    borderColor: '#1a1e2e',
   },
   label: {
     flex: 1,
@@ -836,7 +887,7 @@ const LanguagePage: React.FC<{
     <Animated.View
       style={[
         StyleSheet.absoluteFill,
-        { backgroundColor: '#0D0D2E', transform: [{ translateX: slideX }] },
+        { backgroundColor: '#0d0a14', transform: [{ translateX: slideX }] },
       ]}
     >
       {/* Header */}
@@ -943,7 +994,7 @@ const PreferencesPage: React.FC<{
     <Animated.View
       style={[
         StyleSheet.absoluteFill,
-        { backgroundColor: '#0D0D2E', transform: [{ translateX: slideX }] },
+        { backgroundColor: '#0d0a14', transform: [{ translateX: slideX }] },
       ]}
     >
       {/* Header */}
@@ -1053,7 +1104,7 @@ const pref = StyleSheet.create({
   valueText: {
     fontSize: 15,
     fontWeight: '500',
-    color: 'rgba(255,255,255,0.45)',
+    color: '#6b7280',
     marginRight: 6,
   },
 });
@@ -1088,7 +1139,7 @@ const AccountPage: React.FC<{
     <Animated.View
       style={[
         StyleSheet.absoluteFill,
-        { backgroundColor: '#0D0D2E', transform: [{ translateX: slideX }] },
+        { backgroundColor: '#0d0a14', transform: [{ translateX: slideX }] },
       ]}
     >
       {/* Header */}
@@ -1175,10 +1226,12 @@ const acct = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: '#171621',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#1a1e2e',
   },
   menuLabel: {
     flex: 1,
@@ -1188,7 +1241,7 @@ const acct = StyleSheet.create({
   },
   menuDivider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: '#1a1e2e',
     marginLeft: 68,
     marginRight: 16,
   },
@@ -1197,26 +1250,28 @@ const acct = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 12,
     gap: 12,
-    backgroundColor: '#0D0D2E',
+    backgroundColor: '#0d0a14',
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(255,255,255,0.06)',
+    borderTopColor: '#1a1e2e',
   },
   btnSignIn: {
     flex: 1,
     paddingVertical: 16,
-    borderRadius: 28,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 10,
+    backgroundColor: '#171621',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#1a1e2e',
   },
-  btnSignInText: { fontSize: 16, fontWeight: '600', color: '#FFF' },
+  btnSignInText: { fontSize: 16, fontWeight: '600', color: '#d1d5db' },
   btnCreate: {
     flex: 1,
     paddingVertical: 16,
-    borderRadius: 28,
-    backgroundColor: '#7538F5',
+    borderRadius: 10,
+    backgroundColor: '#FFF',
     alignItems: 'center',
   },
-  btnCreateText: { fontSize: 16, fontWeight: '600', color: '#FFF' },
+  btnCreateText: { fontSize: 16, fontWeight: '600', color: '#0d0a14' },
 });
 
 // ─── Tab definitions ────────────────────────────────────────────────────────
@@ -1319,7 +1374,7 @@ export const PlatformLoginScreen: React.FC = () => {
         {/* ── Market list ── */}
         <View style={s.card}>
           {loading ? (
-            <View style={s.loader}><ActivityIndicator size="small" color="#7538F5" /></View>
+            <View style={s.loader}><ActivityIndicator size="small" color="#FFF" /></View>
           ) : (
             filtered.map(c => <MarketRow key={c.id} coin={c} />)
           )}
@@ -1354,12 +1409,13 @@ export const PlatformLoginScreen: React.FC = () => {
 
 const s = StyleSheet.create({
   /* layout */
-  container: { flex: 1, backgroundColor: '#0D0D2E' },
+  container: { flex: 1, backgroundColor: '#0d0a14' },
   header: { paddingHorizontal: 16, paddingVertical: 8 },
   headerIcon: {
     width: 36, height: 36, borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: '#171621',
     justifyContent: 'center', alignItems: 'center',
+    borderWidth: 1, borderColor: '#1a1e2e',
   },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 120 },
@@ -1369,32 +1425,31 @@ const s = StyleSheet.create({
   hero: { alignItems: 'center', paddingTop: 14, paddingBottom: 80 },
   logoWrap: {
     width: 110, height: 110, borderRadius: 55,
-    backgroundColor: 'rgba(117,56,245,0.12)',
     justifyContent: 'center', alignItems: 'center',
     marginBottom: 14,
   },
   title: { fontSize: 26, fontWeight: '700', color: '#FFF', textAlign: 'center', marginBottom: 8 },
-  subtitle: { fontSize: 14, color: 'rgba(255,255,255,0.55)', textAlign: 'center', lineHeight: 20, paddingHorizontal: 32 },
+  subtitle: { fontSize: 14, color: '#6b7280', textAlign: 'center', lineHeight: 20, paddingHorizontal: 32 },
 
   /* tabs */
   tabs: { maxHeight: 44, marginBottom: 12 },
   tabsInner: { paddingHorizontal: 16, gap: 8 },
-  tab: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.06)' },
-  tabOn: { backgroundColor: 'rgba(255,255,255,0.14)' },
-  tabLabel: { fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.5)' },
-  tabLabelOn: { color: '#FFF' },
+  tab: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10, backgroundColor: '#171621', borderWidth: 1, borderColor: '#1a1e2e' },
+  tabOn: { backgroundColor: '#FFF' },
+  tabLabel: { fontSize: 13, fontWeight: '600', color: '#6b7280' },
+  tabLabelOn: { color: '#0d0a14' },
 
   /* market card */
-  card: { marginHorizontal: 16, marginTop: 4, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 16, overflow: 'hidden' },
+  card: { marginHorizontal: 16, marginTop: 4, backgroundColor: '#171621', borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: '#1a1e2e' },
   loader: { paddingVertical: 40, alignItems: 'center' },
   row: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 16, paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.06)',
+    borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#1a1e2e',
   },
   rowInfo: { flex: 1, marginLeft: 12 },
   rowName: { fontSize: 15, fontWeight: '600', color: '#FFF', marginBottom: 2 },
-  rowSymbol: { fontSize: 12, color: 'rgba(255,255,255,0.45)', fontWeight: '500' },
+  rowSymbol: { fontSize: 12, color: '#6b7280', fontWeight: '500' },
   rowChart: { width: 70, marginHorizontal: 10, justifyContent: 'center', alignItems: 'center' },
   rowPriceCol: { alignItems: 'flex-end', minWidth: 90 },
   rowPrice: { fontSize: 15, fontWeight: '600', color: '#FFF', marginBottom: 2 },
@@ -1403,19 +1458,20 @@ const s = StyleSheet.create({
   /* bottom bar */
   bottomBar: {
     flexDirection: 'row', paddingHorizontal: 16, paddingTop: 12, gap: 12,
-    backgroundColor: '#0D0D2E',
-    borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: '#0d0a14',
+    borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: '#1a1e2e',
   },
   btnSignIn: {
-    flex: 1, paddingVertical: 16, borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.08)', alignItems: 'center',
+    flex: 1, paddingVertical: 16, borderRadius: 10,
+    backgroundColor: '#171621', alignItems: 'center',
+    borderWidth: 1, borderColor: '#1a1e2e',
   },
-  btnSignInText: { fontSize: 16, fontWeight: '600', color: '#FFF' },
+  btnSignInText: { fontSize: 16, fontWeight: '600', color: '#d1d5db' },
   btnCreate: {
-    flex: 1, paddingVertical: 16, borderRadius: 24,
-    backgroundColor: '#7538F5', alignItems: 'center',
+    flex: 1, paddingVertical: 16, borderRadius: 10,
+    backgroundColor: '#FFF', alignItems: 'center',
   },
-  btnCreateText: { fontSize: 16, fontWeight: '600', color: '#FFF' },
+  btnCreateText: { fontSize: 16, fontWeight: '600', color: '#0d0a14' },
 
   /* coin fallback */
   coinFallback: { justifyContent: 'center', alignItems: 'center' },
@@ -1425,7 +1481,7 @@ const s = StyleSheet.create({
   backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.6)' },
   sheet: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
-    backgroundColor: '#1A1A3E',
+    backgroundColor: '#0d0a14',
     borderTopLeftRadius: 24, borderTopRightRadius: 24,
     paddingHorizontal: 24, paddingTop: 12,
   },
@@ -1434,30 +1490,33 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignSelf: 'center', marginBottom: 20,
   },
-  sheetTitle: { fontSize: 24, fontWeight: '700', color: '#FFF', marginBottom: 20, textAlign: 'center' },
+  sheetTitle: { fontSize: 24, fontWeight: '700', color: '#FFF', marginBottom: 4, textAlign: 'center' },
+  sheetSubtitle: { fontSize: 14, color: '#9ca3af', textAlign: 'center', marginBottom: 24 },
   nameRow: { flexDirection: 'row', gap: 12 },
   nameInput: { flex: 1 },
+  inputLabel: { fontSize: 13, fontWeight: '600', color: '#d1d5db', marginBottom: 6 },
   input: {
-    backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 12,
+    backgroundColor: '#171621', borderRadius: 10,
     paddingHorizontal: 16, paddingVertical: 14,
     fontSize: 16, color: '#FFF', marginBottom: 12,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1, borderColor: '#1a1e2e',
   },
   sheetError: { color: '#FF6B6B', fontSize: 14, textAlign: 'center', marginBottom: 12 },
-  sheetSubmit: { backgroundColor: '#7538F5', borderRadius: 24, paddingVertical: 16, alignItems: 'center', marginTop: 4 },
+  passwordHint: { color: '#6b7280', fontSize: 12, marginTop: -8, marginBottom: 12 },
+  sheetSubmit: { backgroundColor: '#FFF', borderRadius: 10, paddingVertical: 14, alignItems: 'center', marginTop: 4 },
   sheetSubmitOff: { opacity: 0.35 },
-  sheetSubmitText: { color: '#FFF', fontSize: 17, fontWeight: '600' },
+  sheetSubmitText: { color: '#0d0a14', fontSize: 16, fontWeight: '600' },
   divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
-  dividerLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: 'rgba(255,255,255,0.15)' },
-  dividerText: { color: 'rgba(255,255,255,0.4)', fontSize: 13, marginHorizontal: 12 },
+  dividerLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: '#1a1e2e' },
+  dividerText: { color: '#6b7280', fontSize: 13, marginHorizontal: 12 },
   socialRow: { flexDirection: 'row', gap: 12 },
   socialBtn: {
     flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
-    backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12, paddingVertical: 14,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: '#171621', borderRadius: 10, paddingVertical: 14,
+    borderWidth: 1, borderColor: '#1a1e2e',
   },
   socialLabel: { color: '#d1d5db', fontSize: 14, fontWeight: '500' },
   toggle: { paddingVertical: 16, alignItems: 'center' },
-  toggleText: { color: 'rgba(255,255,255,0.5)', fontSize: 14 },
-  toggleLink: { color: '#7538F5', fontWeight: '600' },
+  toggleText: { color: '#6b7280', fontSize: 14 },
+  toggleLink: { color: '#FFF', fontWeight: '600' },
 });

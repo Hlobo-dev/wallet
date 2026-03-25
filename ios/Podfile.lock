@@ -79,6 +79,8 @@ PODS:
     - ExpoModulesCore
   - ExpoStoreReview (9.0.8):
     - ExpoModulesCore
+  - ExpoWebBrowser (14.2.0):
+    - ExpoModulesCore
   - fast_float (6.1.4)
   - FBLazyVector (0.79.7)
   - fmt (11.0.2)
@@ -2470,6 +2472,7 @@ DEPENDENCIES:
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoScreenCapture (from `../node_modules/expo-screen-capture/ios`)
   - ExpoStoreReview (from `../node_modules/expo-store-review/ios`)
+  - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - fast_float (from `../node_modules/react-native/third-party-podspecs/fast_float.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
@@ -2614,6 +2617,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-screen-capture/ios"
   ExpoStoreReview:
     :path: "../node_modules/expo-store-review/ios"
+  ExpoWebBrowser:
+    :path: "../node_modules/expo-web-browser/ios"
   fast_float:
     :podspec: "../node_modules/react-native/third-party-podspecs/fast_float.podspec"
   FBLazyVector:
@@ -2832,6 +2837,7 @@ SPEC CHECKSUMS:
   ExpoModulesCore: 00a1b5c73248465bd0b93f59f8538c4573dac579
   ExpoScreenCapture: d3bf63d48c87f8dad3f0874412ce9d47b6ddf709
   ExpoStoreReview: 15f19e0d6cb6e00330ba1b356485bf47ef19c39a
+  ExpoWebBrowser: dc39a88485f007e61a3dff05d6a75f22ab4a2e92
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: b60fe06f0f15b7d7408f169442176e69e8eeacde
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
@@ -2940,4 +2946,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 47ae358fc56aaa731bb5595573a3451be661e147
 
-COCOAPODS: 1.14.2
+COCOAPODS: 1.16.2
