@@ -80,6 +80,14 @@ export const KarkenConnectScreen = ({ navigation, route }: NavigationProps<'Krak
     }
   };
 
+  const navigateToBrokerage = () => {
+    navigation.replace(Routes.Settings, { screen: Routes.SettingsWalletCloudBackup, params: { mode: 'brokerage' } });
+  };
+
+  const navigateToWealth = () => {
+    navigation.replace(Routes.Settings, { screen: Routes.SettingsWalletCloudBackup, params: { mode: 'wealth' } });
+  };
+
   const onTransferPress = () => {
     close();
     navigation.replace(Routes.KrakenConnectTransfer);
@@ -129,7 +137,7 @@ export const KarkenConnectScreen = ({ navigation, route }: NavigationProps<'Krak
         return <KrakenConnectFetchingError />;
       case 'landing':
       default:
-        return <KrakenConnectLanding accountNumber={accountNumber} noAccount={openPanel} connect={checkAppLockAndConnectToKraken} />;
+        return <KrakenConnectLanding accountNumber={accountNumber} noAccount={navigateToWealth} connect={navigateToBrokerage} />;
     }
   };
 
