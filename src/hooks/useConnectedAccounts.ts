@@ -11,6 +11,7 @@ import type { BrokerageConnection } from '@/services/snaptrade';
 import { BROKERAGES } from '@/services/snaptrade';
 import { getPlaidClient } from '@/services/plaid';
 import type { PlaidConnection } from '@/services/plaid';
+import { useNubleAuth } from '@/providers/NubleAuthProvider';
 
 // ─── Unified type ────────────────────────────────────────────────────────────
 
@@ -101,6 +102,7 @@ function mapPlaidConnection(conn: PlaidConnection): ConnectedAccount {
 export const useConnectedAccounts = () => {
   const [accounts, setAccounts] = useState<ConnectedAccount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { getAccessToken, isAuthenticated } = useNubleAuth();
 
   const fetchAccounts = useCallback(async () => {
     setIsLoading(true);
@@ -123,12 +125,16 @@ export const useConnectedAccounts = () => {
     }
 
     try {
-      // Fetch Plaid wealth connections
-      const plaidClient = getPlaidClient();
-      const plaidResult = await plaidClient.getConnections();
-      if (plaidResult.success && plaidResult.data) {
-        for (const conn of plaidResult.data) {
-          results.push(mapPlaidConnection(conn));
+      // Fetch Plaid wealth connections — needs platform auth token
+      const token = await getAccessToken();
+      if (token) {
+        const plaidClient = getPlaidClient();
+        plaidClient.setAuthToken(token);
+        const plaidResult = await plaidClient.getConnections();
+        if (plaidResult.success && plaidResult.data) {
+          for (const conn of plaidResult.data) {
+            results.push(mapPlaidConnection(conn));
+          }
         }
       }
     } catch {
@@ -147,7 +153,7 @@ export const useConnectedAccounts = () => {
         setAccounts(cached);
       }
     }
-  }, []);
+  }, [getAccessToken]);
 
   // Load cache first, then fetch live
   useEffect(() => {

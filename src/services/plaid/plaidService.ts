@@ -9,8 +9,6 @@
  * Backend API: NUBLE_PLATFORM_URL/api/plaid/*
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import { NUBLE_PLATFORM_URL } from '@/screens/Chat/chatConfig';
 
 import { URLs } from '/config';
@@ -92,19 +90,32 @@ export interface ApiResponse<T> {
 
 const API_BASE_URL = `${NUBLE_PLATFORM_URL}/api/plaid`;
 const DEFAULT_TIMEOUT = 30000;
-const AUTH_TOKEN_KEY = 'auth_token';
 
 // =============================================================================
 // SERVICE CLASS
 // =============================================================================
 
 export class PlaidClientService {
+  private _authToken: string | null = null;
+
+  // ---------------------------------------------------------------------------
+  // Auth Token Management
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Set the auth token for Plaid API requests.
+   * Should be called with the platform access token before making requests.
+   */
+  setAuthToken(token: string): void {
+    this._authToken = token;
+  }
+
   // ---------------------------------------------------------------------------
   // Private Helpers
   // ---------------------------------------------------------------------------
 
   private async getAuthToken(): Promise<string | null> {
-    return AsyncStorage.getItem(AUTH_TOKEN_KEY);
+    return this._authToken;
   }
 
   private async request<T>(
