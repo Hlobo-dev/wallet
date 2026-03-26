@@ -206,12 +206,12 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
         activeOpacity={0.7}
         onPress={() => handleConnectBrokerage(brokerage)}
         disabled={isConnecting}>
-        {/* Logo */}
-        <View style={[styles.brokerageAvatar, { backgroundColor: brokerage.color }]}>
+        {/* Logo — white bg circle matching Vibe-Trading style */}
+        <View style={[styles.brokerageAvatar, brokerage.needsWhiteBg ? styles.avatarWhiteBg : styles.avatarDefaultBg]}>
           <Image
-            source={{ uri: brokerage.logoUrl }}
-            style={styles.brokerageLogo}
-            resizeMode="contain"
+            source={brokerage.logo}
+            style={brokerage.useContain ? styles.brokerageLogoContain : styles.brokerageLogoCover}
+            resizeMode={brokerage.useContain ? 'contain' : 'cover'}
           />
         </View>
 
@@ -288,10 +288,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 14,
     overflow: 'hidden',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255,255,255,0.12)',
   },
-  brokerageLogo: {
-    width: 30,
-    height: 30,
+  avatarWhiteBg: {
+    backgroundColor: '#FFFFFF',
+  },
+  avatarDefaultBg: {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+  },
+  brokerageLogoCover: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+  },
+  brokerageLogoContain: {
+    width: 28,
+    height: 28,
   },
   brokerageName: {
     flex: 1,
