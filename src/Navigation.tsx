@@ -52,6 +52,7 @@ import { BrandedSplash } from './components/BrandedSplash';
 
 import { useDeepLinkFromExchange } from './hooks/useDeepLinkFromExchange';
 import { BrowserScreen } from './screens/Browser';
+import { BrokerageAssetScreen } from './screens/BrokerageAsset/BrokerageAssetScreen';
 import { KarkenConnectScreen } from './screens/KrakenConnect/KarkenConnectScreen';
 import { SwapScreen } from './screens/Swap';
 import { ChatScreen } from './screens/Chat';
@@ -105,6 +106,7 @@ const NavigationStack = () => {
       <DefaultStack.Screen name="AdvancedAccountInfo" component={AdvancedAccountInfoScreen} options={AdvancedAccountInfoScreen.navigationOptions(theme)} />
       <DefaultStack.Screen name="AppDetails" component={AppDetailsScreen} options={AppDetailsScreen.navigationOptions(theme)} />
       <DefaultStack.Screen name="Browser" component={BrowserScreen} options={BrowserScreen.navigationOptions(theme)} />
+      <DefaultStack.Screen name="BrokerageAsset" component={BrokerageAssetScreen} options={BrokerageAssetScreen.navigationOptions(theme)} />
       <DefaultStack.Screen name="Chat" component={ChatScreen} options={ChatScreen.navigationOptions(theme)} />
       <DefaultStack.Screen name="WalletBackupPrompt" component={WalletBackupPromptScreen} options={WalletBackupPromptScreen.navigationOptions(theme)} />
       <DefaultStack.Screen name="CoinsList" component={CoinsListScreen} options={CoinsListScreen.navigationOptions(theme)} />

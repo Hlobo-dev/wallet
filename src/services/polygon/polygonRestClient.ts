@@ -15,6 +15,12 @@ import Config from 'react-native-config';
 
 import type { PolygonSnapshot } from './types';
 
+export interface PriceBar {
+  timestamp: number;
+  value: number;
+  [key: string]: unknown;
+}
+
 const BASE = 'https://api.polygon.io';
 const API_KEY = Config.POLYGON_API_KEY || '';
 
@@ -193,6 +199,128 @@ class PolygonRestClient {
     }
     return `X:${upper}USD`;
   }
+
+  // ── Aggregate bars (historical price chart) ─────────────────────────────
+
+  /**
+   * Fetch aggregate (OHLCV) bars for a ticker from Polygon.io.
+   * Used for price history charts on the asset detail screen.
+   *
+   * @param symbol  - Ticker symbol (e.g. "AAPL", "BTC")
+   * @param period  - One of: 'DAY', 'WEEK', 'MONTH', 'YEAR', 'ALL'
+   * @returns Array of { timestamp, value } for the chart
+   */
+  async getAggregateBars(symbol: string, period: string): Promise<PriceBar[]> {
+    if (!this.isConfigured) {
+      return [];
+    }
+
+    const isCrypto = this.isCryptoTicker(symbol);
+    const ticker = isCrypto ? this.toPolygonCryptoTicker(symbol) : symbol.toUpperCase();
+
+    // Determine timespan + multiplier + date range based on period
+    const now = new Date();
+    const to = formatDate(now);
+    let from: string;
+    let timespan: string;
+    let multiplier: number;
+
+    switch (period) {
+      case 'DAY':
+        from = formatDate(daysAgo(now, 1));
+        timespan = 'minute';
+        multiplier = 5; // 5-min bars → ~78 points for a trading day
+        break;
+      case 'WEEK':
+        from = formatDate(daysAgo(now, 7));
+        timespan = 'hour';
+        multiplier = 1; // 1-hour bars → ~168 points
+        break;
+      case 'MONTH':
+        from = formatDate(daysAgo(now, 30));
+        timespan = 'hour';
+        multiplier = 4; // 4-hour bars → ~180 points
+        break;
+      case 'YEAR':
+        from = formatDate(daysAgo(now, 365));
+        timespan = 'day';
+        multiplier = 1; // daily bars → ~252 points
+        break;
+      case 'ALL':
+      default:
+        from = formatDate(daysAgo(now, 365 * 5));
+        timespan = 'week';
+        multiplier = 1; // weekly bars → ~260 points
+        break;
+    }
+
+    const url = `${BASE}/v2/aggs/ticker/${ticker}/range/${multiplier}/${timespan}/${from}/${to}?adjusted=true&sort=asc&limit=5000&apiKey=${API_KEY}`;
+    const data = await fetchJSON<{ results?: any[] }>(url);
+
+    if (!data?.results || data.results.length === 0) {
+      return [];
+    }
+
+    return data.results.map((bar: any) => ({
+      timestamp: bar.t, // milliseconds
+      value: bar.c,     // close price
+    }));
+  }
+
+  /**
+   * Fetch ticker details (name, description, market cap, etc.) from Polygon.io.
+   */
+  async getTickerDetails(symbol: string): Promise<TickerDetails | null> {
+    if (!this.isConfigured) {
+      return null;
+    }
+
+    const isCrypto = this.isCryptoTicker(symbol);
+    const ticker = isCrypto ? this.toPolygonCryptoTicker(symbol) : symbol.toUpperCase();
+    const url = `${BASE}/v3/reference/tickers/${ticker}?apiKey=${API_KEY}`;
+    const data = await fetchJSON<{ results?: any }>(url);
+
+    if (!data?.results) {
+      return null;
+    }
+
+    const r = data.results;
+    return {
+      name: r.name || symbol,
+      description: r.description || '',
+      marketCap: r.market_cap || 0,
+      homepageUrl: r.homepage_url || '',
+      listDate: r.list_date || '',
+      locale: r.locale || '',
+      market: r.market || '',
+      type: r.type || '',
+      totalEmployees: r.total_employees || 0,
+    };
+  }
+}
+
+export interface TickerDetails {
+  name: string;
+  description: string;
+  marketCap: number;
+  homepageUrl: string;
+  listDate: string;
+  locale: string;
+  market: string;
+  type: string;
+  totalEmployees: number;
+}
+
+// ─── Date helpers ───────────────────────────────────────────────────────────
+
+function formatDate(d: Date): string {
+  return d.toISOString().split('T')[0]; // YYYY-MM-DD
+}
+
+function daysAgo(now: Date, days: number): Date {
+  const d = new Date(now);
+  d.setDate(d.getDate() - days);
+  return d;
 }
 
 export const polygonRestClient = new PolygonRestClient();

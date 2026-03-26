@@ -264,21 +264,59 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
 
   const renderBrokeragePosition = useCallback((item: BrokerageHolding) => {
     const live = livePrices.get(item.symbol.toUpperCase());
+    const handlePress = () => {
+      navigation.navigate(Routes.BrokerageAsset, {
+        symbol: item.symbol,
+        name: item.name,
+        price: live ? live.price : item.price,
+        units: item.units,
+        value: live ? item.units * live.price : item.value,
+        averageCost: item.averageCost,
+        unrealizedPnl: item.unrealizedPnl,
+        unrealizedPnlPercent: item.unrealizedPnlPercent,
+        change24h: live ? live.changePercent : item.change24h,
+        isCrypto: item.isCrypto,
+        bgColor: item.bgColor,
+        accountName: item.accountName,
+      });
+    };
     return (
       <ListAnimatedItem>
-        <BrokeragePositionRow holding={item} livePrice={live} />
+        <BrokeragePositionRow holding={item} livePrice={live} onPress={handlePress} />
       </ListAnimatedItem>
     );
-  }, [livePrices]);
+  }, [livePrices, navigation]);
 
   const renderWealthPosition = useCallback((item: WealthHolding) => {
     const live = livePrices.get(item.symbol.toUpperCase());
+    const handlePress = () => {
+      const costBasis = item.costBasis ?? 0;
+      const effectivePrice = live ? live.price : item.price;
+      const effectiveValue = item.quantity * effectivePrice;
+      const pnl = costBasis > 0 ? effectiveValue - costBasis : (item.unrealizedPnl ?? 0);
+      const pnlPct = costBasis > 0 ? ((effectiveValue - costBasis) / costBasis) * 100 : (item.unrealizedPnlPercent ?? 0);
+      navigation.navigate(Routes.BrokerageAsset, {
+        symbol: item.symbol,
+        name: item.name,
+        price: effectivePrice,
+        units: item.quantity,
+        value: effectiveValue,
+        averageCost: costBasis > 0 && item.quantity > 0 ? costBasis / item.quantity : 0,
+        unrealizedPnl: pnl,
+        unrealizedPnlPercent: pnlPct,
+        change24h: live ? live.changePercent : 0,
+        isCrypto: false,
+        bgColor: item.bgColor,
+        accountName: item.institution,
+        institution: item.institution,
+      });
+    };
     return (
       <ListAnimatedItem>
-        <WealthPositionRow holding={item} livePrice={live} />
+        <WealthPositionRow holding={item} livePrice={live} onPress={handlePress} />
       </ListAnimatedItem>
     );
-  }, [livePrices]);
+  }, [livePrices, navigation]);
 
   const renderSectionItem = useCallback(
     ({ item, section }: { item: SectionItem; index: number; section: SectionType }) => {

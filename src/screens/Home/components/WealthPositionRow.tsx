@@ -12,6 +12,7 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import type { SvgProps } from 'react-native-svg';
 
 import { Label } from '@/components/Label';
+import { Touchable } from '@/components/Touchable';
 import type { WealthHolding } from '@/hooks/useWealthPositions';
 import { getRemoteLogoUrls, isCurrencySymbol, parseCurrencyCode } from '@/hooks/useStockLogo';
 import { useAppCurrency } from '@/realm/settings/useAppCurrency';
@@ -195,9 +196,11 @@ interface WealthPositionRowProps {
   holding: WealthHolding;
   /** Real-time price from Polygon.io WebSocket (optional — overlays Plaid price). */
   livePrice?: LivePrice;
+  /** Called when the user taps the row. */
+  onPress?: () => void;
 }
 
-export const WealthPositionRow = memo(({ holding, livePrice }: WealthPositionRowProps) => {
+export const WealthPositionRow = memo(({ holding, livePrice, onPress }: WealthPositionRowProps) => {
   const { currency } = useAppCurrency();
   const currencyInfo = useMemo(() => getCurrencyInfo(currency), [currency]);
   const sign = currencyInfo.sign;
@@ -223,29 +226,31 @@ export const WealthPositionRow = memo(({ holding, livePrice }: WealthPositionRow
     : '';
 
   return (
-    <View style={styles.container}>
-      <HoldingIcon symbol={holding.symbol} bgColor={holding.bgColor} />
+    <Touchable onPress={onPress} disabled={!onPress}>
+      <View style={styles.container}>
+        <HoldingIcon symbol={holding.symbol} bgColor={holding.bgColor} />
 
-      {/* Left side: name + P&L */}
-      <View style={styles.left}>
-        <Label type="boldTitle2" numberOfLines={1}>
-          {displayName}
-        </Label>
-        {pnlPctText ? (
-          <Text style={[styles.pnl, isPositive ? styles.pnlUp : styles.pnlDown]}>{pnlPctText}{changeLabel}</Text>
-        ) : (
-          <Text style={styles.institution}>{holding.institution}</Text>
-        )}
-      </View>
+        {/* Left side: name + P&L */}
+        <View style={styles.left}>
+          <Label type="boldTitle2" numberOfLines={1}>
+            {displayName}
+          </Label>
+          {pnlPctText ? (
+            <Text style={[styles.pnl, isPositive ? styles.pnlUp : styles.pnlDown]}>{pnlPctText}{changeLabel}</Text>
+          ) : (
+            <Text style={styles.institution}>{holding.institution}</Text>
+          )}
+        </View>
 
-      {/* Right side: value + quantity */}
-      <View style={styles.right}>
-        <Label type="boldTitle2">{formatFiat(effectiveValue, sign)}</Label>
-        <Label type="regularCaption1" color="light50">
-          {formatQuantity(holding.quantity, displaySymbol)}
-        </Label>
+        {/* Right side: value + quantity */}
+        <View style={styles.right}>
+          <Label type="boldTitle2">{formatFiat(effectiveValue, sign)}</Label>
+          <Label type="regularCaption1" color="light50">
+            {formatQuantity(holding.quantity, displaySymbol)}
+          </Label>
+        </View>
       </View>
-    </View>
+    </Touchable>
   );
 });
 

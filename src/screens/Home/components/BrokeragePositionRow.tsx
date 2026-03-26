@@ -14,6 +14,7 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import type { SvgProps } from 'react-native-svg';
 
 import { Label } from '@/components/Label';
+import { Touchable } from '@/components/Touchable';
 import type { BrokerageHolding } from '@/hooks/useBrokeragePositions';
 import { getRemoteLogoUrls, isCurrencySymbol, parseCurrencyCode } from '@/hooks/useStockLogo';
 import { useAppCurrency } from '@/realm/settings/useAppCurrency';
@@ -225,9 +226,11 @@ interface BrokeragePositionRowProps {
   holding: BrokerageHolding;
   /** Real-time price from Polygon.io WebSocket (optional — overlays SnapTrade price). */
   livePrice?: LivePrice;
+  /** Called when the user taps the row. */
+  onPress?: () => void;
 }
 
-export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({ holding, livePrice }) => {
+export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({ holding, livePrice, onPress }) => {
   const { currency } = useAppCurrency();
   const currencyInfo = getCurrencyInfo(currency);
   const currencySymbol = currencyInfo.sign;
@@ -257,32 +260,34 @@ export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({
 
   const row = useMemo(
     () => (
-      <View style={styles.container}>
-        {/* Left: icon + name + change */}
-        <View style={styles.leftContentContainer}>
-          <HoldingIcon symbol={holding.symbol} bgColor={holding.bgColor} />
-          <View style={styles.labelContainer}>
-            <Label type="boldTitle2" numberOfLines={1} style={styles.nameLabel}>
-              {displayName}
+      <Touchable onPress={onPress} disabled={!onPress}>
+        <View style={styles.container}>
+          {/* Left: icon + name + change */}
+          <View style={styles.leftContentContainer}>
+            <HoldingIcon symbol={holding.symbol} bgColor={holding.bgColor} />
+            <View style={styles.labelContainer}>
+              <Label type="boldTitle2" numberOfLines={1} style={styles.nameLabel}>
+                {displayName}
+              </Label>
+              <Label type="regularCaption1" color={pnlColor}>
+                {pnlLabel}{changeLabel}
+              </Label>
+            </View>
+          </View>
+
+          {/* Right: fiat value + quantity */}
+          <View style={styles.rightContentContainer}>
+            <Label type="boldMonospace" style={styles.fiatLabel}>
+              {fiatValue}
             </Label>
-            <Label type="regularCaption1" color={pnlColor}>
-              {pnlLabel}{changeLabel}
+            <Label type="regularMonospace" color="light50" style={styles.qtyLabel} numberOfLines={1}>
+              {qty}
             </Label>
           </View>
         </View>
-
-        {/* Right: fiat value + quantity */}
-        <View style={styles.rightContentContainer}>
-          <Label type="boldMonospace" style={styles.fiatLabel}>
-            {fiatValue}
-          </Label>
-          <Label type="regularMonospace" color="light50" style={styles.qtyLabel} numberOfLines={1}>
-            {qty}
-          </Label>
-        </View>
-      </View>
+      </Touchable>
     ),
-    [holding.symbol, holding.bgColor, displayName, pnlColor, pnlLabel, changeLabel, fiatValue, qty],
+    [holding.symbol, holding.bgColor, displayName, pnlColor, pnlLabel, changeLabel, fiatValue, qty, onPress],
   );
 
   return row;

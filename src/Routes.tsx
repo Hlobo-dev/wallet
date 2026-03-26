@@ -30,6 +30,7 @@ import type { SwapScreenParams } from '@/screens/Swap';
 import type { TransactionDetailsParams, TransactionsRouteProps } from '@/screens/Transactions';
 import type { TriggeredPushPromptParams } from '@/screens/TriggerredPushPromptScreen';
 import type { UniversalSendRouteParams } from '@/screens/UniversalSend';
+import type { BrokerageAssetRouteParams } from '@/screens/BrokerageAsset/BrokerageAssetScreen';
 
 import { type KrakenConnectNavigationParams } from './screens/KrakenConnect/types';
 
@@ -51,6 +52,7 @@ export type RouteProps = ExcludeRealmObjectsFromRouteParams<
     AdvancedAccountInfo: AdvancedAccountInfoParams;
     AdvancedSettings: undefined;
     AppDetails: AppDetailsParams;
+    BrokerageAsset: BrokerageAssetRouteParams;
     Browser: BrowserParams;
     AppLock: undefined;
     Chat: undefined;
@@ -124,6 +126,7 @@ export enum Routes {
   AdvancedAccountInfo = 'AdvancedAccountInfo',
   AdvancedSettings = 'AdvancedSettings',
   AppDetails = 'AppDetails',
+  BrokerageAsset = 'BrokerageAsset',
   Browser = 'Browser',
   Chat = 'Chat',
   WhatsNewBrowserExplore = 'WhatsNewBrowserExplore',
