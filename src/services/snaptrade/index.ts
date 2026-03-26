@@ -10,6 +10,8 @@ export type {
   BrokerageAccount,
   Balance,
   Position,
+  SnapTradeSymbol,
+  HoldingsResponse,
   Order,
   TradeRequest,
   ConnectionPortalResponse,

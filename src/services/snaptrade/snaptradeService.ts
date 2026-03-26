@@ -67,14 +67,32 @@ export interface BrokerageAccount {
   meta?: Record<string, unknown>;
 }
 
-export interface Position {
+export interface SnapTradeSymbol {
+  id: string;
   symbol: string;
-  symbolId: string;
+  rawSymbol?: string;
+  description?: string;
+  currency?: string;
+  exchange?: string;
+  type?: string;
+}
+
+export interface Position {
+  /** Can be a string OR a mapped symbol object from the backend */
+  symbol: string | SnapTradeSymbol;
+  symbolId?: string;
   units: number;
   price: number;
   openPnl: number;
   averagePrice: number;
   fractionalUnits: number;
+  currency?: string;
+}
+
+export interface HoldingsResponse {
+  positions: Position[];
+  balances: Balance[];
+  accounts: BrokerageAccount[];
 }
 
 export interface Balance {
@@ -299,6 +317,10 @@ export class SnapTradeClientService {
 
   async getPositions(accountId: string): Promise<ApiResponse<Position[]>> {
     return this.request<Position[]>('POST', `/accounts/${accountId}/positions`);
+  }
+
+  async getAllHoldings(): Promise<ApiResponse<HoldingsResponse>> {
+    return this.request<HoldingsResponse>('POST', '/holdings');
   }
 
   async getBalances(accountId: string): Promise<ApiResponse<Balance[]>> {

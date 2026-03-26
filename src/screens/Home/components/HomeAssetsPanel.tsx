@@ -117,50 +117,19 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
 
   const stickyHeaderIndex = useSharedValue(0);
 
-  // Split SnapTrade holdings: crypto → Brokerage section, stocks → Wealth section
-  const brokerageHoldings = useMemo(
-    () => allBrokerageHoldings.filter(h => h.isCrypto),
-    [allBrokerageHoldings],
-  );
-  const brokerageStockHoldings = useMemo(
-    () => allBrokerageHoldings.filter(h => !h.isCrypto),
-    [allBrokerageHoldings],
-  );
-
-  // Combine stock positions from SnapTrade + holdings from Plaid into one Wealth list
+  // Wealth section: only Plaid-connected holdings (Morgan Stanley, etc.)
   // Deduplicate by symbol — aggregate quantities across accounts
+  // Compute wealth FIRST so we can exclude overlapping symbols from brokerage
   const combinedWealthHoldings = useMemo(() => {
-    const stocksAsWealth: WealthHolding[] = brokerageStockHoldings.map(h => ({
-      key: `wealth_snap_${h.key}`,
-      symbol: h.symbol,
-      name: h.name,
-      type: 'equity',
-      price: h.price,
-      costBasis: h.averageCost > 0 ? h.averageCost * h.units : null,
-      quantity: h.units,
-      currentValue: h.value,
-      unrealizedPnl: h.unrealizedPnl,
-      unrealizedPnlPercent: h.unrealizedPnlPercent,
-      currency: 'USD',
-      institution: h.accountName,
-      itemId: h.accountId,
-      bgColor: h.bgColor,
-    }));
-
-    const all = [...wealthHoldings, ...stocksAsWealth];
-
-    // Deduplicate by symbol — keep the one with the highest value,
-    // or aggregate if same symbol appears from multiple accounts
+    // Only Plaid holdings go to Wealth — no SnapTrade stock mixing
     const bySymbol = new Map<string, WealthHolding>();
-    for (const h of all) {
+    for (const h of wealthHoldings) {
       const existing = bySymbol.get(h.symbol);
       if (existing) {
-        // Aggregate: sum quantities and values
         existing.quantity += h.quantity;
         existing.currentValue += h.currentValue;
         existing.unrealizedPnl = (existing.unrealizedPnl ?? 0) + (h.unrealizedPnl ?? 0);
         existing.costBasis = (existing.costBasis ?? 0) + (h.costBasis ?? 0);
-        // Recalculate P&L percent from aggregated values
         if (existing.costBasis && existing.costBasis > 0) {
           existing.unrealizedPnlPercent = ((existing.currentValue - existing.costBasis) / existing.costBasis) * 100;
         }
@@ -168,9 +137,53 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
         bySymbol.set(h.symbol, { ...h });
       }
     }
-
     return Array.from(bySymbol.values()).sort((a, b) => b.currentValue - a.currentValue);
-  }, [wealthHoldings, brokerageStockHoldings]);
+  }, [wealthHoldings]);
+
+  // All SnapTrade holdings go under Brokerage
+  // Deduplicate by symbol — aggregate same symbol from multiple accounts
+  // Exclude positions from wealth-type institutions (Morgan Stanley, etc.) that
+  // may have leaked through SnapTrade — those belong in the Wealth/Plaid section.
+  // We filter by accountName (institution), NOT by symbol, so that legitimate
+  // Kraken / Robinhood positions sharing the same ticker are kept.
+  const brokerageHoldings = useMemo(() => {
+    const bySymbol = new Map<string, BrokerageHolding>();
+    for (const h of allBrokerageHoldings) {
+      // Skip positions from wealth institutions that shouldn't be in Brokerage.
+      // These are already handled by the Plaid/wealth hook.
+      const acctLower = (h.accountName || '').toLowerCase();
+      if (
+        acctLower.includes('morgan stanley') ||
+        acctLower.includes('goldman sachs') ||
+        acctLower.includes('merrill') ||
+        acctLower.includes('jpmorgan') ||
+        acctLower.includes('jp morgan') ||
+        acctLower.includes('ubs') ||
+        acctLower.includes('wells fargo') ||
+        acctLower.includes('edward jones') ||
+        acctLower.includes('charles schwab') ||
+        acctLower.includes('fidelity') ||
+        acctLower.includes('vanguard')
+      ) {
+        continue;
+      }
+
+      const existing = bySymbol.get(h.symbol);
+      if (existing) {
+        existing.units += h.units;
+        existing.value += h.value;
+        existing.unrealizedPnl += h.unrealizedPnl;
+        const costBasis = existing.averageCost * (existing.units - h.units) + h.averageCost * h.units;
+        existing.averageCost = existing.units > 0 ? costBasis / existing.units : 0;
+        existing.unrealizedPnlPercent = existing.averageCost > 0
+          ? ((existing.price - existing.averageCost) / existing.averageCost) * 100
+          : 0;
+      } else {
+        bySymbol.set(h.symbol, { ...h });
+      }
+    }
+    return Array.from(bySymbol.values()).sort((a, b) => b.value - a.value);
+  }, [allBrokerageHoldings]);
 
   const tokensDataSource = useMemo(() => {
     return sortTokensByFiatValue(tokens.filtered('inGallery == "autoAdded" OR inGallery == "manuallyAdded"'), tokenPrices);
@@ -188,7 +201,7 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
       items.push({ index: 0, key: SectionName.Assets, data: tokensDataSource });
     }
 
-    // Wealth section: stocks from SnapTrade + holdings from Plaid (Morgan Stanley, etc.)
+    // Wealth section: holdings from Plaid (Morgan Stanley, etc.)
     if (combinedWealthHoldings.length > 0) {
       items.push({ index: 1, key: SectionName.WealthPositions, data: combinedWealthHoldings });
     }

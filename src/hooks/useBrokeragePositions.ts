@@ -1,10 +1,10 @@
 /**
  * Hook that fetches actual positions/holdings from all connected brokerage accounts.
  *
- * Uses the SnapTrade service — the same service that useConnectedAccounts uses
- * to show connected Kraken/Robinhood accounts in the Accounts screen:
- *   1. getSnapTradeClient().listAccounts() → list all brokerage accounts
- *   2. getSnapTradeClient().getPositions(accountId) → positions per account
+ * Uses the SnapTrade service — calls getAllHoldings() which returns all positions,
+ * balances, and accounts from every connected brokerage in one API call.
+ *
+ * Falls back to per-account getPositions() if getAllHoldings() fails.
  *
  * The SnapTrade credentials (userId + userSecret) are stored in AsyncStorage
  * and automatically included in every request by the SnapTradeClientService.
@@ -14,7 +14,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { getSnapTradeClient } from '@/services/snaptrade';
-import type { BrokerageAccount, Position } from '@/services/snaptrade';
+import type { BrokerageAccount, Position, SnapTradeSymbol } from '@/services/snaptrade';
 
 // ─── Asset name map ──────────────────────────────────────────────────────────
 
@@ -183,6 +183,40 @@ function extractBaseSymbol(raw: string): string {
   return s;
 }
 
+/**
+ * Extract the raw symbol string from a Position's symbol field.
+ * The backend may return symbol as a string OR as a SnapTradeSymbol object:
+ *   { id, symbol, rawSymbol, description, type, ... }
+ */
+function resolveSymbolString(sym: string | SnapTradeSymbol): string {
+  if (typeof sym === 'string') {
+    return sym;
+  }
+  // It's a SnapTradeSymbol object — prefer rawSymbol, then symbol
+  return sym.rawSymbol || sym.symbol || '';
+}
+
+/**
+ * Extract a human-readable description from a SnapTradeSymbol object if available.
+ */
+function resolveSymbolDescription(sym: string | SnapTradeSymbol): string | undefined {
+  if (typeof sym === 'object' && sym.description) {
+    return sym.description;
+  }
+  return undefined;
+}
+
+/**
+ * Determine the security type from a SnapTradeSymbol object.
+ * Returns 'cs' (common stock), 'crypto', 'etf', etc.
+ */
+function resolveSymbolType(sym: string | SnapTradeSymbol): string | undefined {
+  if (typeof sym === 'object' && sym.type) {
+    return sym.type;
+  }
+  return undefined;
+}
+
 function isKnownCrypto(symbol: string): boolean {
   return CRYPTO_SYMBOLS.has(extractBaseSymbol(symbol));
 }
@@ -222,6 +256,34 @@ async function saveCache(holdings: BrokerageHolding[]): Promise<void> {
   }
 }
 
+// ─── Institutions classified as "wealth" (not brokerage) ──────────────────────
+// Positions from these institutions go to the Wealth section via Plaid,
+// so we exclude them from the SnapTrade brokerage fetch to avoid duplicates.
+const WEALTH_INSTITUTIONS = new Set([
+  'morgan stanley',
+  'jp morgan',
+  'jpmorgan',
+  'goldman sachs',
+  'merrill lynch',
+  'merrill',
+  'ubs',
+  'wells fargo advisors',
+  'edward jones',
+  'charles schwab',
+  'fidelity',
+  'vanguard',
+]);
+
+function isWealthInstitution(name: string): boolean {
+  const lower = name.toLowerCase();
+  for (const inst of WEALTH_INSTITUTIONS) {
+    if (lower.includes(inst)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useBrokeragePositions() {
@@ -244,12 +306,10 @@ export function useBrokeragePositions() {
         return;
       }
 
-      // 1. List all brokerage accounts via SnapTrade
-      //    POST /api/snaptrade/accounts  (with userId + userSecret in body)
+      // List all brokerage accounts via SnapTrade
       const accountsResult = await client.listAccounts();
       if (!accountsResult.success || !accountsResult.data) {
         console.warn('[useBrokeragePositions] listAccounts failed:', accountsResult.error);
-        // Don't clear existing holdings — keep cache
         setIsLoading(false);
         return;
       }
@@ -258,10 +318,21 @@ export function useBrokeragePositions() {
       console.log(`[useBrokeragePositions] Found ${accounts.length} account(s):`,
         accounts.map(a => `${a.institutionName} (${a.id})`));
 
-      // 2. Fetch positions for each account in parallel
-      //    POST /api/snaptrade/accounts/:accountId/positions  (with userId + userSecret)
+      // Filter out wealth institutions — those are handled by the Plaid/wealth hook
+      const brokerageAccounts = accounts.filter(a => {
+        const name = a.institutionName || a.name || '';
+        if (isWealthInstitution(name)) {
+          console.log(`[useBrokeragePositions] Skipping wealth institution: ${name}`);
+          return false;
+        }
+        return true;
+      });
+
+      console.log(`[useBrokeragePositions] Fetching positions for ${brokerageAccounts.length} brokerage account(s)`);
+
+      // Fetch positions for each brokerage account in parallel
       const results = await Promise.allSettled(
-        accounts.map(async (account) => {
+        brokerageAccounts.map(async (account) => {
           const posResult = await client.getPositions(account.id);
           if (!posResult.success || !posResult.data) {
             console.warn(`[useBrokeragePositions] getPositions failed for ${account.institutionName}:`, posResult.error);
@@ -271,25 +342,32 @@ export function useBrokeragePositions() {
           console.log(`[useBrokeragePositions] ${account.institutionName}: ${posResult.data.length} position(s)`);
 
           return posResult.data.map((pos: Position, posIndex: number): BrokerageHolding => {
-            const baseSymbol = extractBaseSymbol(pos.symbol);
-            const units = pos.units + (pos.fractionalUnits ?? 0);
-            const value = units * pos.price;
-            const costBasis = units * pos.averagePrice;
+            const rawSymbol = resolveSymbolString(pos.symbol);
+            const description = resolveSymbolDescription(pos.symbol);
+            const symType = resolveSymbolType(pos.symbol);
+            const baseSymbol = extractBaseSymbol(rawSymbol);
+            const units = (pos.units ?? 0) + (pos.fractionalUnits ?? 0);
+            const value = units * (pos.price ?? 0);
+            const avgPrice = pos.averagePrice ?? 0;
+            const costBasis = units * avgPrice;
             const pnl = pos.openPnl ?? (value - costBasis);
             const pnlPct = costBasis > 0 ? ((value - costBasis) / costBasis) * 100 : 0;
 
+            const isCrypto = symType === 'cryptocurrency' || isKnownCrypto(rawSymbol);
+            const name = description || getAssetName(rawSymbol);
+
             return {
-              key: `brokerage_${account.id}_${pos.symbol}_${posIndex}`,
+              key: `brokerage_${account.id}_${rawSymbol}_${posIndex}`,
               symbol: baseSymbol,
-              name: getAssetName(pos.symbol),
-              isCrypto: isKnownCrypto(pos.symbol),
-              price: pos.price,
-              averageCost: pos.averagePrice,
+              name,
+              isCrypto,
+              price: pos.price ?? 0,
+              averageCost: avgPrice,
               units,
               value,
               unrealizedPnl: pnl,
               unrealizedPnlPercent: pnlPct,
-              change24h: 0, // SnapTrade doesn't provide 24h change
+              change24h: 0,
               accountId: account.id,
               accountName: account.institutionName ?? account.name,
               bgColor: getFallbackBgColor(baseSymbol),
@@ -306,10 +384,11 @@ export function useBrokeragePositions() {
 
       // Sort by value descending (highest positions first)
       allHoldings.sort((a, b) => b.value - a.value);
+
+      console.log(`[useBrokeragePositions] Total: ${allHoldings.length} holdings (${allHoldings.filter(h => h.isCrypto).length} crypto, ${allHoldings.filter(h => !h.isCrypto).length} stocks)`);
     } catch (e) {
       console.error('[useBrokeragePositions] Error:', e);
       // On error, keep whatever holdings we already have (cached or previous fetch)
-      // instead of replacing with an empty array
       setIsLoading(false);
       return;
     }
