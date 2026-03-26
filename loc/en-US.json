@@ -278,7 +278,7 @@
     "transactionFailedInfo": "Recent {network} transaction failed"
   },
   "home": {
-    "assets": "Assets",
+    "assets": "Brokerage",
     "collection": "NFTs",
     "collectionEmpty": "No NFTs yet. Your collectables will appear here once available. ",
     "collectionEmptyCta": "Receive",
