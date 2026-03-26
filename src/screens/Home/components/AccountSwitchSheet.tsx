@@ -1,12 +1,8 @@
-import type { ListRenderItem } from 'react-native';
-
 import { BottomSheetFooter, BottomSheetView, useBottomSheetModal } from '@gorhom/bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
-import noop from 'lodash/noop';
-import { forwardRef, useCallback, useEffect, useRef } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { forwardRef, useCallback, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { cancelActiveRequestsAndInvalidateCache } from '@/api/base/fetchClient';
 import type { BottomSheetModalRef } from '@/components/BottomSheet';
 import { BottomSheetModal } from '@/components/BottomSheet';
 
@@ -15,13 +11,10 @@ import { ConnectedAccountItem } from '@/components/ConnectedAccountItem';
 import { FloatingBottomButtons } from '@/components/FloatingBottomButtons';
 import { Label } from '@/components/Label';
 import { showToast } from '@/components/Toast';
-import { WALLET_ITEM_HEIGHT, WalletItem } from '@/components/WalletItem';
 import { useBottomSheetPadding } from '@/hooks/useBottomSheetPadding';
 import type { ConnectedAccount } from '@/hooks/useConnectedAccounts';
 import { useConnectedAccounts } from '@/hooks/useConnectedAccounts';
 import { useManageAccount } from '@/hooks/useManageAccount';
-import type { RealmAccount } from '@/realm/accounts';
-import { useAccounts, useCurrentAccountNumber } from '@/realm/accounts';
 import { Routes } from '@/Routes';
 import { getSnapTradeClient } from '@/services/snaptrade';
 import { getPlaidClient } from '@/services/plaid';
@@ -44,30 +37,14 @@ export const showCreateNewWalletToast = async () =>
 
 const ACCOUNT_SWITCH_MODAL = 'ACCOUNT_SWITCH_MODAL';
 
-const keyExtractor = (account: RealmAccount) => String(account.accountNumber);
-
 export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
-  const listRef = useRef<FlatList>(null);
   const navigation = useNavigation();
-  const { createAccount, switchAccount } = useManageAccount();
-  const accounts = useAccounts().sorted('accountNumber');
-  const accountNumber = useCurrentAccountNumber();
+  const { createAccount } = useManageAccount();
   const isOnline = useIsOnline();
   const { dismiss } = useBottomSheetModal();
   const { connectedAccounts, refetch: refetchConnectedAccounts } = useConnectedAccounts();
 
-  const currentAccountIndex = accounts.findIndex(a => a.accountNumber === accountNumber);
-
   const dismissModal = useCallback(() => dismiss(ACCOUNT_SWITCH_MODAL), [dismiss]);
-
-  const handleWalletItemPress = useCallback(
-    async (walletAccountNumber: number) => {
-      dismissModal();
-      cancelActiveRequestsAndInvalidateCache();
-      switchAccount(walletAccountNumber);
-    },
-    [dismissModal, switchAccount],
-  );
 
   useEffect(() => {
     navigation.addListener('blur', dismissModal);
@@ -97,23 +74,8 @@ export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
     [refetchConnectedAccounts],
   );
 
-  const renderItem: ListRenderItem<RealmAccount> = useCallback(
-    ({ item, index }) => {
-      const isFirst = index === 0;
-      const isLast = index === accounts.length - 1;
-      const isCurrent = accountNumber === item.accountNumber;
-
-      return (
-        <WalletItem account={item} isLast={isLast} isFirst={isFirst} isCurrentAccount={isCurrent} onPress={handleWalletItemPress} backgroundType="modal" />
-      );
-    },
-    [accountNumber, accounts.length, handleWalletItemPress],
-  );
-
   const handleBottomSheetChange = (index: number) => {
     if (index > -1) {
-      listRef.current?.scrollToIndex({ index: currentAccountIndex, animated: true });
-      // Refetch connected accounts whenever the sheet opens
       refetchConnectedAccounts();
     }
   };
@@ -183,9 +145,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  connectedHeader: {
-    marginTop: 16,
-    marginBottom: 8,
   },
 });
