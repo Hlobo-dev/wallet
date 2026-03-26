@@ -1390,11 +1390,11 @@
     "pendingTransactionId": "Kraken transaction id",
     "balanceOnKraken": "on Kraken",
     "unconnected": {
-      "title": "Get crypto in your wallet with Kraken",
-      "body": "Connect your Kraken exchange account to seamlessly transfer funds into your wallet",
+      "title": "Connect your accounts",
+      "body": "Link your brokerage to trade or connect a wealth account to track your portfolio",
       "cta": "Connect your brokerage",
       "noAccount": "Connect your wealth account",
-      "alert": "Only the current wallet: \"<b>{walletName}</b>\", will be connected to Kraken."
+      "alert": "Only the current wallet: \"<b>{walletName}</b>\", will be linked to your connected accounts."
     },
     "connected": {
       "alert": "Only the current wallet: \"<b>{walletName}</b>\", has been connected to Kraken.",
