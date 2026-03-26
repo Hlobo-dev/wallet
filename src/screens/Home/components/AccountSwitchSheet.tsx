@@ -136,6 +136,8 @@ export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
             text: loc.accountSwitch.createWallet,
             onPress: handleCreateNewAccount,
             testID: 'CreateWalletButton',
+            color: 'light100',
+            textColor: 'dark100',
           }}
         />
       </BottomSheetFooter>
@@ -153,22 +155,8 @@ export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
         <View style={styles.container}>
           <WalletBackupWarning showDismissable={false} />
         </View>
-        <FlatList
-          style={{ marginBottom: connectedAccounts.length > 0 ? 0 : marginBottom, maxHeight: 9 * WALLET_ITEM_HEIGHT }}
-          data={accounts}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-          ref={listRef}
-          onScrollToIndexFailed={noop}
-          contentContainerStyle={styles.container}
-        />
         {connectedAccounts.length > 0 && (
           <View style={[styles.container, { marginBottom }]}>
-            <View style={styles.connectedHeader}>
-              <Label type="boldCaption1" color="light50">
-                Connected accounts
-              </Label>
-            </View>
             {connectedAccounts.map((ca, index) => (
               <ConnectedAccountItem
                 key={ca.id}
