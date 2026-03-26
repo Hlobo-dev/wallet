@@ -1427,9 +1427,9 @@
       "body": "Connect your Kraken account to transfer crypto quickly"
     },
     "fundCta": {
-      "heading": "Fund your wallet",
-      "body": "Connect your Kraken account to",
-      "bodyBold": "transfer crypto to your wallet"
+      "heading": "Connect your account",
+      "body": "Link your brokerage to",
+      "bodyBold": "track and trade from your wallet"
     },
     "receiveCta": {
       "headline": "Fast transfer from Kraken",
