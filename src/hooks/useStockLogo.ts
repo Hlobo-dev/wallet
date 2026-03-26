@@ -11,6 +11,23 @@
  * URL is never resolved twice.
  */
 
+// ─── Currency → country flag mapping ─────────────────────────────────────────
+// Professional exchanges (Robinhood, Schwab, IBKR, Bloomberg) use circular
+// country flags for fiat / cash positions.  SnapTrade & Plaid report cash
+// holdings with symbols like "CUR:USD", "CUR:EUR", etc.
+
+const CURRENCY_TO_COUNTRY: Record<string, string> = {
+  USD: 'us', EUR: 'eu', GBP: 'gb', JPY: 'jp', CHF: 'ch',
+  CAD: 'ca', AUD: 'au', NZD: 'nz', HKD: 'hk', SGD: 'sg',
+  KRW: 'kr', CNY: 'cn', CNH: 'cn', INR: 'in', MXN: 'mx',
+  BRL: 'br', SEK: 'se', NOK: 'no', DKK: 'dk', PLN: 'pl',
+  ZAR: 'za', TRY: 'tr', THB: 'th', TWD: 'tw', ILS: 'il',
+  AED: 'ae', SAR: 'sa', RUB: 'ru', CZK: 'cz', HUF: 'hu',
+  RON: 'ro', CLP: 'cl', COP: 'co', PEN: 'pe', ARS: 'ar',
+  PHP: 'ph', IDR: 'id', MYR: 'my', VND: 'vn', EGP: 'eg',
+  NGN: 'ng', KES: 'ke', GHS: 'gh', UAH: 'ua',
+};
+
 // ─── Known crypto symbols ────────────────────────────────────────────────────
 
 const CRYPTO_SYMBOLS = new Set([
@@ -49,6 +66,54 @@ export function getCoinCapLogoUrl(symbol: string): string {
   return `https://assets.coincap.io/assets/icons/${base}@2x.png`;
 }
 
+/**
+ * FlagCDN — free, Cloudflare-backed, no API key needed.
+ * Returns a circular-croppable PNG of the country flag at 2× retina size.
+ * Professional exchanges (Robinhood, Schwab, IBKR) use country flags
+ * for cash / fiat currency positions.
+ */
+export function getFlagLogoUrl(countryCode: string): string {
+  return `https://flagcdn.com/w160/${countryCode.toLowerCase()}.png`;
+}
+
+// ─── Currency detection helpers ──────────────────────────────────────────────
+
+/**
+ * Returns true if the symbol represents a fiat currency / cash holding.
+ * Handles formats: "CUR:USD", "USD" (when in the currency map).
+ */
+export function isCurrencySymbol(symbol: string): boolean {
+  const upper = symbol.toUpperCase();
+  if (upper.startsWith('CUR:')) {
+    return true;
+  }
+  // Only match bare currency codes if they're NOT crypto
+  return CURRENCY_TO_COUNTRY.hasOwnProperty(upper) && !CRYPTO_SYMBOLS.has(upper);
+}
+
+/**
+ * Extract the raw currency code from symbols like "CUR:USD" → "USD".
+ */
+export function parseCurrencyCode(symbol: string): string {
+  const upper = symbol.toUpperCase();
+  if (upper.startsWith('CUR:')) {
+    return upper.slice(4);
+  }
+  return upper;
+}
+
+/**
+ * Return a flag CDN URL for a currency symbol, or null if not recognized.
+ */
+export function getCurrencyFlagUrl(symbol: string): string | null {
+  const code = parseCurrencyCode(symbol);
+  const country = CURRENCY_TO_COUNTRY[code];
+  if (country) {
+    return getFlagLogoUrl(country);
+  }
+  return null;
+}
+
 // ─── Public API ──────────────────────────────────────────────────────────────
 
 /**
@@ -63,6 +128,12 @@ export function getCoinCapLogoUrl(symbol: string): string {
  */
 export function getRemoteLogoUrl(symbol: string): string {
   const upper = symbol.toUpperCase();
+
+  // Currency / cash position → country flag (industry standard)
+  const flagUrl = getCurrencyFlagUrl(upper);
+  if (flagUrl) {
+    return flagUrl;
+  }
 
   if (CRYPTO_SYMBOLS.has(upper)) {
     return getCoinCapLogoUrl(upper);

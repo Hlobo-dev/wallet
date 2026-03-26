@@ -15,7 +15,7 @@ import type { SvgProps } from 'react-native-svg';
 
 import { Label } from '@/components/Label';
 import type { BrokerageHolding } from '@/hooks/useBrokeragePositions';
-import { getRemoteLogoUrl } from '@/hooks/useStockLogo';
+import { getRemoteLogoUrl, isCurrencySymbol, parseCurrencyCode } from '@/hooks/useStockLogo';
 import { useAppCurrency } from '@/realm/settings/useAppCurrency';
 import { getCurrencyInfo } from '@/screens/Settings/currency';
 
@@ -85,6 +85,44 @@ function getBundledIcon(symbol: string): React.FC<SvgProps> | undefined {
     }
   }
   return undefined;
+}
+
+// ─── Currency display helpers ─────────────────────────────────────────────────
+
+/** Pretty names for cash / fiat positions (industry standard). */
+const CURRENCY_NAMES: Record<string, string> = {
+  USD: 'US Dollar', EUR: 'Euro', GBP: 'British Pound', JPY: 'Japanese Yen',
+  CHF: 'Swiss Franc', CAD: 'Canadian Dollar', AUD: 'Australian Dollar',
+  NZD: 'New Zealand Dollar', HKD: 'Hong Kong Dollar', SGD: 'Singapore Dollar',
+  KRW: 'Korean Won', CNY: 'Chinese Yuan', CNH: 'Chinese Yuan (Offshore)',
+  INR: 'Indian Rupee', MXN: 'Mexican Peso', BRL: 'Brazilian Real',
+  SEK: 'Swedish Krona', NOK: 'Norwegian Krone', DKK: 'Danish Krone',
+  PLN: 'Polish Zloty', ZAR: 'South African Rand', TRY: 'Turkish Lira',
+  THB: 'Thai Baht', TWD: 'Taiwan Dollar', ILS: 'Israeli Shekel',
+  AED: 'UAE Dirham', SAR: 'Saudi Riyal', RUB: 'Russian Ruble',
+  CZK: 'Czech Koruna', HUF: 'Hungarian Forint', RON: 'Romanian Leu',
+  CLP: 'Chilean Peso', COP: 'Colombian Peso', PEN: 'Peruvian Sol',
+  ARS: 'Argentine Peso', PHP: 'Philippine Peso', IDR: 'Indonesian Rupiah',
+  MYR: 'Malaysian Ringgit', VND: 'Vietnamese Dong', EGP: 'Egyptian Pound',
+  NGN: 'Nigerian Naira', KES: 'Kenyan Shilling', GHS: 'Ghanaian Cedi',
+  UAH: 'Ukrainian Hryvnia',
+};
+
+/** Clean display name for a holding — resolves ugly "U S Dollar" / "CUR:USD" to "US Dollar". */
+function getDisplayName(name: string, symbol: string): string {
+  if (isCurrencySymbol(symbol)) {
+    const code = parseCurrencyCode(symbol);
+    return CURRENCY_NAMES[code] ?? name;
+  }
+  return name;
+}
+
+/** Clean display symbol — "CUR:USD" → "USD". */
+function getDisplaySymbol(symbol: string): string {
+  if (isCurrencySymbol(symbol)) {
+    return parseCurrencyCode(symbol);
+  }
+  return symbol;
 }
 
 // ─── Formatting helpers ───────────────────────────────────────────────────────
@@ -191,10 +229,12 @@ export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({
   const currencyInfo = getCurrencyInfo(currency);
   const currencySymbol = currencyInfo.sign;
 
+  const displayName = getDisplayName(holding.name, holding.symbol);
+  const displaySymbol = getDisplaySymbol(holding.symbol);
   const pnlColor = holding.unrealizedPnlPercent >= 0 ? 'green400' : 'red400';
   const pnlLabel = formatPnlPercent(holding.unrealizedPnlPercent);
   const fiatValue = formatFiat(holding.value, currencySymbol);
-  const qty = formatQuantity(holding.units, holding.symbol);
+  const qty = formatQuantity(holding.units, displaySymbol);
 
   const row = useMemo(
     () => (
@@ -204,7 +244,7 @@ export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({
           <HoldingIcon symbol={holding.symbol} bgColor={holding.bgColor} />
           <View style={styles.labelContainer}>
             <Label type="boldTitle2" numberOfLines={1} style={styles.nameLabel}>
-              {holding.name}
+              {displayName}
             </Label>
             <Label type="regularCaption1" color={pnlColor}>
               {pnlLabel}
@@ -223,7 +263,7 @@ export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({
         </View>
       </View>
     ),
-    [holding.symbol, holding.bgColor, holding.name, pnlColor, pnlLabel, fiatValue, qty],
+    [holding.symbol, holding.bgColor, displayName, pnlColor, pnlLabel, fiatValue, qty],
   );
 
   return row;
