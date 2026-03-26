@@ -23,6 +23,8 @@ export const URLs = {
   supportContact: 'https://support.kraken.com/hc/en-us/forms/24835178652180',
   signUp: 'https://www.kraken.com/sign-up',
   oauthRedirect: 'krakenwallet://krakenconnect',
+  snaptradeRedirect: 'krakenwallet://snaptrade',
+  plaidRedirect: 'krakenwallet://plaid',
 };
 
 export const DISABLE_PREVENT_SCREEN_CAPTURE = Config.DISABLE_PREVENT_SCREEN_CAPTURE;

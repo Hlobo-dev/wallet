@@ -2,7 +2,7 @@ import type { GestureResponderEvent, NativeSyntheticEvent } from 'react-native';
 
 import WebView from '@metamask/react-native-webview';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Linking, Platform, StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { Touchable } from '@/components/Touchable';
@@ -49,6 +49,7 @@ export const BrowserWebView = forwardRef<BrowserWebViewRef, BrowserWebViewProps>
     loadingPercentage,
     isLoading,
     error,
+    onExitBrowser,
     onNavigationStateChange,
     onLoadStart,
     onLoadProgress,
@@ -58,7 +59,36 @@ export const BrowserWebView = forwardRef<BrowserWebViewRef, BrowserWebViewProps>
 
   const secret = useRandomSecret();
 
-  const { onMessage, disconnect } = useDappMethods(webViewRef as React.RefObject<WebView>, secret);
+  const { onMessage: onDappMessage, disconnect } = useDappMethods(webViewRef as React.RefObject<WebView>, secret);
+
+  // Wrap onMessage to intercept SnapTrade postMessage events
+  const onMessage = useCallback(
+    (event: any) => {
+      try {
+        const data = JSON.parse(event.nativeEvent.data);
+        // SnapTrade sends { status: 'SUCCESS', connectionId: '...' } via postMessage
+        if (data?.status === 'SUCCESS' && data?.connectionId) {
+          const redirectUrl = `krakenwallet://snaptrade?status=SUCCESS&connectionId=${data.connectionId}`;
+          Linking.openURL(redirectUrl);
+          onExitBrowser();
+          return;
+        }
+        // SnapTrade connection close / error
+        if (data?.status === 'ERROR' || data?.status === 'CLOSE' || data?.status === 'CLOSED') {
+          if (data?.status === 'ERROR') {
+            const redirectUrl = `krakenwallet://snaptrade?status=ERROR&error=${encodeURIComponent(data.errorMessage || 'Connection failed')}`;
+            Linking.openURL(redirectUrl);
+          }
+          onExitBrowser();
+          return;
+        }
+      } catch {
+        // Not JSON or not a SnapTrade message — pass to dApp handler
+      }
+      onDappMessage(event);
+    },
+    [onDappMessage, onExitBrowser],
+  );
 
   const { animatedWebViewStyle } = useBrowserAnimationContext();
 
@@ -73,6 +103,14 @@ export const BrowserWebView = forwardRef<BrowserWebViewRef, BrowserWebViewProps>
   };
 
   const onShouldStartLoadWithRequest = (request: ShouldStartLoadRequest) => {
+    // Intercept deep-link redirects (SnapTrade / Plaid callbacks)
+    if (request.url.startsWith('krakenwallet://')) {
+      Linking.openURL(request.url);
+      // Close the browser after the deep link fires
+      onExitBrowser();
+      return false;
+    }
+
     if (request.url.startsWith('about:')) {
       return true;
     }
@@ -208,7 +246,7 @@ export const BrowserWebView = forwardRef<BrowserWebViewRef, BrowserWebViewProps>
               style={[styles.webView, { opacity: hideWebView ? 0 : 1 }]}
               source={{ uri: url }}
               setSupportMultipleWindows={false}
-              originWhitelist={['https://', 'http://', 'about:']}
+              originWhitelist={['https://', 'http://', 'about:', 'krakenwallet://']}
               decelerationRate="normal"
               onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
               onNavigationStateChange={onNavigationStateChange}
@@ -220,7 +258,19 @@ export const BrowserWebView = forwardRef<BrowserWebViewRef, BrowserWebViewProps>
               onError={onLoadError}
               onMessage={onMessage}
               onFileDownload={handleOnFileDownload}
-              injectedJavaScript={getInjectedScriptString(secret, Platform.OS, solanaSdk)}
+              injectedJavaScript={
+                getInjectedScriptString(secret, Platform.OS, solanaSdk) +
+                `;(function(){
+                  window.addEventListener('message', function(e) {
+                    try {
+                      var d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+                      if (d && (d.status === 'SUCCESS' || d.status === 'ERROR' || d.status === 'CLOSE' || d.status === 'CLOSED')) {
+                        window.ReactNativeWebView.postMessage(JSON.stringify(d));
+                      }
+                    } catch(ex) {}
+                  });
+                })();`
+              }
               renderError={() => <BrowserLoadingFailure />}
             />
           </Animated.View>

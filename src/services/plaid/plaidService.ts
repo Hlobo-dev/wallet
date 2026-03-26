@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { NUBLE_PLATFORM_URL } from '@/screens/Chat/chatConfig';
 
+import { URLs } from '/config';
+
 // =============================================================================
 // TYPES
 // =============================================================================
@@ -169,7 +171,8 @@ export class PlaidClientService {
    * Build the Plaid hosted Link URL for opening in the in-app browser.
    */
   getHostedLinkUrl(linkToken: string): string {
-    return `https://cdn.plaid.com/link/v2/stable/link.html?isWebview=true&token=${linkToken}`;
+    const redirectUri = encodeURIComponent(URLs.plaidRedirect);
+    return `https://cdn.plaid.com/link/v2/stable/link.html?isWebview=true&token=${linkToken}&redirect_uri=${redirectUri}`;
   }
 
   /**

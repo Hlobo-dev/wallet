@@ -11,15 +11,20 @@ import type { BottomSheetModalRef } from '@/components/BottomSheet';
 import { BottomSheetModal } from '@/components/BottomSheet';
 
 import { Button } from '@/components/Button';
+import { ConnectedAccountItem } from '@/components/ConnectedAccountItem';
 import { FloatingBottomButtons } from '@/components/FloatingBottomButtons';
 import { Label } from '@/components/Label';
 import { showToast } from '@/components/Toast';
 import { WALLET_ITEM_HEIGHT, WalletItem } from '@/components/WalletItem';
 import { useBottomSheetPadding } from '@/hooks/useBottomSheetPadding';
+import type { ConnectedAccount } from '@/hooks/useConnectedAccounts';
+import { useConnectedAccounts } from '@/hooks/useConnectedAccounts';
 import { useManageAccount } from '@/hooks/useManageAccount';
 import type { RealmAccount } from '@/realm/accounts';
 import { useAccounts, useCurrentAccountNumber } from '@/realm/accounts';
 import { Routes } from '@/Routes';
+import { getSnapTradeClient } from '@/services/snaptrade';
+import { getPlaidClient } from '@/services/plaid';
 import { WalletBackupWarning } from '@/screens/Settings/walletBackup';
 import { useIsOnline } from '@/utils/useConnectionManager';
 
@@ -49,6 +54,7 @@ export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
   const accountNumber = useCurrentAccountNumber();
   const isOnline = useIsOnline();
   const { dismiss } = useBottomSheetModal();
+  const { connectedAccounts, refetch: refetchConnectedAccounts } = useConnectedAccounts();
 
   const currentAccountIndex = accounts.findIndex(a => a.accountNumber === accountNumber);
 
@@ -72,6 +78,25 @@ export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
     navigation.navigate(Routes.Settings, { screen: Routes.ManageWallets });
   };
 
+  const handleRemoveConnectedAccount = useCallback(
+    async (account: ConnectedAccount) => {
+      try {
+        if (account.type === 'brokerage') {
+          const client = getSnapTradeClient();
+          await client.deleteConnection(account.connectionId);
+        } else {
+          const client = getPlaidClient();
+          await client.removeConnection(account.connectionId);
+        }
+        refetchConnectedAccounts();
+        showToast({ type: 'success', text: `${account.name} disconnected` });
+      } catch {
+        showToast({ type: 'error', text: `Failed to disconnect ${account.name}` });
+      }
+    },
+    [refetchConnectedAccounts],
+  );
+
   const renderItem: ListRenderItem<RealmAccount> = useCallback(
     ({ item, index }) => {
       const isFirst = index === 0;
@@ -88,6 +113,8 @@ export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
   const handleBottomSheetChange = (index: number) => {
     if (index > -1) {
       listRef.current?.scrollToIndex({ index: currentAccountIndex, animated: true });
+      // Refetch connected accounts whenever the sheet opens
+      refetchConnectedAccounts();
     }
   };
 
@@ -127,7 +154,7 @@ export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
           <WalletBackupWarning showDismissable={false} />
         </View>
         <FlatList
-          style={{ marginBottom, maxHeight: 9 * WALLET_ITEM_HEIGHT }}
+          style={{ marginBottom: connectedAccounts.length > 0 ? 0 : marginBottom, maxHeight: 9 * WALLET_ITEM_HEIGHT }}
           data={accounts}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
@@ -135,6 +162,25 @@ export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
           onScrollToIndexFailed={noop}
           contentContainerStyle={styles.container}
         />
+        {connectedAccounts.length > 0 && (
+          <View style={[styles.container, { marginBottom }]}>
+            <View style={styles.connectedHeader}>
+              <Label type="boldCaption1" color="light50">
+                Connected accounts
+              </Label>
+            </View>
+            {connectedAccounts.map((ca, index) => (
+              <ConnectedAccountItem
+                key={ca.id}
+                account={ca}
+                isFirst={index === 0}
+                isLast={index === connectedAccounts.length - 1}
+                backgroundType="modal"
+                onRemove={handleRemoveConnectedAccount}
+              />
+            ))}
+          </View>
+        )}
       </BottomSheetView>
     </BottomSheetModal>
   );
@@ -149,5 +195,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  connectedHeader: {
+    marginTop: 16,
+    marginBottom: 8,
   },
 });

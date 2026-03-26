@@ -32,6 +32,7 @@ import type { PasskeyErrorType } from './components/CloudBackupErrorSheet';
 import type { CloudBackupSuccessSheetRef } from './components/CloudBackupSuccessSheet';
 
 import { handleError } from '/helpers/errorHandler';
+import { URLs } from '/config';
 import loc from '/loc';
 import { getDateLocale } from '/loc/date';
 import type { CloudBackupMetadata } from '/modules/cloud-backup';
@@ -177,6 +178,7 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
         const portalResult = await snaptradeClient.generateConnectionPortal({
           brokerageSlug: brokerage.slug,
           connectionType: brokerage.supportsTrading ? 'trade' : 'read',
+          customRedirectUri: URLs.snaptradeRedirect,
         });
 
         if (!portalResult.success || !portalResult.data) {
@@ -191,9 +193,6 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
 
         // Open the SnapTrade OAuth page inside the in-app browser
         openURL(portalResult.data.redirectURI);
-
-        hapticFeedback.notificationSuccess();
-        setConnectedSlug(brokerage.slug);
       } catch (e) {
         handleError(e, 'ERROR_CONTEXT_PLACEHOLDER', 'generic');
       } finally {
@@ -268,9 +267,6 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
         // Open the Plaid hosted Link page inside the in-app browser
         const hostedUrl = plaidClient.getHostedLinkUrl(tokenResult.data.linkToken);
         openURL(hostedUrl);
-
-        hapticFeedback.notificationSuccess();
-        setConnectedWealthId(_institution.id);
       } catch (e) {
         handleError(e, 'ERROR_CONTEXT_PLACEHOLDER', 'generic');
       } finally {

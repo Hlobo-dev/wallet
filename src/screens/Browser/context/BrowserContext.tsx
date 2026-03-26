@@ -6,7 +6,7 @@ import React, { type PropsWithChildren } from 'react';
 
 import { useContext, useState } from 'react';
 
-import { Platform } from 'react-native';
+import { Linking, Platform } from 'react-native';
 
 import { useSharedValue } from 'react-native-reanimated';
 
@@ -81,6 +81,13 @@ export const BrowserContextProvider: React.FC<PropsWithChildren<BrowserContextPr
   const onNavigationStateChange = (navState: WebViewNavigation) => {
     if (navState.loading && Platform.OS === 'android' && error) {
       setShouldDisplayWebView(false);
+    }
+
+    // Intercept deep-link redirects from SnapTrade / Plaid callbacks
+    if (navState.url && navState.url.startsWith('krakenwallet://')) {
+      Linking.openURL(navState.url);
+      value.onExitBrowser();
+      return;
     }
 
     setNavigationState({
