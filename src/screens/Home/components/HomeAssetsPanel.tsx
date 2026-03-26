@@ -298,9 +298,16 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
 
   const onViewableItemsChanged = useCallback(
     (info: { viewableItems: Array<ViewToken> }) => {
-      const header = info.viewableItems.find(item => item.key === '0');
-      if (header && stickyHeaderIndex.value !== header.item.index) {
-        stickyHeaderIndex.value = header.item.index;
+      // Determine which section is at the top of the visible area.
+      // Viewable items are ordered top→bottom. The first item with a valid
+      // section tells us which sticky header to show.
+      for (const viewToken of info.viewableItems) {
+        if (viewToken.section && typeof viewToken.section.index === 'number') {
+          if (stickyHeaderIndex.value !== viewToken.section.index) {
+            stickyHeaderIndex.value = viewToken.section.index;
+          }
+          return;
+        }
       }
     },
     [stickyHeaderIndex],
