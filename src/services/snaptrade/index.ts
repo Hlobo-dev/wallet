@@ -16,4 +16,5 @@ export type {
   ApiResponse,
 } from './snaptradeService';
 
-export { BROKERAGES, type BrokerageInfo } from './brokerageData';
+export { BROKERAGES } from './brokerageData';
+export type { BrokerageInfo } from './brokerageData';
