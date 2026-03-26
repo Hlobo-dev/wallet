@@ -29,6 +29,7 @@ import { useAppState } from '@/utils/useAppState';
 
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ExploreNavigator } from './components/ExploreNavigator';
+import { BrandedSplash } from './components/BrandedSplash';
 import { GlobalStateProvider } from './components/GlobalState';
 import { MenuProvider } from './components/Menu';
 import { ToastManager } from './components/Toast';
@@ -100,7 +101,7 @@ const App = () => {
   }, []);
 
   if (!migrationCompleted) {
-    return null;
+    return <BrandedSplash />;
   }
 
   return (

@@ -13,14 +13,11 @@ import { FadingElement } from '@/components/FadingElement';
 
 import { ListAnimatedItem } from '@/components/ListAnimatedItem';
 import { ListHeader } from '@/components/ListHeader';
-import { NFTCollectionRow } from '@/components/NFTCollectionRow';
 import { useBottomElementSpacing } from '@/hooks/useBottomElementSpacing';
 import { useCommonSnapPoints } from '@/hooks/useCommonSnapPoints';
 import { useDefiPositionsQuery } from '@/reactQuery/hooks/earn/useDefiPositionsQuery';
 import type { RealmDefi } from '@/realm/defi';
 import { useIsKrakenConnectCtaHidden } from '@/realm/krakenConnect/useIsKrakenConnectCtaHidden';
-import type { NftsCollection } from '@/realm/nfts';
-import { useNftsArchivedCollection, useNftsCollections } from '@/realm/nfts';
 import { useTokenPrices } from '@/realm/tokenPrice';
 import type { RealmToken } from '@/realm/tokens';
 import { sortTokensByFiatValue, useTokensFilteredByReputationAndNetwork } from '@/realm/tokens';
@@ -30,10 +27,8 @@ import { isRealmObject } from '@/utils/isRealmObject';
 
 import { HEADER_HEIGHT } from './consts';
 import { DefiEmptyPositions } from './DefiEmptyPositions';
-import { EmptyCollections } from './EmptyCollections';
 import { useHomeAssetPanelEmitterListener } from './homeAssetPanelEventEmitter';
 import { HomeAssetPanelSectionList } from './HomeAssetsSectionList';
-import { HomeNFTGallery } from './HomeNFTGallery';
 import { KrakenConnectFundCTA } from './KrakenConnectFundCTA';
 
 import { TokenRow } from './TokenRow';
@@ -41,8 +36,6 @@ import { TokenRow } from './TokenRow';
 import loc from '/loc';
 
 enum SectionName {
-  Collection = 'Collection',
-  EmptyCollections = 'EmptyCollections',
   Assets = 'Assets',
   Defi = 'Defi',
   DefiEarnNoPositions = 'DefiEarnNoPositions',
@@ -50,16 +43,6 @@ enum SectionName {
 }
 
 type Sections =
-  | {
-      key: typeof SectionName.Collection;
-      index: number;
-      data: NftsCollection[];
-    }
-  | {
-      key: typeof SectionName.EmptyCollections;
-      index: number;
-      data: NftsCollection[];
-    }
   | {
       key: typeof SectionName.Assets;
       index: number;
@@ -80,10 +63,8 @@ interface HomeAssetsPanelProps {
   navigation: NavigationProps<'Home'>['navigation'];
 }
 
-type SectionItem = RealmToken | NftsCollection | RealmDefi | DefiProtocol;
+type SectionItem = RealmToken | RealmDefi | DefiProtocol;
 type SectionType = SectionListData<SectionItem, Sections>;
-
-const COLLECTIONS_TO_SHOW = 3;
 
 const renderSectionSeparator = () => <View style={styles.headerDivider} />;
 
@@ -93,7 +74,7 @@ const sectionListKeyExtractor = (item: SectionItem, index: number) => {
   if (item === null || (isRealmObject(item) && !item.isValid())) {
     return 'invalid_' + index;
   }
-  return (item as NftsCollection | RealmDefi).id || (item as RealmToken).assetId || String(index);
+  return (item as RealmDefi).id || (item as RealmToken).assetId || String(index);
 };
 
 const isIos = Platform.OS === 'ios';
@@ -103,8 +84,6 @@ const DISTANCE_TO_RECENT_ACTIVITY = 300;
 export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
   const tokens = useTokensFilteredByReputationAndNetwork([]);
   const tokenPrices = useTokenPrices();
-  const nftsCollection = useNftsCollections().slice(0, COLLECTIONS_TO_SHOW);
-  const archivedCollection = useNftsArchivedCollection();
   const { data: earnDefiPositions, isPending: isDefiPositionPending } = useDefiPositionsQuery();
   const bottomSheetRef = useRef<BottomSheetRef>(null);
   const hideConnectCTA = useIsKrakenConnectCtaHidden();
@@ -131,25 +110,8 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
       items.push(section);
     }
 
-    if (nftsCollection && Object.keys(nftsCollection)?.length > 0) {
-      items.push({ index: 1, key: SectionName.Collection, data: nftsCollection });
-    }
-
-    if (!nftsCollection || (nftsCollection && Object.keys(nftsCollection)?.length === 0)) {
-      items.push({ index: 1, key: SectionName.EmptyCollections, data: [] });
-    }
-
     return items;
-  }, [nftsCollection, tokensDataSource, isDefiPositionPending, earnDefiPositions]);
-
-  const renderNftRow = useCallback(
-    (item: NftsCollection) => (
-      <ListAnimatedItem>
-        <NFTCollectionRow collection={item} onPress={() => navigation.navigate(Routes.NftCollection, { collectionId: item.id })} />
-      </ListAnimatedItem>
-    ),
-    [navigation],
-  );
+  }, [tokensDataSource, isDefiPositionPending, earnDefiPositions]);
 
   const renderTokenRow = useCallback(
     (item: RealmToken) => {
@@ -177,8 +139,6 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
   const renderSectionItem = useCallback(
     ({ item, section }: { item: SectionItem; index: number; section: SectionType }) => {
       switch (section.key) {
-        case SectionName.Collection:
-          return renderNftRow(item as NftsCollection);
         case SectionName.Assets:
           return renderTokenRow(item as RealmToken);
         case SectionName.DefiEarnPositions:
@@ -187,7 +147,7 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
           return null;
       }
     },
-    [renderNftRow, renderTokenRow, renderDefiEarnProtocol],
+    [renderTokenRow, renderDefiEarnProtocol],
   );
 
   const renderHeader = useCallback(
@@ -206,24 +166,6 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
               style={[headerStyle, !sticky && styles.firstHeader]}
             />
           );
-        case SectionName.Collection:
-          return (
-            <View>
-              <ListHeader
-                title={loc.home.collection}
-                buttonText={loc.home.collection_see_all}
-                buttonTestID={`CollectionViewAll${sticky ? '-Sticky' : ''}`}
-                onButtonPress={() => {
-                  navigation.navigate(Routes.Nfts);
-                }}
-                style={headerStyle}
-              />
-              {!sticky && <HomeNFTGallery />}
-            </View>
-          );
-        case SectionName.EmptyCollections: {
-          return <EmptyCollections hasArchivedNfts={archivedCollection.nfts.length > 0} sticky={sticky} headerStyle={headerStyle} />;
-        }
         case SectionName.DefiEarnPositions:
           return <ListHeader title={loc.home.deposits} style={headerStyle} buttonTestID="DefiHeader" />;
         case SectionName.DefiEarnNoPositions:
@@ -232,7 +174,7 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
           return null;
       }
     },
-    [navigation, archivedCollection],
+    [navigation],
   );
 
   const stickyHeaderStyle = useAnimatedStyle(() => ({

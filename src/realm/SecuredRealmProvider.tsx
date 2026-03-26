@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { HomeLockScreen } from '@/screens/Settings/passwordProtection';
 import { getRealmEncryptionKey } from '@/secureStore';
 import { KeychainKey, getFromKeychain } from '@/secureStore/keychain';
+import { BrandedSplash } from '@/components/BrandedSplash';
 
 import { RealmProvider } from './RealmContext';
 
@@ -63,7 +64,7 @@ export const SecuredRealmProvider = ({ children }: Props) => {
   }
 
   if (!realmEncryptionKey) {
-    return null;
+    return <BrandedSplash />;
   }
 
   return (

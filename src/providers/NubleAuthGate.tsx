@@ -10,7 +10,8 @@
  */
 
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+
+import { BrandedSplash } from '@/components/BrandedSplash';
 
 import { useNubleAuth } from './NubleAuthProvider';
 import { PlatformLoginScreen } from '@/screens/PlatformLogin';
@@ -20,12 +21,7 @@ export const NubleAuthGate: React.FC<React.PropsWithChildren> = ({ children }) =
 
   // Still hydrating from Keychain — show branded splash
   if (!isReady) {
-    return (
-      <View style={styles.splash}>
-        <Text style={styles.logo}>N</Text>
-        <ActivityIndicator size="large" color="#7538F5" style={styles.spinner} />
-      </View>
-    );
+    return <BrandedSplash />;
   }
 
   // Not authenticated — show login/signup
@@ -36,20 +32,3 @@ export const NubleAuthGate: React.FC<React.PropsWithChildren> = ({ children }) =
   // Authenticated — render the full wallet app
   return <>{children}</>;
 };
-
-const styles = StyleSheet.create({
-  splash: {
-    flex: 1,
-    backgroundColor: '#0D0D2E',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logo: {
-    fontSize: 48,
-    fontWeight: '900',
-    color: '#7538F5',
-  },
-  spinner: {
-    marginTop: 24,
-  },
-});

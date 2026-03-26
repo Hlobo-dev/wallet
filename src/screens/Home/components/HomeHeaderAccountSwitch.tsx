@@ -1,6 +1,6 @@
 import type { NativeSyntheticEvent, TextLayoutEventData } from 'react-native';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 
 import { AvatarIcon } from '@/components/AvatarIcon';
@@ -19,11 +19,23 @@ export const HomeHeaderAccountSwitch = () => {
   const bottomSheetModalRef = useRef<BottomSheetModalRef>(null);
   const [isTruncated, setIsTruncated] = useState(false);
   const [, setShowNavTabs] = useGlobalState('showNavTabs');
+  const [shouldOpenSheet, setShouldOpenSheet] = useGlobalState('openAccountSheet');
 
   const openPanel = () => {
     setShowNavTabs(false);
     bottomSheetModalRef.current?.present();
   };
+
+  useEffect(() => {
+    if (shouldOpenSheet) {
+      setShouldOpenSheet(false);
+      // Small delay to ensure the screen is fully mounted/visible
+      const timer = setTimeout(() => {
+        openPanel();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldOpenSheet]);
 
   const name = normalizeAccountName(account?.isValid() ? account.accountCustomName : undefined);
 

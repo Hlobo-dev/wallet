@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { Linking } from 'react-native';
 
 import { showToast } from '@/components/Toast';
+import { useGlobalState } from '@/components/GlobalState';
 import { Routes } from '@/Routes';
 import { getSnapTradeClient } from '@/services/snaptrade';
 import { getPlaidClient } from '@/services/plaid';
@@ -12,6 +13,7 @@ import { hapticFeedback } from '@/utils/hapticFeedback';
 
 export const useDeepLinkFromExchange = () => {
   const navigation = useNavigation();
+  const [, setOpenAccountSheet] = useGlobalState('openAccountSheet');
   const handleURL = useCallback(
     async (url: string) => {
       const parsedUrl = new URL(url);
@@ -43,6 +45,9 @@ export const useDeepLinkFromExchange = () => {
           } catch {
             // Silently continue — connection was likely created
           }
+          // Navigate to Home and open the Accounts sheet
+          navigation.navigate(Routes.Home);
+          setOpenAccountSheet(true);
         } else {
           showToast({ type: 'error', text: 'Brokerage connection failed' });
         }
@@ -65,6 +70,9 @@ export const useDeepLinkFromExchange = () => {
             if (result.success) {
               hapticFeedback.notificationSuccess();
               showToast({ type: 'success', text: `${institutionName ?? 'Account'} connected successfully` });
+              // Navigate to Home and open the Accounts sheet
+              navigation.navigate(Routes.Home);
+              setOpenAccountSheet(true);
             } else {
               showToast({ type: 'error', text: 'Failed to save wealth account connection' });
             }
@@ -79,7 +87,7 @@ export const useDeepLinkFromExchange = () => {
         }
       }
     },
-    [navigation],
+    [navigation, setOpenAccountSheet],
   );
   useEffect(() => {
     const listener = Linking.addEventListener('url', (event: { url: string }) => {

@@ -48,6 +48,7 @@ import { WhatsNewAvaxLineaScreen, WhatsNewSwaps } from '@/screens/WhatsNew';
 import { useConnectionManager } from '@/utils/useConnectionManager';
 
 import { DefaultBackButton } from './components/BackButton';
+import { BrandedSplash } from './components/BrandedSplash';
 
 import { useDeepLinkFromExchange } from './hooks/useDeepLinkFromExchange';
 import { BrowserScreen } from './screens/Browser';
@@ -87,7 +88,7 @@ const NavigationStack = () => {
   const initialWalletsCount = realm.objects<RealmWallet>(REALM_TYPE_WALLET).snapshot().length;
 
   if (initialWalletsCount === undefined) {
-    return null;
+    return <BrandedSplash />;
   }
 
   return (
