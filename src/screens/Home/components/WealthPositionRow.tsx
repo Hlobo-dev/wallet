@@ -32,6 +32,15 @@ const SYMBOL_TO_ICON_KEYS: Record<string, string[]> = {
   BTC: ['btc-hdsegwitbech32'],
   ETH: ['eth-ethereum'],
   SOL: ['sol-solana'],
+  // Crypto trusts — show the underlying crypto icon
+  ETHE: ['eth-ethereum'],
+  GBTC: ['btc-hdsegwitbech32'],
+  GSOL: ['sol-solana'],
+  IBIT: ['btc-hdsegwitbech32'],
+  FBTC: ['btc-hdsegwitbech32'],
+  ETHA: ['eth-ethereum'],
+  BITB: ['btc-hdsegwitbech32'],
+  ARKB: ['btc-hdsegwitbech32'],
 };
 
 function getBundledIcon(symbol: string): React.FC<SvgProps> | undefined {
@@ -206,8 +215,18 @@ export const WealthPositionRow = memo(({ holding, livePrice, onPress }: WealthPo
   const sign = currencyInfo.sign;
 
   // ── Overlay live Polygon price if available ─────────────────────────────
-  const effectivePrice = livePrice ? livePrice.price : holding.price;
-  const effectiveValue = holding.quantity * effectivePrice;
+  // Use livePrice from Polygon keyed by tickerSymbol (the real stock ticker).
+  // Fall back to holding.price from Plaid. If the Plaid price looks
+  // unreasonable relative to currentValue (e.g. crypto trust misreport),
+  // derive the per-unit price from currentValue / quantity.
+  const plaidPricePerUnit = holding.quantity > 0 ? holding.currentValue / holding.quantity : holding.price;
+  const basePriceReasonable =
+    holding.quantity > 0 &&
+    Math.abs(holding.price * holding.quantity - holding.currentValue) / holding.currentValue < 0.5;
+  const basePrice = basePriceReasonable ? holding.price : plaidPricePerUnit;
+
+  const effectivePrice = livePrice ? livePrice.price : basePrice;
+  const effectiveValue = livePrice ? holding.quantity * effectivePrice : holding.currentValue;
   const costBasis = holding.costBasis ?? 0;
   const effectivePnl = costBasis > 0 ? effectiveValue - costBasis : holding.unrealizedPnl;
   const effectivePnlPct = costBasis > 0 ? ((effectiveValue - costBasis) / costBasis) * 100 : holding.unrealizedPnlPercent;

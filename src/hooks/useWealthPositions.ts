@@ -25,6 +25,14 @@ export interface WealthHolding {
   key: string;
   /** Ticker symbol, e.g. "AAPL" or "VTI" */
   symbol: string;
+  /**
+   * Actual stock/ETF ticker for Polygon price lookups.
+   * For crypto trusts (e.g. Grayscale ETHE) Plaid returns the underlying crypto
+   * symbol ("ETH") which would fetch the wrong live price. `tickerSymbol`
+   * holds the real tradeable ticker so that Polygon returns the correct price.
+   * Falls back to `symbol` when no override is needed.
+   */
+  tickerSymbol: string;
   /** Full name, e.g. "Apple Inc" or "Vanguard Total Stock Market ETF" */
   name: string;
   /** Security type: equity, etf, mutual fund, fixed income, etc. */
@@ -49,6 +57,50 @@ export interface WealthHolding {
   itemId: string;
   /** Background color for the logo fallback circle */
   bgColor: string;
+}
+
+// ─── Crypto trust ticker overrides ────────────────────────────────────────────
+
+/**
+ * Plaid often returns the underlying crypto ticker (e.g. "ETH") for crypto
+ * investment trusts instead of the real stock ticker (e.g. "ETHE").
+ * This map resolves the correct tradeable ticker so that Polygon returns the
+ * right live price and the quantity label shows the trust symbol, not the
+ * crypto symbol.
+ *
+ * Key: `<plaid symbol>__<name substring>` (lowercased) → real ticker.
+ */
+const CRYPTO_TRUST_OVERRIDES: { plaidSymbol: string; namePattern: string; realTicker: string }[] = [
+  // Grayscale Trusts
+  { plaidSymbol: 'ETH', namePattern: 'grayscale ethereum', realTicker: 'ETHE' },
+  { plaidSymbol: 'BTC', namePattern: 'grayscale bitcoin', realTicker: 'GBTC' },
+  { plaidSymbol: 'SOL', namePattern: 'grayscale solana', realTicker: 'GSOL' },
+  { plaidSymbol: 'AVAX', namePattern: 'grayscale avalanche', realTicker: 'AVAX' },
+  { plaidSymbol: 'LINK', namePattern: 'grayscale chainlink', realTicker: 'GLNK' },
+  { plaidSymbol: 'XLM', namePattern: 'grayscale stellar', realTicker: 'GXLM' },
+  { plaidSymbol: 'LTC', namePattern: 'grayscale litecoin', realTicker: 'LTCN' },
+  { plaidSymbol: 'ETC', namePattern: 'grayscale ethereum classic', realTicker: 'ETCG' },
+  // Bitwise / 21Shares / other crypto ETFs
+  { plaidSymbol: 'BTC', namePattern: 'ishares bitcoin', realTicker: 'IBIT' },
+  { plaidSymbol: 'BTC', namePattern: 'fidelity wise origin bitcoin', realTicker: 'FBTC' },
+  { plaidSymbol: 'ETH', namePattern: 'ishares ethereum', realTicker: 'ETHA' },
+  { plaidSymbol: 'BTC', namePattern: 'bitwise bitcoin', realTicker: 'BITB' },
+  { plaidSymbol: 'BTC', namePattern: 'ark 21shares bitcoin', realTicker: 'ARKB' },
+];
+
+/**
+ * If Plaid returned a crypto symbol for a trust/ETF, resolve the real
+ * tradeable ticker. Returns `undefined` if no override applies.
+ */
+function resolveCryptoTrustTicker(plaidSymbol: string, name: string): string | undefined {
+  const upperSym = plaidSymbol.toUpperCase();
+  const lowerName = name.toLowerCase();
+  for (const o of CRYPTO_TRUST_OVERRIDES) {
+    if (o.plaidSymbol === upperSym && lowerName.includes(o.namePattern)) {
+      return o.realTicker;
+    }
+  }
+  return undefined;
 }
 
 // ─── Asset name map for common tickers ────────────────────────────────────────
@@ -89,6 +141,19 @@ const ASSET_NAMES: Record<string, string> = {
   PLTR: 'Palantir Technologies',
   AAL: 'American Airlines',
   SMCI: 'Super Micro Computer',
+  // Crypto trusts / ETFs
+  ETHE: 'Grayscale Ethereum Trust',
+  GBTC: 'Grayscale Bitcoin Trust',
+  GSOL: 'Grayscale Solana Trust',
+  GLNK: 'Grayscale Chainlink Trust',
+  GXLM: 'Grayscale Stellar Trust',
+  LTCN: 'Grayscale Litecoin Trust',
+  ETCG: 'Grayscale Ethereum Classic Trust',
+  IBIT: 'iShares Bitcoin Trust',
+  FBTC: 'Fidelity Wise Origin Bitcoin Fund',
+  ETHA: 'iShares Ethereum Trust',
+  BITB: 'Bitwise Bitcoin ETF',
+  ARKB: 'ARK 21Shares Bitcoin ETF',
 };
 
 // ─── Institution brand colors ─────────────────────────────────────────────────
@@ -224,10 +289,15 @@ export function useWealthPositions() {
           const pnl = h.unrealizedPnL ?? (h.costBasis ? h.currentValue - h.costBasis : null);
           const pnlPct = h.unrealizedPnLPercent ?? (h.costBasis && h.costBasis > 0 ? ((h.currentValue - h.costBasis) / h.costBasis) * 100 : null);
 
+          // Resolve the real stock ticker if Plaid returned a crypto symbol for a trust/ETF
+          const realTicker = resolveCryptoTrustTicker(h.symbol, h.name);
+          const displaySymbol = realTicker ?? h.symbol;
+
           return {
             key: `wealth_${h.itemId}_${h.securityId}_${index}`,
-            symbol: h.symbol || 'N/A',
-            name: getAssetName(h.symbol, h.name),
+            symbol: displaySymbol || 'N/A',
+            tickerSymbol: displaySymbol || h.symbol || 'N/A',
+            name: getAssetName(displaySymbol, h.name),
             type: h.type || 'equity',
             price: h.closePrice ?? (h.quantity > 0 ? h.currentValue / h.quantity : 0),
             costBasis: h.costBasis,

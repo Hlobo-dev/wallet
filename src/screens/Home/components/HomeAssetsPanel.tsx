@@ -126,8 +126,9 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
       }
     }
     for (const h of wealthHoldings) {
-      if (h.symbol && h.symbol !== 'N/A') {
-        syms.add(h.symbol.toUpperCase());
+      const ticker = h.tickerSymbol || h.symbol;
+      if (ticker && ticker !== 'N/A') {
+        syms.add(ticker.toUpperCase());
       }
     }
     return Array.from(syms);
@@ -288,7 +289,8 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
   }, [livePrices, navigation]);
 
   const renderWealthPosition = useCallback((item: WealthHolding) => {
-    const live = livePrices.get(item.symbol.toUpperCase());
+    const ticker = (item.tickerSymbol || item.symbol).toUpperCase();
+    const live = livePrices.get(ticker);
     const handlePress = () => {
       const costBasis = item.costBasis ?? 0;
       const effectivePrice = live ? live.price : item.price;

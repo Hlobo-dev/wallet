@@ -364,8 +364,9 @@ export class PolygonWebSocket {
       state.isAuthenticated = true;
       this.syncSubscriptions(market);
     } else if (status === 'auth_failed') {
-      console.error(`[PolygonWS] ${market}: Auth failed — ${message}`);
-      // Don't reconnect on auth failure
+      console.warn(`[PolygonWS] ${market}: Auth failed — ${message}. WebSocket streaming disabled for this market.`);
+      // Don't reconnect on auth failure — close cleanly so onclose won't retry
+      this.disconnectSocket(market);
     } else if (status === 'success') {
       // Subscription confirmation — log it
       console.log(`[PolygonWS] ${market}: ${message}`);
