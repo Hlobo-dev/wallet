@@ -7,12 +7,13 @@
  * Visual style matches BrokeragePositionRow — icon on left, name + P&L%,
  * fiat value + quantity on right. Uses institution brand colors for fallback icons.
  */
-import React, { memo, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { memo, useMemo, useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import type { SvgProps } from 'react-native-svg';
 
 import { Label } from '@/components/Label';
 import type { WealthHolding } from '@/hooks/useWealthPositions';
+import { getRemoteLogoUrl } from '@/hooks/useStockLogo';
 import { useAppCurrency } from '@/realm/settings/useAppCurrency';
 import { getCurrencyInfo } from '@/screens/Settings/currency';
 
@@ -55,20 +56,14 @@ function getBundledIcon(symbol: string): React.FC<SvgProps> | undefined {
 // ─── Formatting helpers ───────────────────────────────────────────────────────
 
 function formatFiat(value: number, currencySymbol: string): string {
-  if (Math.abs(value) >= 1000) {
-    return `${currencySymbol}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  }
-  return `${currencySymbol}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`;
+  return `${currencySymbol}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function formatQuantity(units: number, symbol: string): string {
   if (units === 0) {
-    return `0 ${symbol}`;
+    return `0.00 ${symbol}`;
   }
-  if (units >= 1) {
-    return `${units.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })} ${symbol}`;
-  }
-  return `${units.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 8 })} ${symbol}`;
+  return `${units.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${symbol}`;
 }
 
 function formatPnlPercent(pct: number | null): string {
@@ -85,7 +80,9 @@ const ICON_SIZE = 40;
 
 const HoldingIcon = memo(({ symbol, bgColor }: { symbol: string; bgColor: string }) => {
   const Icon = getBundledIcon(symbol);
+  const [remoteError, setRemoteError] = useState(false);
 
+  // 1. Bundled SVG icon (crypto)
   if (Icon) {
     return (
       <View style={[iconStyles.ball, { backgroundColor: '#ffffff' }]}>
@@ -94,7 +91,22 @@ const HoldingIcon = memo(({ symbol, bgColor }: { symbol: string; bgColor: string
     );
   }
 
-  // Fallback: neutral semi-transparent circle with first 1-2 letters
+  // 2. Remote logo from CDN (Parqet for stocks/ETFs, CoinCap for crypto)
+  if (!remoteError) {
+    const logoUri = getRemoteLogoUrl(symbol);
+    return (
+      <View style={[iconStyles.ball, iconStyles.remoteBall]}>
+        <Image
+          source={{ uri: logoUri }}
+          style={iconStyles.remoteImage}
+          resizeMode="cover"
+          onError={() => setRemoteError(true)}
+        />
+      </View>
+    );
+  }
+
+  // 3. Fallback: neutral semi-transparent circle with first 1-2 letters
   const letters = symbol.length <= 2 ? symbol : symbol.charAt(0);
   return (
     <View style={[iconStyles.ball, iconStyles.neutralBall]}>
@@ -117,9 +129,19 @@ const iconStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
   },
+  remoteBall: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+  },
   svg: {
     width: ICON_SIZE,
     height: ICON_SIZE,
+  },
+  remoteImage: {
+    width: ICON_SIZE,
+    height: ICON_SIZE,
+    borderRadius: ICON_SIZE / 2,
   },
   letter: {
     color: 'rgba(255, 255, 255, 0.7)',
