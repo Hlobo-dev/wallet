@@ -320,12 +320,12 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
       <Image style={styles.image} source={require('./images/PasskeyIllustration.png')} />
       <View style={styles.titleContainer}>
         <Label type="boldDisplay4">
-          {mode === 'wealth' ? 'Link Wealth Accounts' : loc.walletCloudBackup.secureYourBackup}
+          {mode === 'wealth' ? 'Link Wealth Accounts' : 'Connect a brokerage'}
         </Label>
         <Label type="regularBody" color="light75">
           {mode === 'wealth'
             ? 'Read-only tracking of your wealth management accounts via Plaid.'
-            : loc.walletCloudBackup.passkeyDescription}
+            : 'Link your brokerage account to track your portfolio, view positions, and trade — all from one place.'}
         </Label>
       </View>
       <View style={styles.container}>
