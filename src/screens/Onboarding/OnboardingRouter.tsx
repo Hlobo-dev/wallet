@@ -43,6 +43,7 @@ export type OnboardingStackParams = {
   OnboardingSecureWallet: undefined;
   OnboardingWalletCloudBackup: {
     origin: Routes.OnboardingBackupPrompt;
+    mode?: 'brokerage' | 'wealth';
   };
   OnboardingWalletCloudImport:
     | {

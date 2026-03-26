@@ -17,7 +17,7 @@ export const SettingsDisplaySeedScreen = ({ navigation }: SettingsNavigationProp
   const { isManualBackupNeeded, isCloudBackupSupported, isCloudBackupNeeded, isAnyBackupCompleted } = useWalletBackupSettings();
   const { seed, isSeedVisible, onSeedReveal } = useSeedPhrase();
 
-  const onCloudBackupSelected = () => navigation.navigate(Routes.SettingsWalletCloudBackup);
+  const onCloudBackupSelected = () => navigation.navigate(Routes.SettingsWalletCloudBackup, { mode: 'brokerage' });
   const onManualBackupSelected = () => navigation.navigate(Routes.SettingsWalletBackup);
 
   return (

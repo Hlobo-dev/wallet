@@ -7,8 +7,8 @@ import { navigationStyle } from '@/utils/navigationStyle';
 import type { SettingsNavigationProps } from '../SettingsRouter';
 
 export const SettingsWalletBackupMethodScreen = ({ navigation }: SettingsNavigationProps<'SettingsWalletBackupMethod'>) => {
-  const navigateToManualBackup = () => navigation.navigate(Routes.SettingsWalletCloudBackup);
-  const navigateToCloudBackup = () => navigation.navigate(Routes.SettingsWalletCloudBackup);
+  const navigateToManualBackup = () => navigation.navigate(Routes.SettingsWalletCloudBackup, { mode: 'wealth' });
+  const navigateToCloudBackup = () => navigation.navigate(Routes.SettingsWalletCloudBackup, { mode: 'brokerage' });
 
   const navigateToExplainer = () => {
     navigation.navigate(Routes.Explainer, { contentType: EXPLAINER_CONTENT_TYPES.BACKUP_RECOVERABILITY });

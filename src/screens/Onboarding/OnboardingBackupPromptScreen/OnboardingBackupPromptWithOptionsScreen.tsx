@@ -44,10 +44,12 @@ export const OnboardingBackupPromptScreenWithOptions = ({ navigation }: Onboardi
   const navigateToCloudBackup = () =>
     navigation.navigate(Routes.OnboardingWalletCloudBackup, {
       origin: Routes.OnboardingBackupPrompt,
+      mode: 'brokerage',
     });
   const navigateToManualBackup = () =>
     navigation.navigate(Routes.OnboardingWalletCloudBackup, {
       origin: Routes.OnboardingBackupPrompt,
+      mode: 'wealth',
     });
 
   const handleBackAction = useCallback(async () => {

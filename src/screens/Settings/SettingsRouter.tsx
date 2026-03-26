@@ -42,7 +42,7 @@ export type SettingsStackParams = {
   DisablePasswordProtection: undefined;
   SettingsWalletBackup: undefined;
   SettingsWalletBackupMethod: undefined;
-  SettingsWalletCloudBackup: undefined;
+  SettingsWalletCloudBackup: { mode?: 'brokerage' | 'wealth' } | undefined;
   SettingsWalletCloudBackupDelete: undefined;
   SettingsBackupVerify: undefined;
   SettingsDisplaySeed: undefined;

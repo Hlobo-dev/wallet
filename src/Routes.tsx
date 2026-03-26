@@ -58,7 +58,7 @@ export type RouteProps = ExcludeRealmObjectsFromRouteParams<
     WhatsNewAvaxLinea: undefined;
     WhatsNewBrowserExplore: undefined;
     WalletBackupPrompt: undefined;
-    WalletCloudBackupScreen: { origin: Routes } | undefined;
+    WalletCloudBackupScreen: { origin: Routes; mode?: 'brokerage' | 'wealth' } | undefined;
     CoinsList: undefined;
     ConnectAppScreen: ConnectAppParams;
     ConnectWalletConnectApp: ConnectWalletConnectAppParams;

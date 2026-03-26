@@ -16,6 +16,8 @@ import { Routes } from '@/Routes';
 import { useSecuredKeychain } from '@/secureStore/SecuredKeychainProvider';
 import { BROKERAGES, type BrokerageInfo } from '@/services/snaptrade';
 import { getSnapTradeClient } from '@/services/snaptrade';
+import { getPlaidClient } from '@/services/plaid';
+import { WEALTH_INSTITUTIONS, type WealthInstitution } from '@/services/plaid';
 import { hapticFeedback } from '@/utils/hapticFeedback';
 import { navigationStyle } from '@/utils/navigationStyle';
 import { runAfterUISync } from '@/utils/runAfterUISync';
@@ -50,6 +52,9 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
   const language = useLanguage();
 
   const successSheetRef = useRef<CloudBackupSuccessSheetRef>(null);
+
+  // Determine which mode to show based on route params
+  const mode = route.params?.mode ?? 'brokerage';
 
   const saveBackupMetadata = async (metadata: CloudBackupMetadata) => {
     try {
@@ -142,9 +147,12 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
   // ---------------------------------------------------------------------------
 
   const snaptradeClient = getSnapTradeClient();
+  const plaidClient = getPlaidClient();
   const { openURL } = useBrowser();
   const [connectingSlug, setConnectingSlug] = useState<string | null>(null);
   const [connectedSlug, setConnectedSlug] = useState<string | null>(null);
+  const [connectingWealthId, setConnectingWealthId] = useState<string | null>(null);
+  const [connectedWealthId, setConnectedWealthId] = useState<string | null>(null);
 
   const handleConnectBrokerage = useCallback(
     async (brokerage: BrokerageInfo) => {
@@ -232,20 +240,113 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
     );
   };
 
+  // ---------------------------------------------------------------------------
+  // Plaid wealth account connection
+  // ---------------------------------------------------------------------------
+
+  const handleConnectWealth = useCallback(
+    async (_institution: WealthInstitution) => {
+      if (connectingWealthId) {
+        return;
+      }
+      setConnectingWealthId(_institution.id);
+
+      try {
+        // Get a Plaid Link token from the backend
+        const tokenResult = await plaidClient.createLinkToken();
+
+        if (!tokenResult.success || !tokenResult.data) {
+          handleError(
+            new Error(tokenResult.error ?? 'Failed to create Plaid link token'),
+            'ERROR_CONTEXT_PLACEHOLDER',
+            'generic',
+          );
+          setConnectingWealthId(null);
+          return;
+        }
+
+        // Open the Plaid hosted Link page inside the in-app browser
+        const hostedUrl = plaidClient.getHostedLinkUrl(tokenResult.data.linkToken);
+        openURL(hostedUrl);
+
+        hapticFeedback.notificationSuccess();
+        setConnectedWealthId(_institution.id);
+      } catch (e) {
+        handleError(e, 'ERROR_CONTEXT_PLACEHOLDER', 'generic');
+      } finally {
+        setConnectingWealthId(null);
+      }
+    },
+    [connectingWealthId, openURL, plaidClient],
+  );
+
+  const renderWealthItem = (institution: WealthInstitution) => {
+    const isConnecting = connectingWealthId === institution.id;
+    const isConnected = connectedWealthId === institution.id;
+
+    return (
+      <TouchableOpacity
+        key={institution.id}
+        style={styles.brokerageRow}
+        activeOpacity={0.7}
+        onPress={() => handleConnectWealth(institution)}
+        disabled={isConnecting}>
+        {/* Fallback letter avatar — matching Vibe-Trading PlaidConnector style */}
+        <View style={[styles.brokerageAvatar, styles.avatarDefaultBg]}>
+          <Label type="boldBody" style={{ color: institution.color }}>
+            {institution.fallback}
+          </Label>
+        </View>
+
+        {/* Name */}
+        <Label type="boldBody" style={styles.brokerageName}>
+          {institution.name}
+        </Label>
+
+        {/* Status indicator */}
+        {isConnecting ? (
+          <ActivityIndicator size="small" color="#667eea" />
+        ) : isConnected ? (
+          <SvgIcon name="check-circle-filled" size={20} color="green400" />
+        ) : (
+          <SvgIcon name="chevron-right" size={20} color="light50" />
+        )}
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <GradientScreenView>
       <Image style={styles.image} source={require('./images/PasskeyIllustration.png')} />
       <View style={styles.titleContainer}>
-        <Label type="boldDisplay4">{loc.walletCloudBackup.secureYourBackup}</Label>
+        <Label type="boldDisplay4">
+          {mode === 'wealth' ? 'Link Wealth Accounts' : loc.walletCloudBackup.secureYourBackup}
+        </Label>
         <Label type="regularBody" color="light75">
-          {loc.walletCloudBackup.passkeyDescription}
+          {mode === 'wealth'
+            ? 'Read-only tracking of your wealth management accounts via Plaid.'
+            : loc.walletCloudBackup.passkeyDescription}
         </Label>
       </View>
       <View style={styles.container}>
         <GradientItemBackground />
-        <ScrollView style={styles.brokerageList} showsVerticalScrollIndicator={false}>
-          {BROKERAGES.map(renderBrokerageItem)}
-        </ScrollView>
+        {mode === 'wealth' ? (
+          <ScrollView style={styles.brokerageList} showsVerticalScrollIndicator={false}>
+            {WEALTH_INSTITUTIONS.map(renderWealthItem)}
+          </ScrollView>
+        ) : (
+          <ScrollView style={styles.brokerageList} showsVerticalScrollIndicator={false}>
+            {BROKERAGES.map(renderBrokerageItem)}
+          </ScrollView>
+        )}
+        {mode === 'wealth' && (
+          <View style={styles.plaidFooter}>
+            <SvgIcon name="shield-tick" size={14} color="light50" />
+            <Label type="regularCaption1" color="light50" style={styles.plaidFooterText}>
+              Secured by Plaid · Bank-level encryption · Read-only
+            </Label>
+          </View>
+        )}
       </View>
       <CloudBackupSuccessSheet ref={successSheetRef} />
       {!!passkeyError && <CloudBackupErrorSheet type={passkeyError} onClose={clearError} onRetry={runBackupFlow} />}
@@ -308,6 +409,16 @@ const styles = StyleSheet.create({
   },
   brokerageName: {
     flex: 1,
+  },
+  plaidFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    gap: 6,
+  },
+  plaidFooterText: {
+    fontSize: 11,
   },
 });
 
