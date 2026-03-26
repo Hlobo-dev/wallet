@@ -176,7 +176,7 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
         // Generate the connection portal URL
         const portalResult = await snaptradeClient.generateConnectionPortal({
           brokerageSlug: brokerage.slug,
-          connectionType: 'trade',
+          connectionType: brokerage.supportsTrading ? 'trade' : 'read',
         });
 
         if (!portalResult.success || !portalResult.data) {
@@ -190,7 +190,7 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
         }
 
         // Open the SnapTrade OAuth page inside the in-app browser
-        openURL(portalResult.data.redirectUri);
+        openURL(portalResult.data.redirectURI);
 
         hapticFeedback.notificationSuccess();
         setConnectedSlug(brokerage.slug);

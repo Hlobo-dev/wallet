@@ -114,9 +114,9 @@ export interface Order {
 }
 
 export interface ConnectionPortalResponse {
-  redirectUri: string;
-  sessionId: string;
-  expiresAt: Date;
+  redirectURI: string;
+  sessionId?: string;
+  expiresAt?: string;
 }
 
 export interface ApiResponse<T> {
@@ -232,7 +232,7 @@ export class SnapTradeClientService {
     const response = await this.request<SnapTradeUser>(
       'POST',
       '/users/register',
-      { platformUserId },
+      { userId: platformUserId },
       false,
     );
     if (response.success && response.data) {
@@ -260,10 +260,10 @@ export class SnapTradeClientService {
     reconnect?: boolean;
     connectionType?: 'read' | 'trade';
   }): Promise<ApiResponse<ConnectionPortalResponse>> {
-    return this.request<ConnectionPortalResponse>('POST', '/connections/portal', {
-      brokerageSlug: options?.brokerageSlug,
-      immediateRedirect: options?.immediateRedirect,
-      customRedirectUri: options?.customRedirectUri,
+    return this.request<ConnectionPortalResponse>('POST', '/connect', {
+      broker: options?.brokerageSlug,
+      immediateRedirect: options?.immediateRedirect ?? true,
+      customRedirect: options?.customRedirectUri,
       reconnect: options?.reconnect,
       connectionType: options?.connectionType ?? 'trade',
     });

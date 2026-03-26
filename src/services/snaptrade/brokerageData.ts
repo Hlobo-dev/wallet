@@ -25,7 +25,7 @@ export interface BrokerageInfo {
 /* eslint-disable @typescript-eslint/no-require-imports */
 export const BROKERAGES: BrokerageInfo[] = [
   {
-    slug: 'INTERACTIVE_BROKERS',
+    slug: 'INTERACTIVE-BROKERS-FLEX',
     name: 'Interactive Brokers',
     logo: require('@/assets/brokerLogos/interactive-brokers.jpeg'),
     needsWhiteBg: false,
@@ -61,7 +61,7 @@ export const BROKERAGES: BrokerageInfo[] = [
     supportsTrading: true,
   },
   {
-    slug: 'ALPACA_PAPER',
+    slug: 'ALPACA-PAPER',
     name: 'Alpaca Paper',
     logo: require('@/assets/brokerLogos/alpaca.png'),
     needsWhiteBg: false,
