@@ -18,6 +18,7 @@ import type { BrokerageHolding } from '@/hooks/useBrokeragePositions';
 import { getRemoteLogoUrls, isCurrencySymbol, parseCurrencyCode } from '@/hooks/useStockLogo';
 import { useAppCurrency } from '@/realm/settings/useAppCurrency';
 import { getCurrencyInfo } from '@/screens/Settings/currency';
+import type { LivePrice } from '@/services/polygon/types';
 
 import { icons } from '/generated/assetIcons';
 
@@ -222,18 +223,36 @@ const iconStyles = StyleSheet.create({
 
 interface BrokeragePositionRowProps {
   holding: BrokerageHolding;
+  /** Real-time price from Polygon.io WebSocket (optional — overlays SnapTrade price). */
+  livePrice?: LivePrice;
 }
 
-export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({ holding }) => {
+export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({ holding, livePrice }) => {
   const { currency } = useAppCurrency();
   const currencyInfo = getCurrencyInfo(currency);
   const currencySymbol = currencyInfo.sign;
 
+  // ── Overlay live Polygon price if available ─────────────────────────────
+  const effectivePrice = livePrice ? livePrice.price : holding.price;
+  const effectiveValue = holding.units * effectivePrice;
+  const costBasis = holding.units * holding.averageCost;
+  const effectivePnl = costBasis > 0 ? effectiveValue - costBasis : holding.unrealizedPnl;
+  const effectivePnlPct = costBasis > 0 ? (effectivePnl / costBasis) * 100 : holding.unrealizedPnlPercent;
+
+  // Use Polygon's 24h change if available
+  const effectiveChange24h = livePrice ? livePrice.changePercent : holding.change24h;
+
   const displayName = getDisplayName(holding.name, holding.symbol);
   const displaySymbol = getDisplaySymbol(holding.symbol);
-  const pnlColor = holding.unrealizedPnlPercent >= 0 ? 'green400' : 'red400';
-  const pnlLabel = formatPnlPercent(holding.unrealizedPnlPercent);
-  const fiatValue = formatFiat(holding.value, currencySymbol);
+  const pnlColor = effectivePnlPct >= 0 ? 'green400' : 'red400';
+  const pnlLabel = formatPnlPercent(effectivePnlPct);
+
+  // Show 24h change next to P&L if we have real data from Polygon
+  const changeLabel = effectiveChange24h !== 0
+    ? ` (${effectiveChange24h >= 0 ? '+' : ''}${effectiveChange24h.toFixed(2)}% today)`
+    : '';
+
+  const fiatValue = formatFiat(effectiveValue, currencySymbol);
   const qty = formatQuantity(holding.units, displaySymbol);
 
   const row = useMemo(
@@ -247,7 +266,7 @@ export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({
               {displayName}
             </Label>
             <Label type="regularCaption1" color={pnlColor}>
-              {pnlLabel}
+              {pnlLabel}{changeLabel}
             </Label>
           </View>
         </View>
@@ -263,7 +282,7 @@ export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({
         </View>
       </View>
     ),
-    [holding.symbol, holding.bgColor, displayName, pnlColor, pnlLabel, fiatValue, qty],
+    [holding.symbol, holding.bgColor, displayName, pnlColor, pnlLabel, changeLabel, fiatValue, qty],
   );
 
   return row;

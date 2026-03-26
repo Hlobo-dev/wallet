@@ -16,6 +16,7 @@ import type { WealthHolding } from '@/hooks/useWealthPositions';
 import { getRemoteLogoUrls, isCurrencySymbol, parseCurrencyCode } from '@/hooks/useStockLogo';
 import { useAppCurrency } from '@/realm/settings/useAppCurrency';
 import { getCurrencyInfo } from '@/screens/Settings/currency';
+import type { LivePrice } from '@/services/polygon/types';
 
 import { icons } from '/generated/assetIcons';
 
@@ -192,17 +193,34 @@ const iconStyles = StyleSheet.create({
 
 interface WealthPositionRowProps {
   holding: WealthHolding;
+  /** Real-time price from Polygon.io WebSocket (optional — overlays Plaid price). */
+  livePrice?: LivePrice;
 }
 
-export const WealthPositionRow = memo(({ holding }: WealthPositionRowProps) => {
+export const WealthPositionRow = memo(({ holding, livePrice }: WealthPositionRowProps) => {
   const { currency } = useAppCurrency();
   const currencyInfo = useMemo(() => getCurrencyInfo(currency), [currency]);
   const sign = currencyInfo.sign;
 
+  // ── Overlay live Polygon price if available ─────────────────────────────
+  const effectivePrice = livePrice ? livePrice.price : holding.price;
+  const effectiveValue = holding.quantity * effectivePrice;
+  const costBasis = holding.costBasis ?? 0;
+  const effectivePnl = costBasis > 0 ? effectiveValue - costBasis : holding.unrealizedPnl;
+  const effectivePnlPct = costBasis > 0 ? ((effectiveValue - costBasis) / costBasis) * 100 : holding.unrealizedPnlPercent;
+
+  // Use Polygon's 24h change if available
+  const change24h = livePrice ? livePrice.changePercent : 0;
+
   const displayName = getDisplayName(holding.name, holding.symbol);
   const displaySymbol = getDisplaySymbol(holding.symbol);
-  const pnlPctText = formatPnlPercent(holding.unrealizedPnlPercent);
-  const isPositive = (holding.unrealizedPnlPercent ?? 0) >= 0;
+  const pnlPctText = formatPnlPercent(effectivePnlPct);
+  const isPositive = (effectivePnlPct ?? 0) >= 0;
+
+  // Show 24h change next to P&L if we have real data from Polygon
+  const changeLabel = change24h !== 0
+    ? ` (${change24h >= 0 ? '+' : ''}${change24h.toFixed(2)}% today)`
+    : '';
 
   return (
     <View style={styles.container}>
@@ -214,7 +232,7 @@ export const WealthPositionRow = memo(({ holding }: WealthPositionRowProps) => {
           {displayName}
         </Label>
         {pnlPctText ? (
-          <Text style={[styles.pnl, isPositive ? styles.pnlUp : styles.pnlDown]}>{pnlPctText}</Text>
+          <Text style={[styles.pnl, isPositive ? styles.pnlUp : styles.pnlDown]}>{pnlPctText}{changeLabel}</Text>
         ) : (
           <Text style={styles.institution}>{holding.institution}</Text>
         )}
@@ -222,7 +240,7 @@ export const WealthPositionRow = memo(({ holding }: WealthPositionRowProps) => {
 
       {/* Right side: value + quantity */}
       <View style={styles.right}>
-        <Label type="boldTitle2">{formatFiat(holding.currentValue, sign)}</Label>
+        <Label type="boldTitle2">{formatFiat(effectiveValue, sign)}</Label>
         <Label type="regularCaption1" color="light50">
           {formatQuantity(holding.quantity, displaySymbol)}
         </Label>

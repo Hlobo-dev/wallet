@@ -35,6 +35,8 @@ import { useHomeAssetPanelEmitterListener } from './homeAssetPanelEventEmitter';
 import { HomeAssetPanelSectionList } from './HomeAssetsSectionList';
 import { KrakenConnectFundCTA } from './KrakenConnectFundCTA';
 
+import { usePolygonPrices } from '@/hooks/usePolygonPrices';
+
 import { BrokeragePositionRow } from './BrokeragePositionRow';
 import { TokenRow } from './TokenRow';
 import { WealthPositionRow } from './WealthPositionRow';
@@ -114,6 +116,25 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
   const { holdings: wealthHoldings } = useWealthPositions();
   const bottomSheetRef = useRef<BottomSheetRef>(null);
   const hideConnectCTA = useIsKrakenConnectCtaHidden();
+
+  // ── Collect all unique symbols for Polygon.io real-time streaming ─────
+  const allSymbols = useMemo(() => {
+    const syms = new Set<string>();
+    for (const h of allBrokerageHoldings) {
+      if (h.symbol && !h.symbol.startsWith('CUR:')) {
+        syms.add(h.symbol.toUpperCase());
+      }
+    }
+    for (const h of wealthHoldings) {
+      if (h.symbol && h.symbol !== 'N/A') {
+        syms.add(h.symbol.toUpperCase());
+      }
+    }
+    return Array.from(syms);
+  }, [allBrokerageHoldings, wealthHoldings]);
+
+  // ── Polygon.io real-time prices (WebSocket + REST snapshot) ───────────
+  const { prices: livePrices } = usePolygonPrices(allSymbols);
 
   const stickyHeaderIndex = useSharedValue(0);
 
@@ -242,20 +263,22 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
   }, []);
 
   const renderBrokeragePosition = useCallback((item: BrokerageHolding) => {
+    const live = livePrices.get(item.symbol.toUpperCase());
     return (
       <ListAnimatedItem>
-        <BrokeragePositionRow holding={item} />
+        <BrokeragePositionRow holding={item} livePrice={live} />
       </ListAnimatedItem>
     );
-  }, []);
+  }, [livePrices]);
 
   const renderWealthPosition = useCallback((item: WealthHolding) => {
+    const live = livePrices.get(item.symbol.toUpperCase());
     return (
       <ListAnimatedItem>
-        <WealthPositionRow holding={item} />
+        <WealthPositionRow holding={item} livePrice={live} />
       </ListAnimatedItem>
     );
-  }, []);
+  }, [livePrices]);
 
   const renderSectionItem = useCallback(
     ({ item, section }: { item: SectionItem; index: number; section: SectionType }) => {

@@ -10,6 +10,7 @@
  *   2. getPlaidClient().getHoldings()   → all investment holdings across connections
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -154,14 +155,37 @@ async function saveCache(holdings: WealthHolding[]): Promise<void> {
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
+/** Polling interval for live wealth position updates (30 seconds). */
+const POLL_INTERVAL_MS = 30_000;
+
+/**
+ * Minimum time between fetches — prevents hammering the API if multiple
+ * triggers fire in quick succession (e.g. AppState + interval at the same time).
+ */
+const MIN_FETCH_GAP_MS = 10_000;
+
 export function useWealthPositions() {
   const [holdings, setHoldings] = useState<WealthHolding[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const fetchedRef = useRef(false);
+  const lastFetchAt = useRef(0);
+  const isFetching = useRef(false);
+  const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const { getAccessToken, isAuthenticated } = useNubleAuth();
 
-  const fetchPositions = useCallback(async () => {
-    setIsLoading(true);
+  const fetchPositions = useCallback(async (silent = false) => {
+    // Throttle: skip if another fetch is already in-flight or was too recent
+    const now = Date.now();
+    if (isFetching.current) {
+      return;
+    }
+    if (now - lastFetchAt.current < MIN_FETCH_GAP_MS) {
+      return;
+    }
+    isFetching.current = true;
+    if (!silent) {
+      setIsLoading(true);
+    }
 
     try {
       // Get platform auth token
@@ -169,6 +193,8 @@ export function useWealthPositions() {
       if (!token) {
         console.log('[useWealthPositions] No platform auth token available');
         setIsLoading(false);
+        isFetching.current = false;
+        lastFetchAt.current = Date.now();
         return;
       }
 
@@ -183,6 +209,8 @@ export function useWealthPositions() {
         console.warn('[useWealthPositions] getHoldings failed:', result.error);
         // Don't clear existing holdings — keep cache
         setIsLoading(false);
+        isFetching.current = false;
+        lastFetchAt.current = Date.now();
         return;
       }
 
@@ -229,9 +257,11 @@ export function useWealthPositions() {
     }
 
     setIsLoading(false);
+    isFetching.current = false;
+    lastFetchAt.current = Date.now();
   }, [getAccessToken]);
 
-  // Load cache first, then live fetch
+  // ── Initial load: cache → live fetch ──────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
 
@@ -250,6 +280,48 @@ export function useWealthPositions() {
 
     return () => {
       cancelled = true;
+    };
+  }, [fetchPositions, isAuthenticated]);
+
+  // ── Foreground polling: refresh every 30s while the app is active ─────────
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return; // Don't poll until authenticated
+    }
+
+    const startPolling = () => {
+      if (pollTimer.current) {
+        return; // already polling
+      }
+      pollTimer.current = setInterval(() => {
+        fetchPositions(true); // silent — no loading spinner
+      }, POLL_INTERVAL_MS);
+    };
+
+    const stopPolling = () => {
+      if (pollTimer.current) {
+        clearInterval(pollTimer.current);
+        pollTimer.current = null;
+      }
+    };
+
+    // Start polling immediately (app is in foreground)
+    startPolling();
+
+    // Listen for AppState changes — pause polling when backgrounded,
+    // resume + do an immediate fetch when foregrounded.
+    const subscription = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        fetchPositions(true); // immediate silent refresh on foreground
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    });
+
+    return () => {
+      stopPolling();
+      subscription.remove();
     };
   }, [fetchPositions, isAuthenticated]);
 

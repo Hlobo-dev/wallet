@@ -40,6 +40,7 @@ declare module 'react-native-config' {
     PERSONAL_API_KEY?: string;
     PERSONAL_PRIVATE_KEY?: string;
     DEBUG_KEYSTORE_ANDROID_PASSWORD: string;
+    POLYGON_API_KEY?: string;
   }
 
   export const Config: NativeConfig;
