@@ -13,7 +13,7 @@ import type { SvgProps } from 'react-native-svg';
 
 import { Label } from '@/components/Label';
 import type { WealthHolding } from '@/hooks/useWealthPositions';
-import { getRemoteLogoUrl, isCurrencySymbol, parseCurrencyCode } from '@/hooks/useStockLogo';
+import { getRemoteLogoUrls, isCurrencySymbol, parseCurrencyCode } from '@/hooks/useStockLogo';
 import { useAppCurrency } from '@/realm/settings/useAppCurrency';
 import { getCurrencyInfo } from '@/screens/Settings/currency';
 
@@ -118,7 +118,8 @@ const ICON_SIZE = 40;
 
 const HoldingIcon = memo(({ symbol, bgColor }: { symbol: string; bgColor: string }) => {
   const Icon = getBundledIcon(symbol);
-  const [remoteError, setRemoteError] = useState(false);
+  const logoUrls = useMemo(() => getRemoteLogoUrls(symbol), [symbol]);
+  const [urlIndex, setUrlIndex] = useState(0);
 
   // 1. Bundled SVG icon (crypto)
   if (Icon) {
@@ -129,16 +130,15 @@ const HoldingIcon = memo(({ symbol, bgColor }: { symbol: string; bgColor: string
     );
   }
 
-  // 2. Remote logo from CDN (Parqet for stocks/ETFs, CoinCap for crypto)
-  if (!remoteError) {
-    const logoUri = getRemoteLogoUrl(symbol);
+  // 2. Multi-CDN waterfall (Public → Parqet → FMP, or CoinCap / flag)
+  if (urlIndex < logoUrls.length) {
     return (
       <View style={[iconStyles.ball, iconStyles.remoteBall]}>
         <Image
-          source={{ uri: logoUri }}
+          source={{ uri: logoUrls[urlIndex] }}
           style={iconStyles.remoteImage}
           resizeMode="cover"
-          onError={() => setRemoteError(true)}
+          onError={() => setUrlIndex(prev => prev + 1)}
         />
       </View>
     );

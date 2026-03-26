@@ -1,14 +1,15 @@
 /**
  * Hook & utilities for resolving stock/ETF/crypto logos for brokerage & wealth positions.
  *
- * Resolution order (mirrors Vibe-Trading StockLogo):
+ * Resolution order (multi-CDN waterfall for maximum coverage):
  *   1. Bundled SVG icon from kraken-wallet-cryptoicons (handled by row components)
  *   2. CoinCap CDN for known crypto symbols
- *   3. Parqet CDN for stocks & ETFs  (very reliable, no API key needed)
- *   4. Fallback: coloured circle with first letter (handled by row components)
- *
- * Results are cached in-memory for the lifetime of the app so the same logo
- * URL is never resolved twice.
+ *   3. Multi-CDN waterfall for stocks & ETFs:
+ *      a. Public.com CDN  — best overall coverage, incl. niche ETFs (HUMN, etc.)
+ *      b. Parqet CDN      — excellent European stock coverage
+ *      c. Financial Modeling Prep — great ETF fallback, no API key needed
+ *   4. Country flags via FlagCDN for cash / fiat positions (CUR:USD, etc.)
+ *   5. Fallback: coloured circle with first letter (handled by row components)
  */
 
 // ─── Currency → country flag mapping ─────────────────────────────────────────
@@ -44,12 +45,29 @@ const CRYPTO_SYMBOLS = new Set([
 // ─── CDN helpers ─────────────────────────────────────────────────────────────
 
 /**
+ * Public.com CDN — best overall coverage for US stocks & ETFs, including
+ * niche tickers like HUMN (Roundhill ETF Trust) that other CDNs miss.
+ * Returns a 3× retina PNG. 403 for truly non-existent tickers (triggers onError).
+ */
+export function getPublicLogoUrl(ticker: string): string {
+  return `https://universal.hellopublic.com/companyLogos/${ticker.toUpperCase()}@3x.png`;
+}
+
+/**
  * Parqet CDN — works for virtually every stock & ETF ticker.
  * Appends ?format=png because the default is SVG which React Native's
  * <Image> cannot render natively.
  */
 export function getParqetLogoUrl(ticker: string): string {
   return `https://assets.parqet.com/logos/symbol/${ticker.toUpperCase()}?format=png`;
+}
+
+/**
+ * Financial Modeling Prep CDN — great ETF coverage, free, no API key.
+ * Good fallback for tickers that Parqet misses.
+ */
+export function getFmpLogoUrl(ticker: string): string {
+  return `https://financialmodelingprep.com/image-stock/${ticker.toUpperCase()}.png`;
 }
 
 /**
@@ -117,30 +135,46 @@ export function getCurrencyFlagUrl(symbol: string): string | null {
 // ─── Public API ──────────────────────────────────────────────────────────────
 
 /**
- * Return a remote logo URL for the given ticker symbol.
+ * Return an **ordered array** of remote logo URLs to try for the given symbol.
+ * The row component should render the first URL and advance to the next on
+ * each `onError`, finally falling back to a letter circle.
  *
- * • Crypto → CoinCap CDN
- * • Stocks / ETFs → Parqet CDN
- *
- * This is a **synchronous** helper — no network request. The URLs are
- * deterministic CDN patterns that React Native's `<Image>` / `<FastImage>`
- * can load directly (with its own caching layer).
+ * • Currency / cash → single flag URL
+ * • Crypto          → single CoinCap URL
+ * • Stock / ETF     → multi-CDN waterfall (Public → Parqet → FMP)
  */
-export function getRemoteLogoUrl(symbol: string): string {
+export function getRemoteLogoUrls(symbol: string): string[] {
   const upper = symbol.toUpperCase();
 
-  // Currency / cash position → country flag (industry standard)
+  // Currency / cash position → country flag
   const flagUrl = getCurrencyFlagUrl(upper);
   if (flagUrl) {
-    return flagUrl;
+    return [flagUrl];
   }
 
+  // Crypto → CoinCap
   if (CRYPTO_SYMBOLS.has(upper)) {
-    return getCoinCapLogoUrl(upper);
+    return [getCoinCapLogoUrl(upper)];
   }
 
-  // Stock / ETF — use Parqet
-  return getParqetLogoUrl(upper);
+  // Stock / ETF — multi-CDN waterfall
+  // Parqet stays primary (original logos the user already approved).
+  // Public.com & FMP are only tried when Parqet 404s (niche ETFs like HUMN).
+  return [
+    getParqetLogoUrl(upper),   // Primary — original look, great general coverage
+    getPublicLogoUrl(upper),   // Fallback — best niche ETF coverage (HUMN, etc.)
+    getFmpLogoUrl(upper),      // Last resort
+  ];
+}
+
+/**
+ * Return a single remote logo URL for the given ticker symbol.
+ * Convenience wrapper — returns the first (highest-priority) URL.
+ *
+ * @deprecated Prefer `getRemoteLogoUrls()` for multi-CDN waterfall support.
+ */
+export function getRemoteLogoUrl(symbol: string): string {
+  return getRemoteLogoUrls(symbol)[0];
 }
 
 /**
