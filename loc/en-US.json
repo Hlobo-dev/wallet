@@ -1330,12 +1330,12 @@
     "titleWithSubtitle": "Connect your Accounts",
     "prompt": "Link your brokerage and wealth accounts to manage everything in one place.",
     "caption": "Connect your brokerage account for live trading or add wealth accounts to track your full portfolio across all platforms.",
-    "backupWithICloud": "Connect your brokerage for trading",
+    "backupWithICloud": "Connect your brokerage",
     "backupWithICloudCompleted": "Brokerage connected",
     "iCloudDescLong": "Link your brokerage account for live trading",
     "iCloudDescShort": "Brokerage account for trading",
     "iCloudDescCompletedShort": "Brokerage account connected",
-    "backupManually": "Connect your wealth account for tracking",
+    "backupManually": "Connect your wealth account",
     "backupManuallyCompleted": "Wealth account connected",
     "manualBackupDescLong": "Add a wealth account to track your full portfolio",
     "manualBackupDescShort": "Wealth account for tracking",
@@ -1392,8 +1392,8 @@
     "unconnected": {
       "title": "Get crypto in your wallet with Kraken",
       "body": "Connect your Kraken exchange account to seamlessly transfer funds into your wallet",
-      "cta": "Connect Kraken exchange",
-      "noAccount": "I don't have an account",
+      "cta": "Connect your brokerage",
+      "noAccount": "Connect your wealth account",
       "alert": "Only the current wallet: \"<b>{walletName}</b>\", will be connected to Kraken."
     },
     "connected": {

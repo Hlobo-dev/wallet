@@ -33,8 +33,8 @@ export const KrakenConnectLanding = ({ accountNumber, noAccount, connect }: Prop
 
       <FloatingBottomContainer style={styles.buttons}>
         <KrakenConnectWalletAlert message={loc.krakenConnect.unconnected.alert} accountNumber={accountNumber} />
-        <Button size="large" icon="kraken" color="kraken" text={loc.krakenConnect.unconnected.cta} onPress={connect} />
-        <Button size="large" text={loc.krakenConnect.unconnected.noAccount} onPress={noAccount} />
+        <Button size="large" color="light100" textColor="dark100" text={loc.krakenConnect.unconnected.cta} onPress={connect} />
+        <Button size="large" color="light100" textColor="dark100" text={loc.krakenConnect.unconnected.noAccount} onPress={noAccount} />
       </FloatingBottomContainer>
     </View>
   );
