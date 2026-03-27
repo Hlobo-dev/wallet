@@ -203,6 +203,34 @@ export const HomePortfolioChart = () => {
 
   const hasHoldings = symbolWeights.size > 0;
 
+  // ── Aggregate P&L across brokerage + wealth ─────────────────────────────
+  const { totalPnl, totalPnlPercent, todayPercent } = useMemo(() => {
+    let pnlSum = 0;
+    let costBasisSum = 0;
+    let todayWeightedChange = 0;
+    let todayTotalValue = 0;
+
+    for (const h of brokerageHoldings) {
+      pnlSum += h.unrealizedPnl;
+      costBasisSum += h.averageCost * h.units;
+      todayWeightedChange += h.change24h * h.value;
+      todayTotalValue += h.value;
+    }
+    for (const h of wealthHoldings) {
+      if (h.unrealizedPnl != null) {
+        pnlSum += h.unrealizedPnl;
+      }
+      if (h.costBasis != null) {
+        costBasisSum += h.costBasis * h.quantity;
+      }
+    }
+
+    const pnlPct = costBasisSum > 0 ? (pnlSum / costBasisSum) * 100 : 0;
+    const todayPct = todayTotalValue > 0 ? todayWeightedChange / todayTotalValue : 0;
+
+    return { totalPnl: pnlSum, totalPnlPercent: pnlPct, todayPercent: todayPct };
+  }, [brokerageHoldings, wealthHoldings]);
+
   return (
     <View style={styles.container}>
       {/* Portfolio label */}
@@ -246,6 +274,22 @@ export const HomePortfolioChart = () => {
 
       {/* Period Switcher */}
       <PeriodSwitcher onChange={onChangePeriod} />
+
+      {/* P&L Summary Pills */}
+      {hasHoldings && chartLoaded && (
+        <View style={styles.pnlRow}>
+          <View style={[styles.pnlPill, totalPnl >= 0 ? styles.pnlPillPositive : styles.pnlPillNegative]}>
+            <Text style={[styles.pnlText, { color: totalPnl >= 0 ? '#4ade80' : '#f87171' }]}>
+              P&L: {totalPnl >= 0 ? '+' : ''}{totalPnlPercent.toFixed(2)}% ({sign}{Math.abs(totalPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
+            </Text>
+          </View>
+          <View style={[styles.pnlPill, todayPercent >= 0 ? styles.pnlPillPositive : styles.pnlPillNegative]}>
+            <Text style={[styles.pnlText, { color: todayPercent >= 0 ? '#4ade80' : '#f87171' }]}>
+              Today: {todayPercent >= 0 ? '+' : ''}{todayPercent.toFixed(2)}%
+            </Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -282,5 +326,29 @@ const styles = StyleSheet.create({
     height: 140,
     marginLeft: -16,
     marginTop: 8,
+  },
+  pnlRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 12,
+    marginTop: 16,
+  },
+  pnlPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 24,
+    borderWidth: 1,
+  },
+  pnlPillPositive: {
+    backgroundColor: 'rgba(74, 222, 128, 0.08)',
+    borderColor: 'rgba(74, 222, 128, 0.20)',
+  },
+  pnlPillNegative: {
+    backgroundColor: 'rgba(248, 113, 113, 0.08)',
+    borderColor: 'rgba(248, 113, 113, 0.20)',
+  },
+  pnlText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
