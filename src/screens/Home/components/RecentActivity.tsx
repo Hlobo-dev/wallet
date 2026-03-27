@@ -5,11 +5,15 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { Button } from '@/components/Button';
 import { GradientItemBackground } from '@/components/GradientItemBackground';
 import { Label } from '@/components/Label';
+import { useAccountActivity } from '@/hooks/useAccountActivity';
+import type { AccountActivityItem } from '@/hooks/useAccountActivity';
 import { refreshAllTransactions } from '@/realm/refreshManagerHooks';
 import { useTransactionMutations } from '@/realm/transactions';
 import type { NavigationProps } from '@/Routes';
 import { Routes } from '@/Routes';
 import { useTransactionsDataSource } from '@/screens/Transactions/utils/useTransactionsDataSource';
+
+import { AccountActivityRow } from './AccountActivityRow';
 
 import loc from '/loc';
 
@@ -18,6 +22,8 @@ interface Props {
 }
 
 const TX_MAX_COUNT = 3;
+const ACCOUNT_ACTIVITY_MAX = 5;
+const COMBINED_MAX = 5;
 
 export const RecentActivity = ({ navigation }: Props) => {
   const { dangerouslyCleanupConfirmedTransactions } = useTransactionMutations();
@@ -45,7 +51,17 @@ export const RecentActivity = ({ navigation }: Props) => {
     onPendingTxSucceed,
     isRecentActivityView: true,
   });
-  const isEmpty = !dataSource.length;
+
+  // Fetch brokerage orders + wealth transactions
+  const { activities: accountActivities } = useAccountActivity();
+  const recentAccountActivities = accountActivities.slice(0, ACCOUNT_ACTIVITY_MAX);
+
+  // Build a combined, time-sorted feed (on-chain + account activity)
+  // On-chain txs don't have a simple timestamp, so we show them first,
+  // then account activities below. Capped at COMBINED_MAX total items.
+  const hasOnChainTx = dataSource.length > 0;
+  const hasAccountActivity = recentAccountActivities.length > 0;
+  const isEmpty = !hasOnChainTx && !hasAccountActivity;
 
   if (!canRenderSafeContent) {
     return null;
@@ -69,10 +85,16 @@ export const RecentActivity = ({ navigation }: Props) => {
         </View>
       ) : (
         <View style={styles.sectionList}>
-          {}
-          <GradientItemBackground backgroundType="modal" key={dataSource.map(keyExtractor).join('-')} />
-          {dataSource.map(item => (
+          <GradientItemBackground backgroundType="modal" key={`combined_${dataSource.length}_${recentAccountActivities.length}`} />
+
+          {/* On-chain wallet transactions */}
+          {dataSource.slice(0, COMBINED_MAX).map(item => (
             <View key={keyExtractor(item)}>{renderItem({ item })}</View>
+          ))}
+
+          {/* Brokerage orders + Wealth investment transactions */}
+          {recentAccountActivities.slice(0, COMBINED_MAX - dataSource.length).map((item: AccountActivityItem) => (
+            <AccountActivityRow key={item.id} item={item} />
           ))}
         </View>
       )}

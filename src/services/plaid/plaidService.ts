@@ -77,6 +77,25 @@ export interface PlaidHoldingsResponse {
   successCount: number;
 }
 
+export interface PlaidInvestmentTransaction {
+  investmentTransactionId: string;
+  accountId: string;
+  securityId: string;
+  date: string;
+  name: string;
+  quantity: number;
+  amount: number;
+  price: number;
+  fees: number | null;
+  type: 'buy' | 'sell' | 'cancel' | 'cash' | 'fee' | 'transfer' | 'dividend' | 'interest' | string;
+  subtype: string;
+  isoCurrencyCode: string;
+  /** Resolved ticker symbol for the security */
+  symbol?: string;
+  /** Institution the transaction belongs to */
+  institution?: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
@@ -249,6 +268,26 @@ export class PlaidClientService {
    */
   async getAccounts(): Promise<ApiResponse<{ accounts: PlaidAccount[]; count: number }>> {
     return this.request<{ accounts: PlaidAccount[]; count: number }>('GET', '/accounts');
+  }
+
+  /**
+   * Get investment transactions (buys, sells, dividends, etc.) from all Plaid connections.
+   * The backend should proxy Plaid's /investments/transactions/get endpoint.
+   */
+  async getInvestmentTransactions(
+    startDate?: string,
+    endDate?: string,
+  ): Promise<ApiResponse<{ transactions: PlaidInvestmentTransaction[]; totalCount: number }>> {
+    const today = new Date().toISOString().slice(0, 10);
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10);
+    return this.request<{ transactions: PlaidInvestmentTransaction[]; totalCount: number }>(
+      'POST',
+      '/investments/transactions',
+      {
+        startDate: startDate ?? thirtyDaysAgo,
+        endDate: endDate ?? today,
+      },
+    );
   }
 }
 
