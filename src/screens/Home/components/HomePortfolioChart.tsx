@@ -250,6 +250,22 @@ export const HomePortfolioChart = () => {
         )}
       </View>
 
+      {/* P&L Summary Pills */}
+      {hasHoldings && chartLoaded && (
+        <View style={styles.pnlRow}>
+          <View style={[styles.pnlPill, totalPnl >= 0 ? styles.pnlPillPositive : styles.pnlPillNegative]}>
+            <Text style={[styles.pnlText, { color: totalPnl >= 0 ? '#4ade80' : '#f87171' }]}>
+              P&L: {totalPnl >= 0 ? '+' : ''}{totalPnlPercent.toFixed(2)}% ({sign}{Math.abs(totalPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
+            </Text>
+          </View>
+          <View style={[styles.pnlPill, todayPercent >= 0 ? styles.pnlPillPositive : styles.pnlPillNegative]}>
+            <Text style={[styles.pnlText, { color: todayPercent >= 0 ? '#4ade80' : '#f87171' }]}>
+              Today: {todayPercent >= 0 ? '+' : ''}{todayPercent.toFixed(2)}%
+            </Text>
+          </View>
+        </View>
+      )}
+
       {/* Chart */}
       <Animated.View style={styles.chart} layout={CurvedTransition}>
         <CartesianChart data={hasHoldings ? chartData : CHART_PLACEHOLDER} xKey="timestamp" yKeys={['value']}>
@@ -274,22 +290,6 @@ export const HomePortfolioChart = () => {
 
       {/* Period Switcher */}
       <PeriodSwitcher onChange={onChangePeriod} />
-
-      {/* P&L Summary Pills */}
-      {hasHoldings && chartLoaded && (
-        <View style={styles.pnlRow}>
-          <View style={[styles.pnlPill, totalPnl >= 0 ? styles.pnlPillPositive : styles.pnlPillNegative]}>
-            <Text style={[styles.pnlText, { color: totalPnl >= 0 ? '#4ade80' : '#f87171' }]}>
-              P&L: {totalPnl >= 0 ? '+' : ''}{totalPnlPercent.toFixed(2)}% ({sign}{Math.abs(totalPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
-            </Text>
-          </View>
-          <View style={[styles.pnlPill, todayPercent >= 0 ? styles.pnlPillPositive : styles.pnlPillNegative]}>
-            <Text style={[styles.pnlText, { color: todayPercent >= 0 ? '#4ade80' : '#f87171' }]}>
-              Today: {todayPercent >= 0 ? '+' : ''}{todayPercent.toFixed(2)}%
-            </Text>
-          </View>
-        </View>
-      )}
     </View>
   );
 };
@@ -329,9 +329,9 @@ const styles = StyleSheet.create({
   },
   pnlRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     gap: 12,
-    marginTop: 16,
+    marginTop: 12,
   },
   pnlPill: {
     paddingHorizontal: 16,
