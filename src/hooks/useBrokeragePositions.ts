@@ -167,6 +167,9 @@ const CACHE_KEY = 'brokerage_positions_cache';
  *   X:ETHUSD → ETH, ETH-PERP → ETH, ETHUSDT → ETH, XETH → ETH
  */
 function extractBaseSymbol(raw: string): string {
+  if (!raw || typeof raw !== 'string') {
+    return '';
+  }
   let s = raw
     .replace('X:', '')
     .replace(/-USD$/, '')
@@ -190,19 +193,38 @@ function extractBaseSymbol(raw: string): string {
  *   { id, symbol, rawSymbol, description, type, ... }
  */
 function resolveSymbolString(sym: string | SnapTradeSymbol): string {
+  if (!sym) {
+    return '';
+  }
   if (typeof sym === 'string') {
     return sym;
   }
   // It's a SnapTradeSymbol object — prefer rawSymbol, then symbol
-  return sym.rawSymbol || sym.symbol || '';
+  // symbol may itself be a nested object (e.g. Kraken), so drill down
+  const inner = sym.rawSymbol || sym.symbol;
+  if (typeof inner === 'string') {
+    return inner;
+  }
+  if (inner && typeof inner === 'object') {
+    // Nested symbol object: { symbol: "XETH", raw_symbol: "XETH", ... }
+    return (inner as any).raw_symbol || (inner as any).rawSymbol || (inner as any).symbol || '';
+  }
+  return '';
 }
 
 /**
  * Extract a human-readable description from a SnapTradeSymbol object if available.
  */
 function resolveSymbolDescription(sym: string | SnapTradeSymbol): string | undefined {
-  if (typeof sym === 'object' && sym.description) {
-    return sym.description;
+  if (typeof sym === 'object' && sym) {
+    if (sym.description) {
+      return sym.description;
+    }
+    // Nested symbol object
+    const inner = sym.symbol;
+    if (inner && typeof inner === 'object' && (inner as any).description) {
+      return (inner as any).description;
+    }
   }
   return undefined;
 }
@@ -212,8 +234,21 @@ function resolveSymbolDescription(sym: string | SnapTradeSymbol): string | undef
  * Returns 'cs' (common stock), 'crypto', 'etf', etc.
  */
 function resolveSymbolType(sym: string | SnapTradeSymbol): string | undefined {
-  if (typeof sym === 'object' && sym.type) {
-    return sym.type;
+  if (typeof sym === 'object' && sym) {
+    if (sym.type) {
+      return typeof sym.type === 'string' ? sym.type : undefined;
+    }
+    // Nested symbol object: look for type.code (e.g. "crypto", "cs")
+    const inner = sym.symbol;
+    if (inner && typeof inner === 'object') {
+      const innerType = (inner as any).type;
+      if (typeof innerType === 'string') {
+        return innerType;
+      }
+      if (innerType && typeof innerType === 'object' && innerType.code) {
+        return innerType.code;
+      }
+    }
   }
   return undefined;
 }
@@ -236,7 +271,7 @@ function getFallbackBgColor(symbol: string): string {
     return CRYPTO_BG_COLORS[base];
   }
   const colors = ['#627EEA', '#F7931A', '#9945FF', '#4285F4', '#00D632', '#FF6A00'];
-  const idx = base.charCodeAt(0) % colors.length;
+  const idx = (base.length > 0 ? base.charCodeAt(0) : 0) % colors.length;
   return colors[idx];
 }
 
@@ -369,7 +404,7 @@ export function useBrokeragePositions() {
 
           console.log(`[useBrokeragePositions] ${account.institutionName}: ${posResult.data.length} position(s)`);
 
-          return posResult.data.map((pos: Position, posIndex: number): BrokerageHolding => {
+          const mapped = posResult.data.map((pos: Position, posIndex: number): BrokerageHolding => {
             const rawSymbol = resolveSymbolString(pos.symbol);
             const description = resolveSymbolDescription(pos.symbol);
             const symType = resolveSymbolType(pos.symbol);
@@ -401,12 +436,15 @@ export function useBrokeragePositions() {
               bgColor: getFallbackBgColor(baseSymbol),
             };
           });
+          return mapped;
         }),
       );
 
       for (const result of results) {
         if (result.status === 'fulfilled') {
           allHoldings.push(...result.value);
+        } else {
+          console.error('[useBrokeragePositions] Promise rejected:', result.reason);
         }
       }
 
