@@ -240,9 +240,11 @@ export const WealthPositionRow = memo(({ holding, livePrice, onPress }: WealthPo
   const isPositive = (effectivePnlPct ?? 0) >= 0;
 
   // Show 24h change next to P&L if we have real data from Polygon
-  const changeLabel = change24h !== 0
+  const hasChange = change24h !== 0;
+  const changeText = hasChange
     ? ` (${change24h >= 0 ? '+' : ''}${change24h.toFixed(2)}% today)`
     : '';
+  const changeIsPositive = change24h >= 0;
 
   return (
     <Touchable onPress={onPress} disabled={!onPress}>
@@ -255,7 +257,14 @@ export const WealthPositionRow = memo(({ holding, livePrice, onPress }: WealthPo
             {displayName}
           </Label>
           {pnlPctText ? (
-            <Text style={[styles.pnl, isPositive ? styles.pnlUp : styles.pnlDown]}>{pnlPctText}{changeLabel}</Text>
+            <Text style={[styles.pnl, isPositive ? styles.pnlUp : styles.pnlDown]}>
+              {pnlPctText}
+              {hasChange && (
+                <Text style={changeIsPositive ? styles.pnlUp : styles.pnlDown}>
+                  {changeText}
+                </Text>
+              )}
+            </Text>
           ) : (
             <Text style={styles.institution}>{holding.institution}</Text>
           )}

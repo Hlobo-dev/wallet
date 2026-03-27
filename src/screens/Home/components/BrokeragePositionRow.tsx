@@ -250,10 +250,12 @@ export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({
   const pnlColor = effectivePnlPct >= 0 ? 'green400' : 'red400';
   const pnlLabel = formatPnlPercent(effectivePnlPct);
 
-  // Show 24h change next to P&L if we have real data from Polygon
-  const changeLabel = effectiveChange24h !== 0
+  // Show 24h change next to P&L — use its own color based on sign
+  const hasChange = effectiveChange24h !== 0;
+  const changeText = hasChange
     ? ` (${effectiveChange24h >= 0 ? '+' : ''}${effectiveChange24h.toFixed(2)}% today)`
     : '';
+  const changeColor = effectiveChange24h >= 0 ? 'green400' : 'red400';
 
   const fiatValue = formatFiat(effectiveValue, currencySymbol);
   const qty = formatQuantity(holding.units, displaySymbol);
@@ -270,7 +272,12 @@ export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({
                 {displayName}
               </Label>
               <Label type="regularCaption1" color={pnlColor}>
-                {pnlLabel}{changeLabel}
+                {pnlLabel}
+                {hasChange && (
+                  <Label type="regularCaption1" color={changeColor}>
+                    {changeText}
+                  </Label>
+                )}
               </Label>
             </View>
           </View>
@@ -287,7 +294,7 @@ export const BrokeragePositionRow: React.FC<BrokeragePositionRowProps> = memo(({
         </View>
       </Touchable>
     ),
-    [holding.symbol, holding.bgColor, displayName, pnlColor, pnlLabel, changeLabel, fiatValue, qty, onPress],
+    [holding.symbol, holding.bgColor, displayName, pnlColor, pnlLabel, hasChange, changeText, changeColor, fiatValue, qty, onPress],
   );
 
   return row;
