@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
 
 import { StyleSheet } from 'react-native';
@@ -13,13 +14,17 @@ interface ListHeaderProps {
   onButtonPress?: () => void;
   buttonTestID?: string;
   disabled?: boolean;
+  /** Optional custom element to render on the right side (replaces the button) */
+  rightElement?: ReactNode;
 }
 
-export const ListHeader = ({ title, buttonText, onButtonPress, style, buttonTestID, disabled }: ListHeaderProps) => {
+export const ListHeader = ({ title, buttonText, onButtonPress, style, buttonTestID, disabled, rightElement }: ListHeaderProps) => {
   return (
     <Animated.View style={[style, styles.wrapper]} entering={FadeIn} exiting={FadeOut} testID={buttonTestID}>
       <Label type="boldDisplay4">{title}</Label>
-      {buttonText && onButtonPress && <Button text={buttonText} onPress={onButtonPress} testID={buttonTestID} disabled={disabled} />}
+      {rightElement
+        ? rightElement
+        : buttonText && onButtonPress && <Button text={buttonText} onPress={onButtonPress} testID={buttonTestID} disabled={disabled} />}
     </Animated.View>
   );
 };
@@ -28,5 +33,6 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });

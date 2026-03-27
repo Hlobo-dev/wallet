@@ -37,7 +37,7 @@ import { KrakenConnectFundCTA } from './KrakenConnectFundCTA';
 
 import { usePolygonPrices } from '@/hooks/usePolygonPrices';
 
-import { BrokerageAccountFilter } from './BrokerageAccountFilter';
+import { BrokerageAccountFilter, AccountSelectorPill } from './BrokerageAccountFilter';
 import type { BrokerageAccount } from './BrokerageAccountFilter';
 import { BrokeragePositionRow } from './BrokeragePositionRow';
 import { TokenRow } from './TokenRow';
@@ -122,6 +122,9 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
   // ── Brokerage account filter state ────────────────────────────────────
   const [selectedBrokerageAccount, setSelectedBrokerageAccount] = useState<string | null>(null);
 
+  // ── Wealth account filter state ───────────────────────────────────────
+  const [selectedWealthAccount, setSelectedWealthAccount] = useState<string | null>(null);
+
   // ── Collect all unique symbols for Polygon.io real-time streaming ─────
   const allSymbols = useMemo(() => {
     const syms = new Set<string>();
@@ -144,13 +147,36 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
 
   const stickyHeaderIndex = useSharedValue(0);
 
+  // ── Extract unique wealth accounts for the filter pills ────────────
+  const wealthAccounts: BrokerageAccount[] = useMemo(() => {
+    const accountMap = new Map<string, { positionCount: number; totalValue: number }>();
+    for (const h of wealthHoldings) {
+      const name = h.institution || 'Wealth Account';
+      const existing = accountMap.get(name);
+      if (existing) {
+        existing.positionCount += 1;
+        existing.totalValue += h.currentValue;
+      } else {
+        accountMap.set(name, { positionCount: 1, totalValue: h.currentValue });
+      }
+    }
+    return Array.from(accountMap.entries())
+      .map(([name, data]) => ({ name, ...data }))
+      .sort((a, b) => b.totalValue - a.totalValue);
+  }, [wealthHoldings]);
+
   // Wealth section: only Plaid-connected holdings (Morgan Stanley, etc.)
-  // Deduplicate by symbol — aggregate quantities across accounts
+  // Apply account filter, then deduplicate by symbol — aggregate quantities
   // Compute wealth FIRST so we can exclude overlapping symbols from brokerage
   const combinedWealthHoldings = useMemo(() => {
+    // Apply wealth account filter
+    const source = selectedWealthAccount
+      ? wealthHoldings.filter(h => (h.institution || 'Wealth Account') === selectedWealthAccount)
+      : wealthHoldings;
+
     // Only Plaid holdings go to Wealth — no SnapTrade stock mixing
     const bySymbol = new Map<string, WealthHolding>();
-    for (const h of wealthHoldings) {
+    for (const h of source) {
       const existing = bySymbol.get(h.symbol);
       if (existing) {
         existing.quantity += h.quantity;
@@ -165,7 +191,7 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
       }
     }
     return Array.from(bySymbol.values()).sort((a, b) => b.currentValue - a.currentValue);
-  }, [wealthHoldings]);
+  }, [wealthHoldings, selectedWealthAccount]);
 
   // All SnapTrade holdings go under Brokerage
   // Exclude positions from wealth-type institutions (Morgan Stanley, etc.) that
@@ -382,36 +408,43 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
           );
         case SectionName.BrokeragePositions:
           return (
-            <>
-              <ListHeader
-                title="Brokerage"
-                buttonText={loc.home.manage}
-                onButtonPress={() => {
-                  navigation.navigate(Routes.CoinsList);
-                }}
-                buttonTestID={`ManageBrokerageButton${sticky ? '-Sticky' : ''}`}
-                style={[headerStyle, !sticky && styles.firstHeader]}
-              />
-              {!sticky && (
-                <BrokerageAccountFilter
+            <ListHeader
+              title="Brokerage"
+              buttonTestID={`ManageBrokerageButton${sticky ? '-Sticky' : ''}`}
+              style={[headerStyle, !sticky && styles.firstHeader]}
+              rightElement={
+                <AccountSelectorPill
                   accounts={brokerageAccounts}
                   selectedAccount={selectedBrokerageAccount}
                   onSelectAccount={setSelectedBrokerageAccount}
                 />
-              )}
-            </>
+              }
+            />
           );
         case SectionName.DefiEarnPositions:
           return <ListHeader title={loc.home.deposits} style={headerStyle} buttonTestID="DefiHeader" />;
         case SectionName.WealthPositions:
-          return <ListHeader title={loc.home.deposits} style={headerStyle} buttonTestID="WealthHeader" />;
+          return (
+            <ListHeader
+              title="Wealth"
+              style={headerStyle}
+              buttonTestID="WealthHeader"
+              rightElement={
+                <AccountSelectorPill
+                  accounts={wealthAccounts}
+                  selectedAccount={selectedWealthAccount}
+                  onSelectAccount={setSelectedWealthAccount}
+                />
+              }
+            />
+          );
         case SectionName.DefiEarnNoPositions:
           return <DefiEmptyPositions />;
         default:
           return null;
       }
     },
-    [navigation, brokerageAccounts, selectedBrokerageAccount, setSelectedBrokerageAccount],
+    [navigation, brokerageAccounts, selectedBrokerageAccount, setSelectedBrokerageAccount, wealthAccounts, selectedWealthAccount, setSelectedWealthAccount],
   );
 
   const stickyHeaderStyle = useAnimatedStyle(() => ({

@@ -33,6 +33,17 @@ const INSTITUTION_LOGO_TICKERS: Record<string, string> = {
   ally: 'ALLY',
   firstrade: 'FIRST',
   moomoo: 'FUTU',
+  // Wealth institutions
+  'morgan stanley': 'MS',
+  'goldman sachs': 'GS',
+  'jp morgan': 'JPM',
+  jpmorgan: 'JPM',
+  merrill: 'BAC',
+  'merrill lynch': 'BAC',
+  ubs: 'UBS',
+  'wells fargo': 'WFC',
+  'edward jones': 'EDJ',
+  vanguard: 'VGD',
 };
 
 /** Institution brand colors for fallback circles. */
@@ -52,6 +63,17 @@ const INSTITUTION_COLORS: Record<string, string> = {
   public: '#000000',
   ally: '#5A2D82',
   moomoo: '#FF6600',
+  // Wealth institutions
+  'morgan stanley': '#002B59',
+  'goldman sachs': '#6F9FD8',
+  'jp morgan': '#005EB8',
+  jpmorgan: '#005EB8',
+  merrill: '#012169',
+  'merrill lynch': '#012169',
+  ubs: '#E60000',
+  'wells fargo': '#D71E28',
+  'edward jones': '#006747',
+  vanguard: '#96252D',
 };
 
 function getInstitutionColor(name: string): string {
@@ -96,7 +118,7 @@ interface BrokerageAccountFilterProps {
 
 // ─── Pill Components ────────────────────────────────────────────────────────
 
-const PILL_ICON_SIZE = 24;
+const PILL_ICON_SIZE = 20;
 
 const InstitutionLogo = memo(({ name }: { name: string }) => {
   const ticker = getLogoTicker(name);
@@ -197,12 +219,70 @@ export const BrokerageAccountFilter = memo(({ accounts, selectedAccount, onSelec
   );
 });
 
+// ─── Inline Header Pill ─────────────────────────────────────────────────────
+
+/**
+ * Compact pill that sits in the ListHeader right side.
+ * Tapping cycles through: All → Account1 → Account2 → ... → All
+ */
+export const AccountSelectorPill = memo(({ accounts, selectedAccount, onSelectAccount }: BrokerageAccountFilterProps) => {
+  if (accounts.length === 0) {
+    return null;
+  }
+
+  const handlePress = () => {
+    if (selectedAccount === null) {
+      // Currently "All" → go to first account
+      onSelectAccount(accounts[0].name);
+    } else {
+      const currentIdx = accounts.findIndex(a => a.name === selectedAccount);
+      if (currentIdx < accounts.length - 1) {
+        // Go to next account
+        onSelectAccount(accounts[currentIdx + 1].name);
+      } else {
+        // Last account → back to "All"
+        onSelectAccount(null);
+      }
+    }
+  };
+
+  const displayName = selectedAccount ?? 'All';
+
+  return (
+    <Touchable onPress={handlePress}>
+      <View style={selectorStyles.pill}>
+        {selectedAccount && <InstitutionLogo name={selectedAccount} />}
+        <Label type="boldCaption1" color="light100" numberOfLines={1}>
+          {displayName}
+        </Label>
+        <Label type="boldCaption1" color="light50">
+          ▾
+        </Label>
+      </View>
+    </Touchable>
+  );
+});
+
+const selectorStyles = StyleSheet.create({
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.10)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
+  },
+});
+
 // ─── Styles ─────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 8,
-    marginTop: -4,
+    marginBottom: 12,
+    marginTop: 8,
   },
   scrollContent: {
     flexDirection: 'row',
