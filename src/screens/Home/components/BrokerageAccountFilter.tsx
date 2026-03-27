@@ -8,6 +8,7 @@
 import React, { memo, useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { KrakenIcon } from '@/components/KrakenIcon';
 import { Label } from '@/components/Label';
 import { Touchable } from '@/components/Touchable';
 import { getRemoteLogoUrls } from '@/hooks/useStockLogo';
@@ -121,9 +122,15 @@ interface BrokerageAccountFilterProps {
 const PILL_ICON_SIZE = 20;
 
 const InstitutionLogo = memo(({ name }: { name: string }) => {
+  const isKraken = name.toLowerCase().includes('kraken');
   const ticker = getLogoTicker(name);
   const logoUrls = useMemo(() => (ticker ? getRemoteLogoUrls(ticker) : []), [ticker]);
   const [urlIndex, setUrlIndex] = useState(0);
+
+  // Use the bundled Kraken icon for Kraken accounts
+  if (isKraken) {
+    return <KrakenIcon size={PILL_ICON_SIZE} iconSize={12} />;
+  }
 
   if (ticker && urlIndex < logoUrls.length) {
     return (
