@@ -14,7 +14,7 @@ import { FadingElement } from '@/components/FadingElement';
 import { ListAnimatedItem } from '@/components/ListAnimatedItem';
 import { ListHeader } from '@/components/ListHeader';
 import { useBottomElementSpacing } from '@/hooks/useBottomElementSpacing';
-import { useBrokeragePositions } from '@/hooks/useBrokeragePositions';
+import { useBrokeragePositions, CRYPTO_BG_COLORS } from '@/hooks/useBrokeragePositions';
 import type { BrokerageHolding } from '@/hooks/useBrokeragePositions';
 import { useCommonSnapPoints } from '@/hooks/useCommonSnapPoints';
 import { useWealthPositions } from '@/hooks/useWealthPositions';
@@ -22,6 +22,8 @@ import type { WealthHolding } from '@/hooks/useWealthPositions';
 import { useDefiPositionsQuery } from '@/reactQuery/hooks/earn/useDefiPositionsQuery';
 import type { RealmDefi } from '@/realm/defi';
 import { useIsKrakenConnectCtaHidden } from '@/realm/krakenConnect/useIsKrakenConnectCtaHidden';
+import { useIsConnectedWithExchange } from '@/realm/krakenConnect/useIsConnectedWithExchange';
+import { useKrakenAssetsWithPrices } from '@/reactQuery/hooks/krakenConnect/useKrakenAssetsWithPrices';
 import { useTokenPrices } from '@/realm/tokenPrice';
 import type { RealmToken } from '@/realm/tokens';
 import { sortTokensByFiatValue, useTokensFilteredByReputationAndNetwork } from '@/realm/tokens';
@@ -118,6 +120,45 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
   const { holdings: wealthHoldings } = useWealthPositions();
   const bottomSheetRef = useRef<BottomSheetRef>(null);
   const hideConnectCTA = useIsKrakenConnectCtaHidden();
+  const isKrakenConnected = useIsConnectedWithExchange();
+  const { data: krakenAssetsWithPrices } = useKrakenAssetsWithPrices();
+
+  // ── Convert Kraken Connect assets into BrokerageHolding objects ───────
+  console.log('[KRAKEN DEBUG] isKrakenConnected:', isKrakenConnected, 'krakenAssetsWithPrices:', krakenAssetsWithPrices?.length, 'data:', JSON.stringify(krakenAssetsWithPrices?.slice(0, 2)));
+  const krakenHoldings: BrokerageHolding[] = useMemo(() => {
+    if (!isKrakenConnected || !krakenAssetsWithPrices) {
+      console.log('[KRAKEN DEBUG] early return — connected:', isKrakenConnected, 'assets:', !!krakenAssetsWithPrices);
+      return [];
+    }
+    return krakenAssetsWithPrices
+      .filter(asset => asset.balanceInUsd && asset.balanceInUsd > 0.01)
+      .map((asset, idx): BrokerageHolding => {
+        const symbol = asset.symbol.toUpperCase();
+        const decimals = asset.metadata?.decimals ?? 0;
+        // balance is in smallest units (e.g. satoshis) — convert to human units
+        const rawBalance = parseFloat(asset.balance ?? '0');
+        const units = decimals > 0 ? rawBalance / Math.pow(10, decimals) : rawBalance;
+        const valueUsd = asset.balanceInUsd ?? 0;
+        const price = units > 0 ? valueUsd / units : 0;
+
+        return {
+          key: `brokerage_kraken_${symbol}_${idx}`,
+          symbol,
+          name: asset.metadata?.label ?? symbol,
+          isCrypto: true,
+          price,
+          averageCost: 0,
+          units,
+          value: valueUsd,
+          unrealizedPnl: 0,
+          unrealizedPnlPercent: 0,
+          change24h: 0,
+          accountId: 'kraken_connect',
+          accountName: 'Kraken',
+          bgColor: CRYPTO_BG_COLORS[symbol] ?? '#5741D9',
+        };
+      });
+  }, [isKrakenConnected, krakenAssetsWithPrices]);
 
   // ── Brokerage account filter state ────────────────────────────────────
   const [selectedBrokerageAccount, setSelectedBrokerageAccount] = useState<string | null>(null);
@@ -197,7 +238,7 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
   // Exclude positions from wealth-type institutions (Morgan Stanley, etc.) that
   // may have leaked through SnapTrade — those belong in the Wealth/Plaid section.
   const cleanBrokerageHoldings = useMemo(() => {
-    return allBrokerageHoldings.filter(h => {
+    const snapTradeHoldings = allBrokerageHoldings.filter(h => {
       const acctLower = (h.accountName || '').toLowerCase();
       return !(
         acctLower.includes('morgan stanley') ||
@@ -213,7 +254,9 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
         acctLower.includes('vanguard')
       );
     });
-  }, [allBrokerageHoldings]);
+    // Merge Kraken Connect holdings into brokerage positions
+    return [...snapTradeHoldings, ...krakenHoldings];
+  }, [allBrokerageHoldings, krakenHoldings]);
 
   // ── Extract unique brokerage accounts for the filter pills ────────────
   const brokerageAccounts: BrokerageAccount[] = useMemo(() => {
@@ -526,14 +569,14 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
-    marginTop: -HEADER_HEIGHT - 8,
+    marginTop: -HEADER_HEIGHT - 1,
   },
   headerStyle: {
     height: HEADER_HEIGHT,
     overflow: 'hidden',
   },
   scrollableHeaderStyle: {
-    marginTop: 28,
+    marginTop: 2,
   },
   divider: {
     height: 6,
@@ -542,7 +585,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     height: HEADER_HEIGHT,
     marginHorizontal: 24,
-    marginBottom: 8,
+    marginBottom: 20,
   },
   headerDivider: {
     height: 20,
