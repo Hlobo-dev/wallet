@@ -205,9 +205,9 @@ export const HomePortfolioChart = () => {
 
   return (
     <View style={styles.container}>
-      {/* PRICE label */}
+      {/* Portfolio label */}
       <Label type="boldCaption2" color="light50" style={styles.priceLabel}>
-        PRICE
+        PORTFOLIO
       </Label>
 
       {/* Price value + daily change % */}
@@ -255,7 +255,7 @@ export const HomePortfolioChart = () => {
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 24,
-    marginTop: 16,
+    marginTop: 24,
     marginBottom: 12,
   },
   priceLabel: {

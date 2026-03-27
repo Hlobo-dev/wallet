@@ -15,7 +15,6 @@ import { useIsOnline } from '@/utils/useConnectionManager';
 import { HomePortfolioChart } from './components/HomePortfolioChart';
 import { showRecentActivity } from './components/homeAssetPanelEventEmitter';
 import { HomeAssetsPanel } from './components/HomeAssetsPanel';
-import { HomeBalance } from './components/HomeBalance';
 import { HomeHeaderAccountSwitch } from './components/HomeHeaderAccountSwitch';
 import { HomeHeaderRight } from './components/HomeHeaderRight';
 import { RecentActivity } from './components/RecentActivity';
@@ -61,7 +60,6 @@ export const HomeScreen = ({ navigation, route }: NavigationProps<'Home'>) => {
     <GradientScreenView>
       <View style={styles.rootView} testID="HomeScreen">
         <ScrollViewWithRefreshControl onRefresh={pullToRefresh}>
-          <HomeBalance />
           <HomePortfolioChart />
           <WaitForAccountSwitchSettled>
             <RecentActivity navigation={navigation} />
