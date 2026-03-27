@@ -253,12 +253,12 @@ export const HomePortfolioChart = () => {
       {/* P&L Summary Pills */}
       {hasHoldings && chartLoaded && (
         <View style={styles.pnlRow}>
-          <View style={[styles.pnlPill, totalPnl >= 0 ? styles.pnlPillPositive : styles.pnlPillNegative]}>
+          <View style={[styles.pnlBadge, { backgroundColor: 'rgba(255,255,255,0.08)' }]}>
             <Text style={[styles.pnlText, { color: totalPnl >= 0 ? '#4ade80' : '#f87171' }]}>
               P&L: {totalPnl >= 0 ? '+' : ''}{totalPnlPercent.toFixed(2)}% ({sign}{Math.abs(totalPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
             </Text>
           </View>
-          <View style={[styles.pnlPill, todayPercent >= 0 ? styles.pnlPillPositive : styles.pnlPillNegative]}>
+          <View style={[styles.pnlBadge, { backgroundColor: 'rgba(255,255,255,0.08)' }]}>
             <Text style={[styles.pnlText, { color: todayPercent >= 0 ? '#4ade80' : '#f87171' }]}>
               Today: {todayPercent >= 0 ? '+' : ''}{todayPercent.toFixed(2)}%
             </Text>
@@ -329,26 +329,17 @@ const styles = StyleSheet.create({
   },
   pnlRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    gap: 12,
+    gap: 8,
     marginTop: 12,
+    flexWrap: 'wrap',
   },
-  pnlPill: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 24,
-    borderWidth: 1,
-  },
-  pnlPillPositive: {
-    backgroundColor: 'rgba(74, 222, 128, 0.08)',
-    borderColor: 'rgba(74, 222, 128, 0.20)',
-  },
-  pnlPillNegative: {
-    backgroundColor: 'rgba(248, 113, 113, 0.08)',
-    borderColor: 'rgba(248, 113, 113, 0.20)',
+  pnlBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
   pnlText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
   },
 });
