@@ -12,7 +12,7 @@ import { navigationStyle } from '@/utils/navigationStyle';
 import { runAfterUISync } from '@/utils/runAfterUISync';
 import { useIsOnline } from '@/utils/useConnectionManager';
 
-import { HomeActionButtons } from './components/HomeActionButtons';
+import { HomePortfolioChart } from './components/HomePortfolioChart';
 import { showRecentActivity } from './components/homeAssetPanelEventEmitter';
 import { HomeAssetsPanel } from './components/HomeAssetsPanel';
 import { HomeBalance } from './components/HomeBalance';
@@ -62,7 +62,7 @@ export const HomeScreen = ({ navigation, route }: NavigationProps<'Home'>) => {
       <View style={styles.rootView} testID="HomeScreen">
         <ScrollViewWithRefreshControl onRefresh={pullToRefresh}>
           <HomeBalance />
-          <HomeActionButtons navigation={navigation} />
+          <HomePortfolioChart />
           <WaitForAccountSwitchSettled>
             <RecentActivity navigation={navigation} />
           </WaitForAccountSwitchSettled>
