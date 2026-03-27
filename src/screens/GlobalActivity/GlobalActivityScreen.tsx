@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadingElement } from '@/components/FadingElement';
 import { GradientScreenView } from '@/components/Gradients';
 import { Label } from '@/components/Label';
-import { NetworkFilter, useNetworkFilter } from '@/components/NetworkFilter';
+import { AccountFilter } from '@/components/AccountFilter';
 import { useAccountActivity } from '@/hooks/useAccountActivity';
 import type { AccountActivityItem } from '@/hooks/useAccountActivity';
 import { useHeaderTitle } from '@/hooks/useHeaderTitle';
@@ -32,7 +32,7 @@ type CombinedListItem =
 export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActivity'>) => {
   useHeaderTitle(loc.globalActivity.title);
 
-  const [networkFilter, setNetworkFilter] = useNetworkFilter();
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const isOnline = useIsOnline();
   const { fetchAllTransactionsForAllNetworks } = useTransactionsFetch();
   const [isFetching, setIsFetching] = useState(false);
@@ -50,18 +50,26 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
   const { dataSource: onChainData, keyExtractor: onChainKeyExtractor, renderItem: onChainRenderItem, renderFooter, getItemType, loadNextPage } = useTransactionsDataSource({
     onPendingTxSucceed,
     navigation,
-    networkFilter,
+    networkFilter: [],
   });
 
   // Account activity (brokerage + wealth)
-  const { activities: accountActivities } = useAccountActivity();
+  const { activities: accountActivities, accountNames } = useAccountActivity();
+
+  // Filter activities by selected account
+  const filteredActivities = useMemo(() => {
+    if (selectedAccount === null) {
+      return accountActivities;
+    }
+    return accountActivities.filter(a => a.accountName === selectedAccount);
+  }, [accountActivities, selectedAccount]);
 
   // Build combined data source
   const combinedData = useMemo<CombinedListItem[]>(() => {
     const items: CombinedListItem[] = [];
 
-    // On-chain transactions section
-    if (onChainData.length > 0) {
+    // On-chain transactions section (only show when "All Accounts" is selected)
+    if (selectedAccount === null && onChainData.length > 0) {
       items.push({ type: 'sectionHeader', label: 'Wallet Transactions' });
       for (const tx of onChainData) {
         items.push({ type: 'onchain', data: tx });
@@ -69,15 +77,15 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
     }
 
     // Account activity section (brokerage orders + wealth transactions)
-    if (accountActivities.length > 0) {
-      items.push({ type: 'sectionHeader', label: 'Account Activity' });
-      for (const activity of accountActivities) {
+    if (filteredActivities.length > 0) {
+      items.push({ type: 'sectionHeader', label: selectedAccount ? selectedAccount : 'Account Activity' });
+      for (const activity of filteredActivities) {
         items.push({ type: 'accountActivity', data: activity });
       }
     }
 
     return items;
-  }, [onChainData, accountActivities]);
+  }, [onChainData, filteredActivities, selectedAccount]);
 
   const pullToRefresh = useCallback(async () => {
     if (isOnline) {
@@ -94,7 +102,7 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
         index: 0,
       });
     }
-  }, [networkFilter]);
+  }, [selectedAccount]);
 
   const combinedKeyExtractor = useCallback((item: CombinedListItem, index: number): string => {
     if (item.type === 'sectionHeader') {
@@ -131,16 +139,23 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
   }, [getItemType]);
 
   const renderEmptyState = () => {
-    if (networkFilter.length === 0) {
+    if (selectedAccount === null && combinedData.length === 0) {
       return <GlobalActivityEmptyAll navigation={navigation} />;
     }
-    return <GlobalActivityEmptyNetworkSelection />;
+    if (selectedAccount !== null && filteredActivities.length === 0) {
+      return <GlobalActivityEmptyNetworkSelection />;
+    }
+    return null;
   };
 
   return (
     <GradientScreenView>
       <View style={styles.networkFilterContainer}>
-        <NetworkFilter networkFilter={networkFilter} setNetworkFilter={setNetworkFilter} withBtcAndDoge />
+        <AccountFilter
+          accountNames={accountNames}
+          selectedAccount={selectedAccount}
+          onSelectAccount={setSelectedAccount}
+        />
       </View>
       <FadingElement containerStyle={{ marginBottom: insets.bottom }}>
         {combinedData.length === 0 && renderEmptyState()}

@@ -123,7 +123,18 @@ export function useAccountActivity() {
     return items;
   }, [brokerageHoldings, wealthHoldings]);
 
+  // Extract unique account names (for the AccountFilter pill bar)
+  const accountNames = useMemo<string[]>(() => {
+    const seen = new Set<string>();
+    for (const a of activities) {
+      if (a.accountName) {
+        seen.add(a.accountName);
+      }
+    }
+    return Array.from(seen).sort();
+  }, [activities]);
+
   const isLoading = brokerageLoading || wealthLoading;
 
-  return { activities, isLoading };
+  return { activities, accountNames, isLoading };
 }
