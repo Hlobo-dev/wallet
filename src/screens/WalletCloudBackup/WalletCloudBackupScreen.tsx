@@ -8,6 +8,8 @@ import { GradientItemBackground } from '@/components/GradientItemBackground';
 import { GradientScreenView } from '@/components/Gradients';
 import { Label } from '@/components/Label';
 import { SvgIcon } from '@/components/SvgIcon';
+import { showToast } from '@/components/Toast';
+import { useGlobalState } from '@/components/GlobalState';
 import { useBrowser } from '@/hooks/useBrowser';
 import { useWalletBackupSettings } from '@/hooks/useWalletBackupSettings';
 import { useLanguage } from '@/realm/settings';
@@ -18,6 +20,8 @@ import { BROKERAGES, type BrokerageInfo } from '@/services/snaptrade';
 import { getSnapTradeClient } from '@/services/snaptrade';
 import { getPlaidClient } from '@/services/plaid';
 import { WEALTH_INSTITUTIONS, type WealthInstitution } from '@/services/plaid';
+import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { usePlaidLink } from '@/hooks/usePlaidLink';
 import { hapticFeedback } from '@/utils/hapticFeedback';
 import { navigationStyle } from '@/utils/navigationStyle';
 import { runAfterUISync } from '@/utils/runAfterUISync';
@@ -150,6 +154,9 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
   const snaptradeClient = getSnapTradeClient();
   const plaidClient = getPlaidClient();
   const { openURL } = useBrowser();
+  const { getAccessToken } = useNubleAuth();
+  const { openPlaidLink } = usePlaidLink();
+  const [, setOpenAccountSheet] = useGlobalState('openAccountSheet');
   const [connectingSlug, setConnectingSlug] = useState<string | null>(null);
   const [connectedSlug, setConnectedSlug] = useState<string | null>(null);
   const [connectingWealthId, setConnectingWealthId] = useState<string | null>(null);
@@ -251,29 +258,46 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
       setConnectingWealthId(_institution.id);
 
       try {
-        // Get a Plaid Link token from the backend
-        const tokenResult = await plaidClient.createLinkToken();
+        await openPlaidLink(
+          // onSuccess — exchange the public token and navigate home
+          async (publicToken, institutionId, institutionName) => {
+            try {
+              // Set the auth token before making the exchange request
+              const token = await getAccessToken();
+              if (token) {
+                plaidClient.setAuthToken(token);
+              }
 
-        if (!tokenResult.success || !tokenResult.data) {
-          handleError(
-            new Error(tokenResult.error ?? 'Failed to create Plaid link token'),
-            'ERROR_CONTEXT_PLACEHOLDER',
-            'generic',
-          );
-          setConnectingWealthId(null);
-          return;
-        }
-
-        // Open the Plaid hosted Link page inside the in-app browser
-        const hostedUrl = plaidClient.getHostedLinkUrl(tokenResult.data.linkToken);
-        openURL(hostedUrl);
+              const result = await plaidClient.exchangePublicToken(
+                publicToken,
+                institutionId,
+                institutionName,
+              );
+              if (result.success) {
+                hapticFeedback.notificationSuccess();
+                showToast({ type: 'success', text: `${institutionName ?? 'Account'} connected successfully` });
+                setConnectedWealthId(_institution.id);
+                navigation.navigate(Routes.Home);
+                setOpenAccountSheet(true);
+              } else {
+                showToast({ type: 'error', text: 'Failed to save wealth account connection' });
+              }
+            } catch {
+              showToast({ type: 'error', text: 'Failed to save wealth account connection' });
+            }
+          },
+          // onExit — user cancelled or an error occurred
+          () => {
+            setConnectingWealthId(null);
+          },
+        );
       } catch (e) {
         handleError(e, 'ERROR_CONTEXT_PLACEHOLDER', 'generic');
       } finally {
         setConnectingWealthId(null);
       }
     },
-    [connectingWealthId, openURL, plaidClient],
+    [connectingWealthId, openPlaidLink, plaidClient, getAccessToken, navigation, setOpenAccountSheet],
   );
 
   const renderWealthItem = (institution: WealthInstitution) => {

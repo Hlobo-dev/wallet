@@ -11,8 +11,6 @@
 
 import { NUBLE_PLATFORM_URL } from '@/screens/Chat/chatConfig';
 
-import { URLs } from '/config';
-
 // =============================================================================
 // TYPES
 // =============================================================================
@@ -194,18 +192,10 @@ export class PlaidClientService {
 
   /**
    * Create a Plaid Link token from the backend.
-   * Returns a link token to be used with the hosted Plaid Link URL.
+   * Returns a link token to be used with the native Plaid Link SDK.
    */
   async createLinkToken(): Promise<ApiResponse<{ linkToken: string; expiration: string }>> {
     return this.request<{ linkToken: string; expiration: string }>('POST', '/link/token');
-  }
-
-  /**
-   * Build the Plaid hosted Link URL for opening in the in-app browser.
-   */
-  getHostedLinkUrl(linkToken: string): string {
-    const redirectUri = encodeURIComponent(URLs.plaidRedirect);
-    return `https://cdn.plaid.com/link/v2/stable/link.html?isWebview=true&token=${linkToken}&redirect_uri=${redirectUri}`;
   }
 
   /**

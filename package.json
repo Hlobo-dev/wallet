@@ -104,6 +104,7 @@
     "react-native-keychain": "8.1.2",
     "react-native-localize": "2.2.6",
     "react-native-password-strength-meter": "0.0.5",
+    "react-native-plaid-link-sdk": "^12.8.0",
     "react-native-qrcode-svg": "6.2.0",
     "react-native-reanimated": "3.19.3",
     "react-native-safe-area-context": "5.5.2",

@@ -82,6 +82,23 @@ export const BrowserWebView = forwardRef<BrowserWebViewRef, BrowserWebViewProps>
           onExitBrowser();
           return;
         }
+
+        // Plaid Link sends events via postMessage
+        // action: 'plaid_link-undefined::connected' contains the public_token
+        if (data?.action === 'plaid_link-undefined::connected' && data?.metadata?.public_token) {
+          const publicToken = data.metadata.public_token;
+          const institutionId = data.metadata?.institution?.institution_id ?? '';
+          const institutionName = data.metadata?.institution?.name ?? '';
+          const redirectUrl = `krakenwallet://plaid?public_token=${encodeURIComponent(publicToken)}&institution_id=${encodeURIComponent(institutionId)}&institution_name=${encodeURIComponent(institutionName)}`;
+          Linking.openURL(redirectUrl);
+          onExitBrowser();
+          return;
+        }
+        // Plaid Link exit (user closed or error)
+        if (data?.action === 'plaid_link-undefined::exit') {
+          onExitBrowser();
+          return;
+        }
       } catch {
         // Not JSON or not a SnapTrade message — pass to dApp handler
       }
@@ -265,6 +282,10 @@ export const BrowserWebView = forwardRef<BrowserWebViewRef, BrowserWebViewProps>
                     try {
                       var d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
                       if (d && (d.status === 'SUCCESS' || d.status === 'ERROR' || d.status === 'CLOSE' || d.status === 'CLOSED')) {
+                        window.ReactNativeWebView.postMessage(JSON.stringify(d));
+                      }
+                      // Forward Plaid Link events (action starts with 'plaid_link')
+                      if (d && typeof d.action === 'string' && d.action.indexOf('plaid_link') === 0) {
                         window.ReactNativeWebView.postMessage(JSON.stringify(d));
                       }
                     } catch(ex) {}
