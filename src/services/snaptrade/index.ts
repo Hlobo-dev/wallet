@@ -13,6 +13,8 @@ export type {
   SnapTradeSymbol,
   HoldingsResponse,
   Order,
+  SnapTradeActivity,
+  SnapTradeActivitySymbol,
   TradeRequest,
   ConnectionPortalResponse,
   ApiResponse,

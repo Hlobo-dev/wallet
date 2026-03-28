@@ -6,9 +6,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadingElement } from '@/components/FadingElement';
 import { GradientScreenView } from '@/components/Gradients';
 import { Label } from '@/components/Label';
-import { AccountFilter } from '@/components/AccountFilter';
+import { BrokerageAccountFilter } from '@/screens/Home/components/BrokerageAccountFilter';
+import type { BrokerageAccount as FilterAccount } from '@/screens/Home/components/BrokerageAccountFilter';
 import { useAccountActivity } from '@/hooks/useAccountActivity';
 import type { AccountActivityItem } from '@/hooks/useAccountActivity';
+import { useBrokeragePositions } from '@/hooks/useBrokeragePositions';
+import { useWealthPositions } from '@/hooks/useWealthPositions';
 import { useHeaderTitle } from '@/hooks/useHeaderTitle';
 import { refreshAllTransactions } from '@/realm/refreshManagerHooks';
 import { useTransactionsFetch } from '@/realm/transactions';
@@ -53,8 +56,46 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
     networkFilter: [],
   });
 
-  // Account activity (brokerage + wealth)
-  const { activities: accountActivities, accountNames } = useAccountActivity();
+  // Account activity (brokerage + wealth transactions)
+  const { activities: accountActivities, isLoading: activityLoading, refetch: refetchActivity, debugMsg } = useAccountActivity();
+
+  // Use positions to build filter pills (positions load reliably)
+  const { holdings: brokerageHoldings } = useBrokeragePositions();
+  const { holdings: wealthHoldings } = useWealthPositions();
+
+  // Build account objects for the BrokerageAccountFilter pills from positions
+  const filterAccounts = useMemo<FilterAccount[]>(() => {
+    const map = new Map<string, { count: number; value: number }>();
+    for (const h of brokerageHoldings) {
+      const name = h.accountName;
+      const existing = map.get(name);
+      if (existing) {
+        existing.count += 1;
+        existing.value += h.value;
+      } else {
+        map.set(name, { count: 1, value: h.value });
+      }
+    }
+    for (const h of wealthHoldings) {
+      const name = h.institution;
+      const existing = map.get(name);
+      if (existing) {
+        existing.count += 1;
+        existing.value += h.currentValue;
+      } else {
+        map.set(name, { count: 1, value: h.currentValue });
+      }
+    }
+    // Also add any account names from actual transactions that aren't in positions
+    for (const a of accountActivities) {
+      if (a.accountName && !map.has(a.accountName)) {
+        map.set(a.accountName, { count: 1, value: 0 });
+      }
+    }
+    return Array.from(map.entries())
+      .map(([name, { count, value }]) => ({ name, positionCount: count, totalValue: value }))
+      .sort((a, b) => b.totalValue - a.totalValue);
+  }, [brokerageHoldings, wealthHoldings, accountActivities]);
 
   // Filter activities by selected account
   const filteredActivities = useMemo(() => {
@@ -76,9 +117,9 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
       }
     }
 
-    // Account activity section (brokerage orders + wealth transactions)
+    // Brokerage + wealth real transactions only (no positions)
     if (filteredActivities.length > 0) {
-      items.push({ type: 'sectionHeader', label: selectedAccount ? selectedAccount : 'Account Activity' });
+      items.push({ type: 'sectionHeader', label: 'Recent Transactions' });
       for (const activity of filteredActivities) {
         items.push({ type: 'accountActivity', data: activity });
       }
@@ -90,10 +131,13 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
   const pullToRefresh = useCallback(async () => {
     if (isOnline) {
       setIsFetching(true);
-      await fetchAllTransactionsForAllNetworks();
+      await Promise.all([
+        fetchAllTransactionsForAllNetworks(),
+        refetchActivity(),
+      ]);
       setIsFetching(false);
     }
-  }, [fetchAllTransactionsForAllNetworks, isOnline]);
+  }, [fetchAllTransactionsForAllNetworks, refetchActivity, isOnline]);
 
   useEffect(() => {
     if (listRef.current && combinedData.length > 0) {
@@ -150,15 +194,21 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
 
   return (
     <GradientScreenView>
-      <View style={styles.networkFilterContainer}>
-        <AccountFilter
-          accountNames={accountNames}
-          selectedAccount={selectedAccount}
-          onSelectAccount={setSelectedAccount}
-        />
+      <BrokerageAccountFilter
+        accounts={filterAccounts}
+        selectedAccount={selectedAccount}
+        onSelectAccount={setSelectedAccount}
+      />
+      {/* Temporary debug banner — remove after verifying */}
+      <View style={{ backgroundColor: '#1e293b', padding: 8, marginHorizontal: 16, borderRadius: 8, marginBottom: 4 }}>
+        <Label type="regularCaption1" color="light75">
+          {activityLoading
+            ? `⏳ ${debugMsg}`
+            : `✅ ${accountActivities.length} tx | ${combinedData.length} items | ${debugMsg}`}
+        </Label>
       </View>
       <FadingElement containerStyle={{ marginBottom: insets.bottom }}>
-        {combinedData.length === 0 && renderEmptyState()}
+        {combinedData.length === 0 && !activityLoading && renderEmptyState()}
         <FlashList
           ref={listRef}
           refreshControl={<RefreshControl refreshing={isFetching} onRefresh={pullToRefresh} />}
@@ -182,11 +232,6 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingHorizontal: 24,
     paddingBottom: 150,
-  },
-  networkFilterContainer: {
-    paddingVertical: 4,
-    flexDirection: 'row',
-    marginTop: 14,
   },
   sectionHeader: {
     marginTop: 18,

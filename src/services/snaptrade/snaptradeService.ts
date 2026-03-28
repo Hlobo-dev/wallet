@@ -131,6 +131,48 @@ export interface Order {
   updatedAt: Date;
 }
 
+/**
+ * SnapTrade account activity — represents a historical transaction
+ * (buy, sell, dividend, deposit, withdrawal, fee, etc.).
+ * Returned by the Activities endpoint.
+ *
+ * NOTE: The backend maps SnapTrade SDK fields to camelCase.
+ */
+export interface SnapTradeActivitySymbol {
+  id: string;
+  symbol: string;
+  rawSymbol?: string;
+  description?: string;
+  currency?: string;
+  exchange?: string | { id: string; code: string; name: string };
+  type?: string | { id: string; code: string; description: string };
+}
+
+export interface SnapTradeActivity {
+  id: string;
+  accountId: string;
+  /** The backend enriches this from the account data */
+  accountName?: string;
+  /** Symbol object (mapped by backend) or undefined for cash transactions */
+  symbol?: SnapTradeActivitySymbol;
+  optionSymbol?: string;
+  description: string;
+  /** Activity type: BUY, SELL, DIVIDEND, DIV, FEE, INTEREST, DEPOSIT, WITHDRAWAL, etc. */
+  type: string;
+  /** Positive = cash gained, negative = cash spent */
+  amount: number;
+  /** Positive = shares received, negative = shares sold */
+  units: number;
+  price: number;
+  currency: string;
+  fee: number;
+  /** Date string YYYY-MM-DD (camelCase from backend) */
+  tradeDate: string;
+  /** Date string YYYY-MM-DD (camelCase from backend) */
+  settlementDate: string;
+  brokerageAuthorizationId?: string;
+}
+
 export interface ConnectionPortalResponse {
   redirectURI: string;
   sessionId?: string;
@@ -341,6 +383,61 @@ export class SnapTradeClientService {
 
   async getOrders(accountId: string, status?: 'open' | 'all'): Promise<ApiResponse<Order[]>> {
     return this.request<Order[]>('POST', `/trading/${accountId}/orders`, { status: status ?? 'all' });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Account Activities (Historical Transactions)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Fetch account activities (buy, sell, dividend, deposit, withdrawal, fee, etc.)
+   * for a specific account. The backend should proxy SnapTrade's
+   * GET /accounts/{accountId}/activities endpoint.
+   *
+   * @param accountId - The SnapTrade account ID
+   * @param startDate - Start date (YYYY-MM-DD). Defaults to 90 days ago.
+   * @param endDate - End date (YYYY-MM-DD). Defaults to today.
+   */
+  async getActivities(
+    accountId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<ApiResponse<SnapTradeActivity[]>> {
+    const today = new Date().toISOString().slice(0, 10);
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 86_400_000).toISOString().slice(0, 10);
+    return this.request<SnapTradeActivity[]>('POST', `/accounts/${accountId}/activities`, {
+      startDate: startDate ?? ninetyDaysAgo,
+      endDate: endDate ?? today,
+    });
+  }
+
+  /**
+   * Fetch activities for ALL connected accounts in parallel.
+   * Returns a flat array of activities from every account.
+   */
+  async getAllActivities(
+    startDate?: string,
+    endDate?: string,
+  ): Promise<ApiResponse<SnapTradeActivity[]>> {
+    const accountsResponse = await this.listAccounts();
+    if (!accountsResponse.success || !accountsResponse.data) {
+      return { success: false, error: accountsResponse.error ?? 'Failed to list accounts' };
+    }
+
+    const results = await Promise.allSettled(
+      accountsResponse.data.map(account =>
+        this.getActivities(account.id, startDate, endDate),
+      ),
+    );
+
+    const allActivities: SnapTradeActivity[] = [];
+    for (const result of results) {
+      if (result.status === 'fulfilled' && result.value.success && result.value.data) {
+        allActivities.push(...result.value.data);
+      }
+    }
+
+    return { success: true, data: allActivities };
   }
 }
 

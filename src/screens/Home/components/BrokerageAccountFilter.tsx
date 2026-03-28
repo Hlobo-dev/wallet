@@ -190,7 +190,7 @@ export const BrokerageAccountFilter = memo(({ accounts, selectedAccount, onSelec
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* "All" pill */}
+        {/* "All Accounts" pill */}
         <Touchable onPress={() => onSelectAccount(null)}>
           <View style={[styles.pill, selectedAccount === null && styles.pillSelected]}>
             <Label
@@ -198,7 +198,7 @@ export const BrokerageAccountFilter = memo(({ accounts, selectedAccount, onSelec
               color={selectedAccount === null ? 'light100' : 'light50'}
               numberOfLines={1}
             >
-              All
+              All Accounts
             </Label>
           </View>
         </Touchable>
