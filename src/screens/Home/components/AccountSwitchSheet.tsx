@@ -101,6 +101,9 @@ export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
             color: 'light100',
             textColor: 'dark100',
           }}
+          bottomSpace={0}
+          useBottomInset={false}
+          style={styles.footerButtons}
         />
       </BottomSheetFooter>
     ),
@@ -149,5 +152,8 @@ const styles = StyleSheet.create({
   },
   footerSpacer: {
     height: 120,
+  },
+  footerButtons: {
+    paddingBottom: 24,
   },
 });
