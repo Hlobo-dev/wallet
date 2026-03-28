@@ -297,7 +297,34 @@ export class SnapTradeClientService {
     );
     if (response.success && response.data) {
       await this.setCredentials(response.data.userId, response.data.userSecret);
+      return response;
     }
+
+    // If registration failed with 400 (user already exists on SnapTrade),
+    // delete the old user and re-register so we get fresh credentials.
+    if (response.error && response.error.includes('400')) {
+      console.log('[SnapTrade] User already exists, deleting and re-registering…');
+      try {
+        // Use the backend's DELETE /api/snaptrade/users/:userId endpoint directly
+        const deleteUrl = `${API_BASE_URL}/users/${encodeURIComponent(platformUserId)}`;
+        await fetch(deleteUrl, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } });
+
+        // Now re-register
+        const retryResponse = await this.request<SnapTradeUser>(
+          'POST',
+          '/users/register',
+          { userId: platformUserId },
+          false,
+        );
+        if (retryResponse.success && retryResponse.data) {
+          await this.setCredentials(retryResponse.data.userId, retryResponse.data.userSecret);
+        }
+        return retryResponse;
+      } catch (retryError) {
+        console.warn('[SnapTrade] Re-registration after delete failed:', retryError);
+      }
+    }
+
     return response;
   }
 

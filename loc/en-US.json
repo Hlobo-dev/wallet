@@ -286,7 +286,7 @@
     "manage": "Manage",
     "total_balance": "Balance",
     "deposits": "Wealth",
-    "defiEmptyTitle": "Wealth",
+    "defiEmptyTitle": "DeFi",
     "defiEmptyCaption": "No positions yet. Participate in DeFi to earn yield on your assets.",
     "defiEmptyCta": "Start earning"
   },

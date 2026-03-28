@@ -30,10 +30,12 @@ import { Routes } from '@/Routes';
 import { isRealmObject } from '@/utils/isRealmObject';
 
 import { HEADER_HEIGHT } from './consts';
+import { BrokerageEmptyPositions } from './BrokerageEmptyPositions';
 import { DefiEmptyPositions } from './DefiEmptyPositions';
 import { useHomeAssetPanelEmitterListener } from './homeAssetPanelEventEmitter';
 import { HomeAssetPanelSectionList } from './HomeAssetsSectionList';
 import { KrakenConnectFundCTA } from './KrakenConnectFundCTA';
+import { WealthEmptyPositions } from './WealthEmptyPositions';
 
 import { usePolygonPrices } from '@/hooks/usePolygonPrices';
 
@@ -48,7 +50,9 @@ import loc from '/loc';
 enum SectionName {
   Assets = 'Assets',
   BrokeragePositions = 'BrokeragePositions',
+  BrokerageNoPositions = 'BrokerageNoPositions',
   WealthPositions = 'WealthPositions',
+  WealthNoPositions = 'WealthNoPositions',
   Defi = 'Defi',
   DefiEarnNoPositions = 'DefiEarnNoPositions',
   DefiEarnPositions = 'DefiEarnPositions',
@@ -66,9 +70,19 @@ type Sections =
       data: BrokerageHolding[];
     }
   | {
+      key: typeof SectionName.BrokerageNoPositions;
+      index: number;
+      data: [];
+    }
+  | {
       key: typeof SectionName.WealthPositions;
       index: number;
       data: WealthHolding[];
+    }
+  | {
+      key: typeof SectionName.WealthNoPositions;
+      index: number;
+      data: [];
     }
   | {
       key: typeof SectionName.DefiEarnPositions;
@@ -257,7 +271,11 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
         bySymbol.set(h.symbol, { ...h });
       }
     }
-    return Array.from(bySymbol.values()).sort((a, b) => b.value - a.value);
+    // Filter out positions with zero units — these are empty placeholder positions
+    // from SnapTrade that should not be displayed
+    return Array.from(bySymbol.values())
+      .filter(h => h.units > 0 || h.value > 0)
+      .sort((a, b) => b.value - a.value);
   }, [cleanBrokerageHoldings, selectedBrokerageAccount]);
 
   const tokensDataSource = useMemo(() => {
@@ -267,18 +285,18 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
   const sections = useMemo(() => {
     const items: SectionListData<SectionItem, Sections>[] = [];
 
-    // If we have actual brokerage positions, show those under the Brokerage header
-    // instead of the static wallet token list
+    // Brokerage section: show positions or empty state
     if (brokerageHoldings.length > 0) {
       items.push({ index: 0, key: SectionName.BrokeragePositions, data: brokerageHoldings });
-    } else if (tokensDataSource && tokensDataSource?.length > 0) {
-      // Fallback: show wallet tokens when no brokerage positions
-      items.push({ index: 0, key: SectionName.Assets, data: tokensDataSource });
+    } else {
+      items.push({ index: 0, key: SectionName.BrokerageNoPositions, data: [] });
     }
 
-    // Wealth section: holdings from Plaid (Morgan Stanley, etc.)
+    // Wealth section: show positions or empty state
     if (combinedWealthHoldings.length > 0) {
       items.push({ index: 1, key: SectionName.WealthPositions, data: combinedWealthHoldings });
+    } else {
+      items.push({ index: 1, key: SectionName.WealthNoPositions, data: [] });
     }
 
     if (!isDefiPositionPending) {
@@ -291,7 +309,7 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
     }
 
     return items;
-  }, [tokensDataSource, isDefiPositionPending, earnDefiPositions, brokerageHoldings, combinedWealthHoldings]);
+  }, [isDefiPositionPending, earnDefiPositions, brokerageHoldings, combinedWealthHoldings]);
 
   const renderTokenRow = useCallback(
     (item: RealmToken) => {
@@ -440,7 +458,35 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
             />
           );
         case SectionName.DefiEarnNoPositions:
-          return <DefiEmptyPositions />;
+          if (sticky) {
+            return <ListHeader title={loc.home.defiEmptyTitle} style={headerStyle} />;
+          }
+          return (
+            <View>
+              <ListHeader title={loc.home.defiEmptyTitle} style={[headerStyle, styles.scrollableHeaderStyle]} />
+              <DefiEmptyPositions />
+            </View>
+          );
+        case SectionName.BrokerageNoPositions:
+          if (sticky) {
+            return <ListHeader title="Brokerage" style={headerStyle} />;
+          }
+          return (
+            <View>
+              <ListHeader title="Brokerage" style={[headerStyle, styles.firstHeader]} />
+              <BrokerageEmptyPositions />
+            </View>
+          );
+        case SectionName.WealthNoPositions:
+          if (sticky) {
+            return <ListHeader title="Wealth" style={headerStyle} />;
+          }
+          return (
+            <View>
+              <ListHeader title="Wealth" style={[headerStyle, styles.scrollableHeaderStyle]} />
+              <WealthEmptyPositions />
+            </View>
+          );
         default:
           return null;
       }
