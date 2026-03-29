@@ -64,45 +64,88 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
   const { holdings: wealthHoldings } = useWealthPositions();
 
   // Build account objects for the BrokerageAccountFilter pills from positions
+  // Merge accounts from the same institution (e.g. "Robinhood" + "Robinhood Individual" → "Robinhood")
   const filterAccounts = useMemo<FilterAccount[]>(() => {
-    const map = new Map<string, { count: number; value: number }>();
+    const map = new Map<string, { displayName: string; count: number; value: number }>();
+
+    // Extract the shortest institution root name from a full account name.
+    // e.g. "Robinhood Individual" → "robinhood", "Morgan Stanley Client Serv" → "morgan stanley"
+    const knownInstitutions = [
+      'robinhood', 'kraken', 'charles schwab', 'schwab', 'fidelity',
+      'interactive brokers', 'td ameritrade', 'etrade', 'e*trade', 'webull',
+      'coinbase', 'sofi', 'public', 'tastytrade', 'ally', 'firstrade', 'moomoo',
+      'morgan stanley', 'goldman sachs', 'jp morgan', 'jpmorgan', 'merrill',
+      'merrill lynch', 'ubs', 'wells fargo', 'edward jones', 'vanguard',
+    ];
+
+    const resolveInstitution = (name: string): string => {
+      const lower = name.trim().toLowerCase();
+      // Find the longest matching known institution
+      let best = '';
+      for (const inst of knownInstitutions) {
+        if (lower.includes(inst) && inst.length > best.length) {
+          best = inst;
+        }
+      }
+      // Return the matching institution key, or the full trimmed lowercase name
+      return best || lower;
+    };
+
+    const toDisplayName = (institutionKey: string, rawName: string): string => {
+      // Capitalise the institution key for display
+      const known = knownInstitutions.find(k => k === institutionKey);
+      if (known) {
+        return known.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      }
+      return rawName.trim();
+    };
+
     for (const h of brokerageHoldings) {
-      const name = h.accountName;
-      const existing = map.get(name);
+      const key = resolveInstitution(h.accountName);
+      const existing = map.get(key);
       if (existing) {
         existing.count += 1;
         existing.value += h.value;
       } else {
-        map.set(name, { count: 1, value: h.value });
+        map.set(key, { displayName: toDisplayName(key, h.accountName), count: 1, value: h.value });
       }
     }
     for (const h of wealthHoldings) {
-      const name = h.institution;
-      const existing = map.get(name);
+      const key = resolveInstitution(h.institution);
+      const existing = map.get(key);
       if (existing) {
         existing.count += 1;
         existing.value += h.currentValue;
       } else {
-        map.set(name, { count: 1, value: h.currentValue });
+        map.set(key, { displayName: toDisplayName(key, h.institution), count: 1, value: h.currentValue });
       }
     }
     // Also add any account names from actual transactions that aren't in positions
     for (const a of accountActivities) {
-      if (a.accountName && !map.has(a.accountName)) {
-        map.set(a.accountName, { count: 1, value: 0 });
+      if (a.accountName) {
+        const key = resolveInstitution(a.accountName);
+        if (!map.has(key)) {
+          map.set(key, { displayName: toDisplayName(key, a.accountName), count: 1, value: 0 });
+        }
       }
     }
-    return Array.from(map.entries())
-      .map(([name, { count, value }]) => ({ name, positionCount: count, totalValue: value }))
+    return Array.from(map.values())
+      .map(({ displayName, count, value }) => ({ name: displayName, positionCount: count, totalValue: value }))
       .sort((a, b) => b.totalValue - a.totalValue);
   }, [brokerageHoldings, wealthHoldings, accountActivities]);
 
-  // Filter activities by selected account
+  // Filter activities by selected account (match by institution, not exact account name)
   const filteredActivities = useMemo(() => {
     if (selectedAccount === null) {
       return accountActivities;
     }
-    return accountActivities.filter(a => a.accountName === selectedAccount);
+    const selected = selectedAccount.trim().toLowerCase();
+    return accountActivities.filter(a => {
+      const acctName = (a.accountName || '').trim().toLowerCase();
+      // Match if the activity's account name contains the selected institution
+      // or the selected institution contains the activity's account name
+      return acctName.includes(selected) || selected.includes(acctName) || acctName === selected;
+    });
   }, [accountActivities, selectedAccount]);
 
   // Build combined data source
@@ -140,13 +183,16 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
   }, [fetchAllTransactionsForAllNetworks, refetchActivity, isOnline]);
 
   useEffect(() => {
-    if (listRef.current && combinedData.length > 0) {
-      listRef.current.scrollToIndex({
-        animated: false,
-        index: 0,
-      });
-    }
-  }, [selectedAccount]);
+    // Use a short delay to let combinedData settle after selectedAccount changes
+    const timer = setTimeout(() => {
+      if (listRef.current && combinedData.length > 0) {
+        try {
+          listRef.current.scrollToOffset({ animated: false, offset: 0 });
+        } catch {}
+      }
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [selectedAccount, combinedData.length]);
 
   const combinedKeyExtractor = useCallback((item: CombinedListItem, index: number): string => {
     if (item.type === 'sectionHeader') {
@@ -199,14 +245,6 @@ export const GlobalActivityScreen = ({ navigation }: NavigationProps<'GlobalActi
         selectedAccount={selectedAccount}
         onSelectAccount={setSelectedAccount}
       />
-      {/* Temporary debug banner — remove after verifying */}
-      <View style={{ backgroundColor: '#1e293b', padding: 8, marginHorizontal: 16, borderRadius: 8, marginBottom: 4 }}>
-        <Label type="regularCaption1" color="light75">
-          {activityLoading
-            ? `⏳ ${debugMsg}`
-            : `✅ ${accountActivities.length} tx | ${combinedData.length} items | ${debugMsg}`}
-        </Label>
-      </View>
       <FadingElement containerStyle={{ marginBottom: insets.bottom }}>
         {combinedData.length === 0 && !activityLoading && renderEmptyState()}
         <FlashList

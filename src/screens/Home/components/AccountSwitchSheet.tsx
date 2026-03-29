@@ -134,7 +134,6 @@ export const AccountSwitchSheet = forwardRef<BottomSheetModalRef>((_, ref) => {
             ))}
           </View>
         )}
-        <View style={styles.footerSpacer} />
       </BottomSheetView>
     </BottomSheetModal>
   );

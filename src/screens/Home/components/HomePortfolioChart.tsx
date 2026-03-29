@@ -66,8 +66,9 @@ export const HomePortfolioChart = () => {
   const currencyInfo = getCurrencyInfo(currency);
   const sign = currencyInfo.sign;
 
-  const { holdings: brokerageHoldings } = useBrokeragePositions();
-  const { holdings: wealthHoldings } = useWealthPositions();
+  const { holdings: brokerageHoldings, isLoading: brokerageLoading } = useBrokeragePositions();
+  const { holdings: wealthHoldings, isLoading: wealthLoading } = useWealthPositions();
+  const positionsLoading = brokerageLoading || wealthLoading;
 
   // ── Gather all unique symbols + their weights (market value) ────────────
   const symbolWeights = useMemo(() => {
@@ -100,6 +101,12 @@ export const HomePortfolioChart = () => {
 
   // ── Fetch composite portfolio chart data ────────────────────────────────
   useEffect(() => {
+    // Don't attempt to build the chart while positions are still loading —
+    // symbolWeights will be empty and we'd show a flat placeholder.
+    if (positionsLoading) {
+      return;
+    }
+
     let cancelled = false;
 
     const symbols = Array.from(symbolWeights.keys());
@@ -109,6 +116,8 @@ export const HomePortfolioChart = () => {
     }
 
     setChartLoaded(false);
+    // Reset to placeholder so the chart doesn't flash stale data
+    setChartData(CHART_PLACEHOLDER);
 
     (async () => {
       try {
@@ -176,7 +185,7 @@ export const HomePortfolioChart = () => {
     return () => {
       cancelled = true;
     };
-  }, [symbolWeights, totalPortfolioValue, period]);
+  }, [symbolWeights, totalPortfolioValue, period, positionsLoading]);
 
   // ── Derived values ──────────────────────────────────────────────────────
   const priceChange = useMemo(() => {
