@@ -10,7 +10,7 @@
     "showMore": "Show more",
     "showLess": "Show less",
     "plus": "+{count}",
-    "appName": "Nuble Wallet",
+    "appName": "Astellr Wallet",
     "copyToClipboard": "Copied to clipboard",
     "copy": "Copy",
     "copied": "Copied",
@@ -147,8 +147,8 @@
     "see_balance": "See your balances and activity",
     "request_approval": "Request approval for transactions",
     "unsupportedNetwork": "Unsupported network",
-    "unsupportedNetworkDescription": "This app uses the {unsupportedNetwork} network which is not supported at this time. Nuble Wallet currently supports apps on the Ethereum, Polygon, OP Mainnet, Arbitrum and Solana networks.",
-    "unsupportedNetworksDescription": "This app uses {unsupportedNetworks} networks which are not supported at this time. Nuble Wallet currently supports apps on the Ethereum, Polygon, OP Mainnet, Arbitrum and Solana networks."
+    "unsupportedNetworkDescription": "This app uses the {unsupportedNetwork} network which is not supported at this time. Astellr Wallet currently supports apps on the Ethereum, Polygon, OP Mainnet, Arbitrum and Solana networks.",
+    "unsupportedNetworksDescription": "This app uses {unsupportedNetworks} networks which are not supported at this time. Astellr Wallet currently supports apps on the Ethereum, Polygon, OP Mainnet, Arbitrum and Solana networks."
   },
   "editAccount": {
     "rename": "Rename",
@@ -513,7 +513,7 @@
     },
     "methodICloud": {
       "title": "Import from iCloud",
-      "desc": "Import from an iCloud backup that you created for Nuble Wallet"
+      "desc": "Import from an iCloud backup that you created for Astellr Wallet"
     }
   },
   "onboardingImportCloudBackup": {
@@ -605,7 +605,7 @@
       "title": "When using Web3 apps on your phone",
       "subtitle": "Instead of scanning:",
       "description1": "Tap on WalletConnect",
-      "description2": "Select Nuble Wallet",
+      "description2": "Select Astellr Wallet",
       "buttonText": "Continue"
     },
     "fourthPage": {
@@ -625,16 +625,16 @@
   },
   "browserExploreWelcome": {
     "title": "Explore the onchain world",
-    "body": "Take the next step in your crypto journey today. You can now discover and connect to decentralized apps (dapps) without leaving your Nuble Wallet.",
+    "body": "Take the next step in your crypto journey today. You can now discover and connect to decentralized apps (dapps) without leaving your Astellr Wallet.",
     "part1": "Use the new menu options at the bottom of your screen to access the Explore page",
     "part2": "Explore popular dapps and new onchain opportunties, or use the Search bar for more",
-    "part3": "Easily connect to dapps and perform transactions without ever leaving the Nuble Wallet app",
+    "part3": "Easily connect to dapps and perform transactions without ever leaving the Astellr Wallet app",
     "buttonText": "Sounds good"
   },
   "onboardingOutro": {
     "title": "Your wallet is ready",
     "caption": "This wallet supports Bitcoin, Ethereum, Polygon, Solana, and more.",
-    "footer": "By continuing you agree to Nuble Wallet’s\n",
+    "footer": "By continuing you agree to Astellr Wallet’s\n",
     "termsOfService": "terms of service",
     "button": "Agree & Continue"
   },
@@ -837,7 +837,7 @@
       "krakenFee": {
         "title": "Kraken fee",
         "value": "FREE",
-        "hint": "Nuble Wallet does not charge any fees for swaps. We offer this service for free to support the adoption of crypto and blockchain technology."
+        "hint": "Astellr Wallet does not charge any fees for swaps. We offer this service for free to support the adoption of crypto and blockchain technology."
       },
       "networkFee": {
         "title": "Network fee",
@@ -966,7 +966,7 @@
     "krakenConnect": "Kraken Connect"
   },
   "storeReview": {
-    "alertTitle": "Are you enjoying the Nuble Wallet App?",
+    "alertTitle": "Are you enjoying the Astellr Wallet App?",
     "alertMessage": "We’d love to know if you’re having a great experience.",
     "notReally": "Not really",
     "yes": "Yes",
@@ -1321,7 +1321,7 @@
     "supportHint": {
       "regular": "If that doesn't resolve your issue, you can get help by visiting ",
       "regularWithManualBackup": "If that doesn't resolve your issue, you can import your 12-24 Secret Recovery Phrase or get help by visiting ",
-      "link": "Nuble Wallet Support ↗"
+      "link": "Astellr Wallet Support ↗"
     }
   },
   "walletBackupSelection": {
@@ -1350,7 +1350,7 @@
     },
     "explainer": {
       "title": "Increase recoverability to reduce the chance of loss",
-      "desc": "Losing a secret recovery phrase is a typical way people lose their crypto. Nuble Wallet minimizes this risk by offering more than one secure backup method."
+      "desc": "Losing a secret recovery phrase is a typical way people lose their crypto. Astellr Wallet minimizes this risk by offering more than one secure backup method."
     },
     "skipButton": "Maybe later"
   },
@@ -1443,7 +1443,7 @@
       "selectAsset": "Select an asset to transfer",
       "selectAssetDescription": "Transfer from Kraken exchange to your wallet",
       "unsupportedAssets": "Unsupported assets",
-      "unsupportedAssetsDescription": "{assets} are not currently supported by Nuble Wallet",
+      "unsupportedAssetsDescription": "{assets} are not currently supported by Astellr Wallet",
       "transferFee": "Transfer fee",
       "transferringTo": "Transferring to",
       "network": "Network"

@@ -6,7 +6,7 @@
  * account.
  *
  * Uses:
- *   1. useNubleAuth().getAccessToken()  → platform JWT for Plaid API auth
+ *   1. useAstellrAuth().getAccessToken()  → platform JWT for Plaid API auth
  *   2. getPlaidClient().getHoldings()   → all investment holdings across connections
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { getPlaidClient } from '@/services/plaid';
 import type { PlaidHolding } from '@/services/plaid';
-import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { useAstellrAuth } from '@/providers/AstellrAuthProvider';
 import { scopedKey, getCurrentUserId, USER_SCOPED_KEYS } from '@/utils/userScopedStorage';
 
 // ─── Public types ─────────────────────────────────────────────────────────────
@@ -241,7 +241,7 @@ export function useWealthPositions() {
   const lastFetchAt = useRef(0);
   const isFetching = useRef(false);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { getAccessToken, isAuthenticated, user } = useNubleAuth();
+  const { getAccessToken, isAuthenticated, user } = useAstellrAuth();
   const currentUserIdRef = useRef<string | null>(user?.id ?? null);
 
   // ── Reset state when user changes (multi-user isolation) ─────────────────

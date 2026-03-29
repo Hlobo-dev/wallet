@@ -1,7 +1,7 @@
 {
   "_": {
     "add": "Aggiungi",
-    "appName": "Nuble Wallet",
+    "appName": "Astellr Wallet",
     "balance": "Saldo {0}",
     "cancel": "Annulla",
     "confirm": "Conferma",
@@ -185,7 +185,7 @@
     "buttonText": "Perfetto",
     "part1": "Il tuo wallet ora supporta la {boldBlastNetwork}. Ethereum L2 con rendimento native per ETH e stablecoin.",
     "part2": "Con questa integrazione, abbiamo posto le basi per aggiungere rapidamente altre reti di livello 2, mantenendo più sicura possibile l’esperienza del wallet mobile.",
-    "title": "Nuble Wallet dà il benvenuto a Blast!"
+    "title": "Astellr Wallet dà il benvenuto a Blast!"
   },
   "broadcast": {
     "sent": "Inviate"
@@ -213,11 +213,11 @@
     "searchOnChain": "Cerca on-chain"
   },
   "browserExploreWelcome": {
-    "body": "Compi oggi stesso il passo successivo nel tuo viaggio nel mondo delle criptovalute. Ora puoi scoprire e connetterti alle applicazioni decentralizzate (DAapp) senza uscire da Nuble Wallet.",
+    "body": "Compi oggi stesso il passo successivo nel tuo viaggio nel mondo delle criptovalute. Ora puoi scoprire e connetterti alle applicazioni decentralizzate (DAapp) senza uscire da Astellr Wallet.",
     "buttonText": "Perfetto",
     "part1": "Per accedere alla pagina Esplora, utilizza le opzioni di menu disponibili nella parte inferiore della schermata",
     "part2": "Esplora le DApp più richieste e le nuove opportunità on-chain o utilizza la barra di ricerca per ulteriori informazioni",
-    "part3": "Connettiti facilmente alle DApp ed effettua transazioni senza uscire dall’app Nuble Wallet",
+    "part3": "Connettiti facilmente alle DApp ed effettua transazioni senza uscire dall’app Astellr Wallet",
     "title": "Esplora il mondo on-chain"
   },
   "bugTracking": {
@@ -225,7 +225,7 @@
     "content": "L’osservabilità ci consente di monitorare e migliorare la tua esperienza di wallet raccogliendo dati essenziali. Questo ci aiuta a identificare i problemi, a ottimizzare le prestazioni e a garantire che il tuo wallet funzioni in modo ottimale. I tuoi dati sono anonimizzati e sicuri! ",
     "disallow": "Non consentire",
     "skip": "Chiedimelo dopo",
-    "title": "Aiutaci a migliorare Nuble Wallet"
+    "title": "Aiutaci a migliorare Astellr Wallet"
   },
   "coins": {
     "allNetworks": "Tutti i network",
@@ -381,8 +381,8 @@
     "request_approval": "Richiedi approvazione per le transazioni",
     "see_balance": "Visualizza saldi e attività",
     "unsupportedNetwork": "Network non supportato",
-    "unsupportedNetworkDescription": "Questa app usa il network {unsupportedNetwork}, che al momento non è supportato. Nuble Wallet attualmente supporta le app per i network Ethereum, Polygon, OP Mainnet, Arbitrum e Solana.",
-    "unsupportedNetworksDescription": "Questa app usa i network {unsupportedNetworks}, che al momento non sono supportati. Nuble Wallet attualmente supporta le app per i network Ethereum, Polygon, OP Mainnet, Arbitrum e Solana."
+    "unsupportedNetworkDescription": "Questa app usa il network {unsupportedNetwork}, che al momento non è supportato. Astellr Wallet attualmente supporta le app per i network Ethereum, Polygon, OP Mainnet, Arbitrum e Solana.",
+    "unsupportedNetworksDescription": "Questa app usa i network {unsupportedNetworks}, che al momento non sono supportati. Astellr Wallet attualmente supporta le app per i network Ethereum, Polygon, OP Mainnet, Arbitrum e Solana."
   },
   "connectedApps": {
     "app_details": {
@@ -701,7 +701,7 @@
       },
       "lockWallet": "Blocca wallet",
       "privacy": "Privacy",
-      "version": "Estensione Nuble Wallet {0}",
+      "version": "Estensione Astellr Wallet {0}",
       "walletSettings": "Impostazioni wallet"
     },
     "skip": "Salta",
@@ -844,7 +844,7 @@
       "transferFee": "Commissione sul trasferimento",
       "transferringTo": "Trasferimento a",
       "unsupportedAssets": "Asset non supportati",
-      "unsupportedAssetsDescription": "{assets} non sono al momento supportati da Nuble Wallet"
+      "unsupportedAssetsDescription": "{assets} non sono al momento supportati da Astellr Wallet"
     },
     "transferCta": {
       "body": "Collega il tuo account di Kraken per trasferire rapidamente criptovalute",
@@ -1090,7 +1090,7 @@
     "import_wallet": "Importa",
     "intro_pages": {
       "1": {
-        "subtitle": "Nuble Wallet",
+        "subtitle": "Astellr Wallet",
         "text": "Acquista criptovaluta, scopri le blockchain e proteggi il tuo futuro finanziario.",
         "title": "Benvenuto/a in"
       },
@@ -1101,7 +1101,7 @@
       },
       "3": {
         "subtitle": "Blockchain",
-        "text": "Nuble Wallet supporta Bitcoin, Ethereum, Polygon, Doge e molte altre criptovalute. ",
+        "text": "Astellr Wallet supporta Bitcoin, Ethereum, Polygon, Doge e molte altre criptovalute. ",
         "title": "Scopri di più"
       },
       "4": {
@@ -1146,7 +1146,7 @@
   },
   "onboardingImportMethod": {
     "methodICloud": {
-      "desc": "Importa da un backup da iCloud creato per Nuble Wallet",
+      "desc": "Importa da un backup da iCloud creato per Astellr Wallet",
       "title": "Importa da iCloud"
     },
     "methodManual": {
@@ -1221,7 +1221,7 @@
   "onboardingOutro": {
     "button": "Accetta e continua",
     "caption": "Questo wallet supporta Bitcoin, Ethereum, Polygon, Solana e molte altre criptovalute.",
-    "footer": "Se scegli di continuare con Nuble Wallet, accetti i suoi\n",
+    "footer": "Se scegli di continuare con Astellr Wallet, accetti i suoi\n",
     "termsOfService": "Termini di servizio",
     "title": "Il tuo wallet è pronto"
   },
@@ -1515,7 +1515,7 @@
   },
   "storeReview": {
     "alertMessage": "Ci piacerebbe ricevere un feedback sulla tua esperienza.",
-    "alertTitle": "Qual è il tuo giudizio sull’app Nuble Wallet?",
+    "alertTitle": "Qual è il tuo giudizio sull’app Astellr Wallet?",
     "nagativeAlertTitle": "Ci dispiace sapere che questa app non soddisfa le tue esigenze.",
     "negativeAlertMessage": "Desideri farci sapere come possiamo migliorare la tua esperienza?",
     "notReally": "Non molto",
@@ -1567,7 +1567,7 @@
         "title": "Bridge cost"
       },
       "krakenFee": {
-        "hint": "Nuble Wallet non applica alcuna commissione per gli swap. Offriamo gratuitamente questo servizio per sostenere l'adozione della criptovaluta e della tecnologia blockchain.",
+        "hint": "Astellr Wallet non applica alcuna commissione per gli swap. Offriamo gratuitamente questo servizio per sostenere l'adozione della criptovaluta e della tecnologia blockchain.",
         "title": "Commissione di Kraken",
         "value": "GRATIS"
       },
@@ -1903,7 +1903,7 @@
     "backupWithICloudCompleted": "Eseguito il backup con iCloud",
     "caption": "Se non esegui il backup del tuo wallet, ti esponi al rischio di perdere le tue criptovalute. Non abbiamo accesso alla tua frase di recupero e non possiamo aiutarti a recuperarla senza un backup.",
     "explainer": {
-      "desc": "Nella maggior parte dei casi, le persone perdono le loro criptovalute perché dimenticano la frase di recupero segreta. Nuble Wallet riduce al minimo questo rischio offrendo molteplici metodi sicuri per il backup.",
+      "desc": "Nella maggior parte dei casi, le persone perdono le loro criptovalute perché dimenticano la frase di recupero segreta. Astellr Wallet riduce al minimo questo rischio offrendo molteplici metodi sicuri per il backup.",
       "title": "Aumenta le opzioni di recupero per ridurre le possibilità di perdita"
     },
     "iCloudDescCompletedShort": "Frase di recupero segreta criptata",
@@ -2028,7 +2028,7 @@
       "title": "Nessuna passkey trovata"
     },
     "supportHint": {
-      "link": "Assistenza clienti di Nuble Wallet ↗",
+      "link": "Assistenza clienti di Astellr Wallet ↗",
       "regular": "Se il problema persiste, puoi ricevere assistenza visitando ",
       "regularWithManualBackup": "Se il problema persiste, puoi importare la frase di recupero segreta di 12-24 parole o ricevere assistenza visitando "
     },

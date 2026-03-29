@@ -6,7 +6,7 @@ import { LargeHeader } from '@/components/LargeHeader';
 import { useWalletBackupSettings } from '@/hooks/useWalletBackupSettings';
 import { useIsConnectedWithExchange } from '@/realm/krakenConnect/useIsConnectedWithExchange';
 import { useLanguage } from '@/realm/settings';
-import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { useAstellrAuth } from '@/providers/AstellrAuthProvider';
 import { Routes } from '@/Routes';
 import { CurrencyBadge } from '@/screens/Settings/currency';
 import { navigationStyle } from '@/utils/navigationStyle';
@@ -37,7 +37,7 @@ export const SettingsScreen = ({ navigation }: SettingsNavigationProps<'Settings
 
   const { isCloudBackupSupported } = useWalletBackupSettings();
   const isConnectedWithExchange = useIsConnectedWithExchange();
-  const { isAuthenticated, logout, user } = useNubleAuth();
+  const { isAuthenticated, logout, user } = useAstellrAuth();
 
   const handleLogout = async () => {
     const confirmed = await showAlert(

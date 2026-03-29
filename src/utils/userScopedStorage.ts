@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ─── Current user tracking ──────────────────────────────────────────────────
 
-const CURRENT_USER_ID_KEY = '__nuble_current_user_id';
+const CURRENT_USER_ID_KEY = '__astellr_current_user_id';
 
 let _currentUserId: string | null = null;
 

@@ -17,7 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSnapTradeClient } from '@/services/snaptrade';
 import type { BrokerageAccount, Position, SnapTradeSymbol } from '@/services/snaptrade';
 import { scopedKey, getCurrentUserId, USER_SCOPED_KEYS } from '@/utils/userScopedStorage';
-import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { useAstellrAuth } from '@/providers/AstellrAuthProvider';
 
 // ─── Asset name map ──────────────────────────────────────────────────────────
 
@@ -344,7 +344,7 @@ export function useBrokeragePositions() {
   const lastFetchAt = useRef(0);
   const isFetching = useRef(false);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { user } = useNubleAuth();
+  const { user } = useAstellrAuth();
   const currentUserIdRef = useRef<string | null>(user?.id ?? null);
 
   // ── Reset state when user changes (multi-user isolation) ─────────────────

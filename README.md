@@ -2,9 +2,9 @@
 <img src="https://github.com/krakenfx/wallet/assets/166629618/98098729-bd9c-4399-8290-bce491149595" width="100%">
 
 
-# Nuble Wallet
+# Astellr Wallet
 
-Nuble Wallet is a Crypto and Bitcoin self-custody wallet. It is built with React Native, Realm, an Electrum Server, and other FOSS projects. The backend runs over a proxy to ensure your personal data is never shared with 3rd party services or companies. It is built under strong principles of privacy, self-custody, and security to ensure maximum sovereignty for its users. It is open sourced under the MIT license.
+Astellr Wallet is a Crypto and Bitcoin self-custody wallet. It is built with React Native, Realm, an Electrum Server, and other FOSS projects. The backend runs over a proxy to ensure your personal data is never shared with 3rd party services or companies. It is built under strong principles of privacy, self-custody, and security to ensure maximum sovereignty for its users. It is open sourced under the MIT license.
 
 This repo functions as a mirror of the main private development repo. Its main purpose is to provide auditability, trust minimization, and code review. Please provide feedback, vulnerabilities or bug reporting using the responsible disclosure process. 
 
@@ -30,7 +30,7 @@ This repo functions as a mirror of the main private development repo. Its main p
 
 ## License
 
-Nuble Wallet's source code is released under the terms of the MIT license.
+Astellr Wallet's source code is released under the terms of the MIT license.
 
 ## Security Audit
 

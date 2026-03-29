@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "nuble-icon.svg",
+      "filename" : "astellr-splash.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "astellr-splash@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "astellr-splash@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

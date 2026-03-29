@@ -15,12 +15,12 @@ import { create, open, dismissLink, LinkIOSPresentationStyle } from 'react-nativ
 import type { LinkSuccess, LinkExit } from 'react-native-plaid-link-sdk';
 
 import { getPlaidClient } from '@/services/plaid';
-import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { useAstellrAuth } from '@/providers/AstellrAuthProvider';
 
 export function usePlaidLink() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { getAccessToken } = useNubleAuth();
+  const { getAccessToken } = useAstellrAuth();
 
   const openPlaidLink = useCallback(async (
     onSuccess?: (publicToken: string, institutionId?: string, institutionName?: string) => void,

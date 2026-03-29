@@ -4,18 +4,18 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import WebView from '@metamask/react-native-webview';
 
 import { Label } from '@/components/Label';
-import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { useAstellrAuth } from '@/providers/AstellrAuthProvider';
 import type { NavigationProps } from '@/Routes';
 import { useTheme } from '@/theme/themes';
 import { navigationStyle } from '@/utils/navigationStyle';
 
-import { NUBLE_CHAT_URL } from './chatConfig';
+import { ASTELLR_CHAT_URL } from './chatConfig';
 
 /**
- * ChatScreen — embeds the Nuble AI chat (ROKET-CHAT) inside a WebView.
+ * ChatScreen — embeds the Astellr AI chat (ROKET-CHAT) inside a WebView.
  *
  * Authentication flow (mirrors the Vibe-Trading web app exactly):
- * 1. On mount, we call NubleAuthProvider.getChatToken() which:
+ * 1. On mount, we call AstellrAuthProvider.getChatToken() which:
  *    a. Gets the current platform access token (refreshing if needed).
  *    b. Calls POST /api/v1/auths/platform-exchange on the ROKET-CHAT
  *       backend — the EXACT same endpoint the Vibe-Trading platform uses.
@@ -34,7 +34,7 @@ export const ChatScreen = ({}: NavigationProps<'Chat'>) => {
   const [chatToken, setChatToken] = useState<string | null>(null);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
 
-  const { getChatToken } = useNubleAuth();
+  const { getChatToken } = useAstellrAuth();
 
   // Exchange platform token for chat token on mount
   useEffect(() => {
@@ -128,7 +128,7 @@ export const ChatScreen = ({}: NavigationProps<'Chat'>) => {
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color={colors.kraken} />
           <Label type="regularBody" color="light50" style={styles.loadingText}>
-            Connecting to Nuble Chat…
+            Connecting to Astellr Chat…
           </Label>
         </View>
       </View>
@@ -143,7 +143,7 @@ export const ChatScreen = ({}: NavigationProps<'Chat'>) => {
             Unable to connect
           </Label>
           <Label type="regularBody" color="light50" style={styles.errorSubtitle}>
-            Make sure the Nuble Chat server is running at {NUBLE_CHAT_URL}
+            Make sure the Astellr Chat server is running at {ASTELLR_CHAT_URL}
           </Label>
           <Label type="boldBody" color="kraken" style={styles.retryButton} onPress={handleRetry}>
             Tap to retry
@@ -157,7 +157,7 @@ export const ChatScreen = ({}: NavigationProps<'Chat'>) => {
     <View style={[styles.container, { backgroundColor: colors.background }]} testID="ChatScreen">
       <WebView
         ref={webViewRef}
-        source={{ uri: NUBLE_CHAT_URL }}
+        source={{ uri: ASTELLR_CHAT_URL }}
         style={styles.webView}
         javaScriptEnabled
         domStorageEnabled
@@ -177,7 +177,7 @@ export const ChatScreen = ({}: NavigationProps<'Chat'>) => {
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color={colors.kraken} />
           <Label type="regularBody" color="light50" style={styles.loadingText}>
-            Loading Nuble Chat…
+            Loading Astellr Chat…
           </Label>
         </View>
       )}

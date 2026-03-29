@@ -1,7 +1,7 @@
 {
   "_": {
     "add": "Thêm",
-    "appName": "Nuble Wallet",
+    "appName": "Astellr Wallet",
     "balance": "Số dư {0}",
     "cancel": "Hủy",
     "confirm": "Xác nhận",
@@ -185,7 +185,7 @@
     "buttonText": "Nghe hay đấy",
     "part1": "Ví của bạn hiện hỗ trợ {boldBlastNetwork}. Ethereum L2 với lợi suất gốc cho ETH và stablecoin.",
     "part2": "Với sự tích hợp này, chúng tôi đã tạo tiền đề để nhanh chóng bổ sung thêm nhiều mạng Cấp 2 hơn, đồng thời duy trì trải nghiệm ví di động an toàn nhất.",
-    "title": "Nuble Wallet chào đón Blast!"
+    "title": "Astellr Wallet chào đón Blast!"
   },
   "broadcast": {
     "sent": "Đã gửi"
@@ -213,11 +213,11 @@
     "searchOnChain": "Tìm kiếm onchain"
   },
   "browserExploreWelcome": {
-    "body": "Hãy thực hiện bước tiếp theo trong hành trình tiền điện tử của bạn ngay hôm nay. Bây giờ, bạn có thể khám phá và kết nối với các ứng dụng phi tập trung (dapp) mà không cần rời khỏi Nuble Wallet của mình.",
+    "body": "Hãy thực hiện bước tiếp theo trong hành trình tiền điện tử của bạn ngay hôm nay. Bây giờ, bạn có thể khám phá và kết nối với các ứng dụng phi tập trung (dapp) mà không cần rời khỏi Astellr Wallet của mình.",
     "buttonText": "Nghe hay đấy",
     "part1": "Sử dụng các tùy chọn menu mới ở cuối màn hình của bạn để truy cập trang Khám phá",
     "part2": "Khám phá các ứng dụng phi tập trung phổ biến và các cơ hội onchain mới hoặc sử dụng thanh Tìm kiếm để biết thêm",
-    "part3": "Dễ dàng kết nối với các ứng dụng phi tập trung và thực hiện giao dịch mà không cần phải thoát khỏi ứng dụng Nuble Wallet",
+    "part3": "Dễ dàng kết nối với các ứng dụng phi tập trung và thực hiện giao dịch mà không cần phải thoát khỏi ứng dụng Astellr Wallet",
     "title": "Khám phá thế giới onchain"
   },
   "bugTracking": {
@@ -225,7 +225,7 @@
     "content": "Khả năng quan sát cho phép chúng tôi theo dõi và cải thiện trải nghiệm ví của bạn bằng cách thu thập dữ liệu cần thiết. Điều này giúp chúng tôi xác định các vấn đề, tối ưu hóa hiệu suất và đảm bảo ví của bạn hoạt động trơn tru. Dữ liệu của bạn được ẩn danh và an toàn! ",
     "disallow": "Không cho phép",
     "skip": "Hỏi tôi sau",
-    "title": "Giúp chúng tôi cải thiện Nuble Wallet"
+    "title": "Giúp chúng tôi cải thiện Astellr Wallet"
   },
   "coins": {
     "allNetworks": "Tất cả các mạng",
@@ -381,8 +381,8 @@
     "request_approval": "Yêu cầu phê duyệt giao dịch",
     "see_balance": "Xem số dư và hoạt động của bạn",
     "unsupportedNetwork": "Mạng không được hỗ trợ",
-    "unsupportedNetworkDescription": "Ứng dụng này sử dụng mạng {unsupportedNetwork} không được hỗ trợ tại thời điểm này. Nuble Wallet hiện hỗ trợ các ứng dụng trên mạng Ethereum, Polygon, OP Mainnet, Arbitrum và Solana.",
-    "unsupportedNetworksDescription": "Ứng dụng này sử dụng các mạng {unsupportedNetworks} không được hỗ trợ tại thời điểm này. Nuble Wallet hiện hỗ trợ các ứng dụng trên mạng Ethereum, Polygon, OP Mainnet, Arbitrum và Solana."
+    "unsupportedNetworkDescription": "Ứng dụng này sử dụng mạng {unsupportedNetwork} không được hỗ trợ tại thời điểm này. Astellr Wallet hiện hỗ trợ các ứng dụng trên mạng Ethereum, Polygon, OP Mainnet, Arbitrum và Solana.",
+    "unsupportedNetworksDescription": "Ứng dụng này sử dụng các mạng {unsupportedNetworks} không được hỗ trợ tại thời điểm này. Astellr Wallet hiện hỗ trợ các ứng dụng trên mạng Ethereum, Polygon, OP Mainnet, Arbitrum và Solana."
   },
   "connectedApps": {
     "app_details": {
@@ -701,7 +701,7 @@
       },
       "lockWallet": "Khóa ví",
       "privacy": "Bảo mật",
-      "version": "Tiện ích mở rộng Nuble Wallet {0}",
+      "version": "Tiện ích mở rộng Astellr Wallet {0}",
       "walletSettings": "Cài đặt ví"
     },
     "skip": "Bỏ qua",
@@ -844,7 +844,7 @@
       "transferFee": "Phí chuyển khoản",
       "transferringTo": "Đang chuyển sang",
       "unsupportedAssets": "Tài sản không được hỗ trợ",
-      "unsupportedAssetsDescription": "{assets} hiện không được Nuble Wallet hỗ trợ"
+      "unsupportedAssetsDescription": "{assets} hiện không được Astellr Wallet hỗ trợ"
     },
     "transferCta": {
       "body": "Kết nối tài khoản Kraken của bạn để chuyển tiền điện tử nhanh chóng",
@@ -1090,7 +1090,7 @@
     "import_wallet": "Nhập",
     "intro_pages": {
       "1": {
-        "subtitle": "Nuble Wallet",
+        "subtitle": "Astellr Wallet",
         "text": "Sở hữu tiền điện tử của bạn, khám phá blockchain và đảm bảo tương lai tài chính của bạn.",
         "title": "Chào mừng đến với"
       },
@@ -1101,7 +1101,7 @@
       },
       "3": {
         "subtitle": "blockchain",
-        "text": "Nuble Wallet hỗ trợ Bitcoin, Ethereum, Polygon, Doge, v.v. ",
+        "text": "Astellr Wallet hỗ trợ Bitcoin, Ethereum, Polygon, Doge, v.v. ",
         "title": "Khám phá thêm"
       },
       "4": {
@@ -1146,7 +1146,7 @@
   },
   "onboardingImportMethod": {
     "methodICloud": {
-      "desc": "Nhập từ bản sao lưu iCloud mà bạn đã tạo cho Nuble Wallet",
+      "desc": "Nhập từ bản sao lưu iCloud mà bạn đã tạo cho Astellr Wallet",
       "title": "Nhập từ iCloud"
     },
     "methodManual": {
@@ -1222,7 +1222,7 @@
     "button": "Đồng ý & Tiếp tục",
     "caption": "Ví này hỗ trợ Bitcoin, Ethereum, Polygon, Solana, v.v.",
     "footer": "Khi tiếp tục, bạn đồng ý với\n",
-    "termsOfService": "các điều khoản dịch vụ của Nuble Wallet",
+    "termsOfService": "các điều khoản dịch vụ của Astellr Wallet",
     "title": "Ví của bạn đã sẵn sàng"
   },
   "onboardingPushNotifications": {
@@ -1515,7 +1515,7 @@
   },
   "storeReview": {
     "alertMessage": "Chúng tôi muốn biết liệu bạn có trải nghiệm tuyệt vời hay không.",
-    "alertTitle": "Bạn có thích Ứng dụng Nuble Wallet không?",
+    "alertTitle": "Bạn có thích Ứng dụng Astellr Wallet không?",
     "nagativeAlertTitle": "Chúng tôi rất tiếc vì bạn không có trải nghiệm tốt với ứng dụng này.",
     "negativeAlertMessage": "Bạn có muốn cho chúng tôi biết cách chúng tôi có thể cải thiện trải nghiệm của bạn không?",
     "notReally": "Không hẳn",
@@ -1567,7 +1567,7 @@
         "title": "Chi phí cầu nối"
       },
       "krakenFee": {
-        "hint": "Nuble Wallet không tính bất kỳ khoản phí nào cho việc hoán đổi. Chúng tôi cung cấp dịch vụ này miễn phí để hỗ trợ việc áp dụng công nghệ tiền điện tử và blockchain.",
+        "hint": "Astellr Wallet không tính bất kỳ khoản phí nào cho việc hoán đổi. Chúng tôi cung cấp dịch vụ này miễn phí để hỗ trợ việc áp dụng công nghệ tiền điện tử và blockchain.",
         "title": "Phí Kraken",
         "value": "MIỄN PHÍ"
       },
@@ -1903,7 +1903,7 @@
     "backupWithICloudCompleted": "Đã sao lưu bằng iCloud",
     "caption": "Nếu không sao lưu ví của mình, bạn sẽ có nguy cơ mất tiền điện tử. Chúng tôi không có quyền truy cập vào cụm từ khôi phục của bạn và không thể giúp bạn khôi phục nếu không có bản sao lưu.",
     "explainer": {
-      "desc": "Việc mất cụm từ khôi phục bí mật là cách thông thường khiến mọi người mất tiền điện tử. Nuble Wallet giảm thiểu rủi ro này bằng cách cung cấp nhiều phương pháp sao lưu an toàn.",
+      "desc": "Việc mất cụm từ khôi phục bí mật là cách thông thường khiến mọi người mất tiền điện tử. Astellr Wallet giảm thiểu rủi ro này bằng cách cung cấp nhiều phương pháp sao lưu an toàn.",
       "title": "Tăng khả năng khôi phục để giảm nguy cơ mất tiền"
     },
     "iCloudDescCompletedShort": "Cụm từ khôi phục bí mật được mã hóa",
@@ -2028,7 +2028,7 @@
       "title": "Không tìm thấy mã khóa"
     },
     "supportHint": {
-      "link": "Bộ phận Hỗ trợ Nuble Wallet ↗",
+      "link": "Bộ phận Hỗ trợ Astellr Wallet ↗",
       "regular": "Nếu điều đó không giải quyết được vấn đề, bạn có thể nhận trợ giúp bằng cách truy cập ",
       "regularWithManualBackup": "Nếu điều đó không giải quyết được vấn đề, bạn có thể nhập Cụm từ khôi phục bí mật 12-24 ký tự hoặc nhận trợ giúp bằng cách truy cập "
     },
@@ -2103,7 +2103,7 @@
     "thirdPage": {
       "buttonText": "Tiếp tục",
       "description1": "Chạm vào WalletConnect",
-      "description2": "Chọn Nuble Wallet",
+      "description2": "Chọn Astellr Wallet",
       "subtitle": "Thay vì quét:",
       "title": "Khi sử dụng ứng dụng Web3 trên điện thoại"
     }

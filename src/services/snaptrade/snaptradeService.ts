@@ -4,12 +4,12 @@
  * Adapted from the Vibe-Trading web service for React Native.
  * Handles user registration, connection portal, account management, and trading.
  *
- * Backend API: NUBLE_PLATFORM_URL/api/snaptrade/*
+ * Backend API: ASTELLR_PLATFORM_URL/api/snaptrade/*
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { NUBLE_PLATFORM_URL } from '@/screens/Chat/chatConfig';
+import { ASTELLR_PLATFORM_URL } from '@/screens/Chat/chatConfig';
 import { scopedKey, getCurrentUserId, USER_SCOPED_KEYS } from '@/utils/userScopedStorage';
 
 // ============================================================================
@@ -192,7 +192,7 @@ export interface ApiResponse<T> {
 // ============================================================================
 
 const CREDENTIALS_BASE_KEY = USER_SCOPED_KEYS.SNAPTRADE_CREDENTIALS;
-const API_BASE_URL = `${NUBLE_PLATFORM_URL}/api/snaptrade`;
+const API_BASE_URL = `${ASTELLR_PLATFORM_URL}/api/snaptrade`;
 const DEFAULT_TIMEOUT = 30000;
 
 // ============================================================================

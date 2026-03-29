@@ -34,8 +34,8 @@ import { GlobalStateProvider } from './components/GlobalState';
 import { MenuProvider } from './components/Menu';
 import { ToastManager } from './components/Toast';
 import NavigationStack from './Navigation';
-import { NubleAuthProvider } from './providers/NubleAuthProvider';
-import { NubleAuthGate } from './providers/NubleAuthGate';
+import { AstellrAuthProvider } from './providers/AstellrAuthProvider';
+import { AstellrAuthGate } from './providers/AstellrAuthGate';
 import { SecuredKeychainProvider } from './secureStore/SecuredKeychainProvider';
 import { SuperDarkTheme } from './theme/themes';
 
@@ -108,8 +108,8 @@ const App = () => {
     <AppLockGuard>
       <GestureHandlerRootView style={styles.container}>
         <SafeAreaProvider>
-          <NubleAuthProvider>
-            <NubleAuthGate>
+          <AstellrAuthProvider>
+            <AstellrAuthGate>
               <NavigationContainer ref={navigationRef} theme={SuperDarkTheme}>
                 <UnencryptedRealmProvider>
                   <SecuredRealmProvider>
@@ -138,8 +138,8 @@ const App = () => {
                   </SecuredRealmProvider>
                 </UnencryptedRealmProvider>
               </NavigationContainer>
-            </NubleAuthGate>
-          </NubleAuthProvider>
+            </AstellrAuthGate>
+          </AstellrAuthProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </AppLockGuard>

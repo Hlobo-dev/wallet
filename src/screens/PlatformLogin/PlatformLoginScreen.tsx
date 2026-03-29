@@ -3,7 +3,7 @@
  *
  * Layout (top → bottom):
  * 1. Header with user icon
- * 2. Branded logo + "Welcome to Nuble" + subtitle
+ * 2. Branded logo + "Welcome to Astellr" + subtitle
  * 3. Category tabs: Most popular | Gainers | Losers | New
  * 4. Market rows — coin icon, name/symbol, sparkline, price, 24h change
  * 5. Bottom sticky bar: "Sign in" + "Create account"
@@ -32,10 +32,10 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Circle, Line, Path } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 
-import { useNubleAuth } from '@/providers/NubleAuthProvider';
-import { PlatformAuthError } from '@/services/nublePlatform';
+import { useAstellrAuth } from '@/providers/AstellrAuthProvider';
+import { PlatformAuthError } from '@/services/astellrPlatform';
 
 import EthereumIcon from '../../../assets/kraken-wallet-network-icons/src/ethereum.svg';
 
@@ -215,7 +215,7 @@ const MarketRow: React.FC<{ coin: CoinData }> = React.memo(({ coin }) => {
 // ─── OAuth ──────────────────────────────────────────────────────────────────
 // OAuth is handled by expo-web-browser (ASWebAuthenticationSession on iOS)
 // which opens a system browser sheet. Google allows this unlike embedded WebViews.
-// The flow is managed entirely by NubleAuthProvider.loginWithOAuth().
+// The flow is managed entirely by AstellrAuthProvider.loginWithOAuth().
 
 // ─── Auth Bottom Sheet ──────────────────────────────────────────────────────
 
@@ -226,7 +226,7 @@ const AuthSheet: React.FC<{
   onToggleMode: () => void;
 }> = ({ visible, mode, onClose, onToggleMode }) => {
   const insets = useSafeAreaInsets();
-  const { login, register, loginWithOAuth, isOAuthLoading } = useNubleAuth();
+  const { login, register, loginWithOAuth, isOAuthLoading } = useAstellrAuth();
   const slide = useRef(new Animated.Value(0)).current;
 
   const [email, setEmail] = useState('');
@@ -311,7 +311,7 @@ const AuthSheet: React.FC<{
             {mode === 'login' ? 'Welcome back' : 'Create account'}
           </Text>
           <Text style={s.sheetSubtitle}>
-            {mode === 'login' ? 'Sign in to your account' : 'Get started with Nuble'}
+            {mode === 'login' ? 'Sign in to your account' : 'Get started with Astellr'}
           </Text>
 
             {mode === 'register' && (
@@ -1342,18 +1342,17 @@ export const PlatformLoginScreen: React.FC = () => {
         {/* ── Logo (independent position) ── */}
         <View style={s.logoSection}>
           <View style={s.logoWrap}>
-            <Svg width={56} height={56} viewBox="0 0 52 52" fill="none">
-              <Line x1={26} y1={8} x2={26} y2={44} stroke="#818cf7" strokeWidth={5} strokeLinecap="round" />
-              <Line x1={10} y1={17} x2={42} y2={35} stroke="#818cf7" strokeWidth={5} strokeLinecap="round" />
-              <Line x1={10} y1={35} x2={42} y2={17} stroke="#818cf7" strokeWidth={5} strokeLinecap="round" />
-              <Circle cx={26} cy={26} r={5} fill="#6366f1" />
-            </Svg>
+            <Image
+              source={require('@/assets/images/astellr-logo.png')}
+              style={{ width: 70, height: 70 }}
+              resizeMode="contain"
+            />
           </View>
         </View>
 
         {/* ── Hero text ── */}
         <View style={s.hero}>
-          <Text style={s.title}>Welcome to Nuble</Text>
+          <Text style={s.title}>Welcome to Astellr</Text>
           <Text style={s.subtitle}>
             Create your account or sign in to an existing{'\n'}account to build and manage your portfolio.
           </Text>

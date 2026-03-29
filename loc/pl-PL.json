@@ -1,7 +1,7 @@
 {
   "_": {
     "add": "Dodaj",
-    "appName": "Portfel Nuble Wallet",
+    "appName": "Portfel Astellr Wallet",
     "balance": "Saldo {0}",
     "cancel": "Anuluj",
     "confirm": "Potwierdź",
@@ -185,7 +185,7 @@
     "buttonText": "Brzmi dobrze",
     "part1": "Twój portfel teraz wspiera {boldBlastNetwork}. Ethereum L2 z natywną stopą dla ETH i stablecoinów.",
     "part2": "Integracja z Blast umożliwia Ci przeglądanie sald aktywów, transmitowanie transakcji i łączenie się z aplikacjami zdecentralizowanymi w sieci Blast. Obsługa NFT będzie wkrótce dostępna.",
-    "title": "Nuble Wallet łączy siły z Blast."
+    "title": "Astellr Wallet łączy siły z Blast."
   },
   "broadcast": {
     "sent": "Wysłano"
@@ -213,11 +213,11 @@
     "searchOnChain": "Szukaj w on-chain"
   },
   "browserExploreWelcome": {
-    "body": "Zrób dzisiaj kolejny krok w swojej przygodzie z krypto. Możesz teraz poznać i połączyć się ze zdecentralizowanymi aplikacjami (dapps) bez opuszczania portfela Nuble Wallet.",
+    "body": "Zrób dzisiaj kolejny krok w swojej przygodzie z krypto. Możesz teraz poznać i połączyć się ze zdecentralizowanymi aplikacjami (dapps) bez opuszczania portfela Astellr Wallet.",
     "buttonText": "Brzmi dobrze",
     "part1": "Użyj nowych opcji menu u dołu ekranu, aby uzyskać dostęp do strony Eksploruj",
     "part2": "Eksploruj popularne aplikacje zdecentralizowane i nowe okazje onchain, lub użyj paska wyszukiwania, aby uzyskać więcej informacji",
-    "part3": "Z łatwością połącz się aplikacjami zdecentralizowanymi i przeprowadzaj transakcje bez opuszczania aplikacji Nuble Wallet",
+    "part3": "Z łatwością połącz się aplikacjami zdecentralizowanymi i przeprowadzaj transakcje bez opuszczania aplikacji Astellr Wallet",
     "title": "Eksploruj świat onchain"
   },
   "bugTracking": {
@@ -225,7 +225,7 @@
     "content": "Obserwowalność pozwala nam monitorować i ulepszać korzystanie z portfela poprzez gromadzenie istotnych danych. Dzięki temu możemy identyfikować problemy, optymalizować wydajność i zapewniać płynne działanie portfela. Twoje dane są anonimowe i bezpieczne! ",
     "disallow": "Nie zezwalaj",
     "skip": "Zapytaj mnie później",
-    "title": "Pomóż nam w ulepszaniu Nuble Wallet"
+    "title": "Pomóż nam w ulepszaniu Astellr Wallet"
   },
   "coins": {
     "allNetworks": "Wszystkie sieci",
@@ -381,8 +381,8 @@
     "request_approval": "Proś o zatwierdzenie transakcji",
     "see_balance": "Zobacz swoje salda i aktywność",
     "unsupportedNetwork": "Nieobsługiwana sieć",
-    "unsupportedNetworkDescription": "Ta aplikacja korzysta z sieci {unsupportedNetwork}, która obecnie nie jest obsługiwana. Portfel Nuble Wallet obecnie obsługuje aplikacje w sieciach Ethereum, Polygon, OP Mainnet, Arbitrum oraz Solana.",
-    "unsupportedNetworksDescription": "Ta aplikacja korzysta z sieci {unsupportedNetworks}, które obecnie nie są obsługiwane. Portfel Nuble Wallet obecnie obsługuje aplikacje w sieciach Ethereum, Polygon, OP Mainnet, Arbitrum oraz Solana."
+    "unsupportedNetworkDescription": "Ta aplikacja korzysta z sieci {unsupportedNetwork}, która obecnie nie jest obsługiwana. Portfel Astellr Wallet obecnie obsługuje aplikacje w sieciach Ethereum, Polygon, OP Mainnet, Arbitrum oraz Solana.",
+    "unsupportedNetworksDescription": "Ta aplikacja korzysta z sieci {unsupportedNetworks}, które obecnie nie są obsługiwane. Portfel Astellr Wallet obecnie obsługuje aplikacje w sieciach Ethereum, Polygon, OP Mainnet, Arbitrum oraz Solana."
   },
   "connectedApps": {
     "app_details": {
@@ -701,7 +701,7 @@
       },
       "lockWallet": "Zablokuj portfel",
       "privacy": "Prywatność",
-      "version": "Rozszerzenie {0} portfela Nuble Wallet",
+      "version": "Rozszerzenie {0} portfela Astellr Wallet",
       "walletSettings": "Ustawienia portfela"
     },
     "skip": "Pomiń",
@@ -844,7 +844,7 @@
       "transferFee": "Opłata za przelew",
       "transferringTo": "Przelew do",
       "unsupportedAssets": "Nieobsługiwane aktywa",
-      "unsupportedAssetsDescription": "{assets} nie są obecnie obsługiwane przez Nuble Wallet"
+      "unsupportedAssetsDescription": "{assets} nie są obecnie obsługiwane przez Astellr Wallet"
     },
     "transferCta": {
       "body": "Połącz konto Kraken, aby szybciej przesyłać kryptowaluty",
@@ -1090,7 +1090,7 @@
     "import_wallet": "Importuj",
     "intro_pages": {
       "1": {
-        "subtitle": "Portfel Nuble Wallet",
+        "subtitle": "Portfel Astellr Wallet",
         "text": "Wejdź w posiadanie kryptowalut, odkrywaj łańcuchy bloków i zabezpiecz swoją finansową przyszłość.",
         "title": "Witamy w"
       },
@@ -1101,7 +1101,7 @@
       },
       "3": {
         "subtitle": "Łańcuchy bloków",
-        "text": "Portfel Nuble Wallet obsługuje Bitcoin, Ethereum, Polygon, Doge i wiele więcej. ",
+        "text": "Portfel Astellr Wallet obsługuje Bitcoin, Ethereum, Polygon, Doge i wiele więcej. ",
         "title": "Odkryj więcej"
       },
       "4": {
@@ -1146,7 +1146,7 @@
   },
   "onboardingImportMethod": {
     "methodICloud": {
-      "desc": "Importuj z kopii zapasowej w iCloud utworzonej dla portfela Nuble Wallet",
+      "desc": "Importuj z kopii zapasowej w iCloud utworzonej dla portfela Astellr Wallet",
       "title": "Importuj z iCloud"
     },
     "methodManual": {
@@ -1221,7 +1221,7 @@
   "onboardingOutro": {
     "button": "Wyraź zgodę i kontynuuj",
     "caption": "Ten portfel obsługuje Bitcoin, Ethereum, Polygon, Solana i wiele innych.",
-    "footer": "Kontynuując, wyrażasz zgodę na obowiązujące w przypadku portfela Nuble Wallet\n",
+    "footer": "Kontynuując, wyrażasz zgodę na obowiązujące w przypadku portfela Astellr Wallet\n",
     "termsOfService": "warunki świadczenia usług",
     "title": "Twój portfel jest gotowy"
   },
@@ -1515,7 +1515,7 @@
   },
   "storeReview": {
     "alertMessage": "Chętnie dowiemy się, jakie są Twoje wrażenia.",
-    "alertTitle": "Czy podoba Ci się aplikacja Nuble Wallet?",
+    "alertTitle": "Czy podoba Ci się aplikacja Astellr Wallet?",
     "nagativeAlertTitle": "Przykro nam, że nie podoba Ci się aplikacja.",
     "negativeAlertMessage": "Czy zechcesz powiedzieć nam, co możemy poprawić?",
     "notReally": "Raczej nie",
@@ -1567,7 +1567,7 @@
         "title": "Koszt Bridge"
       },
       "krakenFee": {
-        "hint": "Nuble Wallet nie nalicza żadnych opłat za swapy. Oferujemy tę usługę bezpłatnie, aby wspierać wdrażanie kryptowalut i technologii blockchain.",
+        "hint": "Astellr Wallet nie nalicza żadnych opłat za swapy. Oferujemy tę usługę bezpłatnie, aby wspierać wdrażanie kryptowalut i technologii blockchain.",
         "title": "Opłata kraken",
         "value": "BEZ OPŁAT"
       },
@@ -1903,7 +1903,7 @@
     "backupWithICloudCompleted": "Utworzono kopię zapasową w iCloud",
     "caption": "Jeśli nie utworzysz kopii zapasowej swojego portfela, narażasz się na ryzyko utraty kryptowalut. Nie mamy dostępu do Twojej frazy odzyskiwania i nie możemy pomóc Ci jej odzyskać, jeśli nie masz kopii zapasowej.",
     "explainer": {
-      "desc": "Utrata tajnej frazy odzyskiwania to typowa sytuacja, w której dochodzi do utraty kryptowaluty. Nuble Wallet zmniejsza to ryzyko, oferując więcej niż jedną bezpieczną metodę kopii zapasowej.",
+      "desc": "Utrata tajnej frazy odzyskiwania to typowa sytuacja, w której dochodzi do utraty kryptowaluty. Astellr Wallet zmniejsza to ryzyko, oferując więcej niż jedną bezpieczną metodę kopii zapasowej.",
       "title": "Zwiększ poziom odzyskiwania, aby zmniejszyć ryzyko straty"
     },
     "iCloudDescCompletedShort": "Zaszyfrowana tajna fraza odzyskiwania",
@@ -2028,7 +2028,7 @@
       "title": "Nie znaleziono klucza dostępu"
     },
     "supportHint": {
-      "link": "Dział Wsparcia Nuble Wallet ↗",
+      "link": "Dział Wsparcia Astellr Wallet ↗",
       "regular": "Jeśli to nie rozwiąże Twojego problemu, możesz uzyskać pomoc, odwiedzając ",
       "regularWithManualBackup": "Jeśli to nie rozwiąże Twojego problemu, możesz zaimportować Twoją 12-24 wyrazową tajną frazę odzyskiwania lub uzyskać pomoc, odwiedzając "
     },
@@ -2103,7 +2103,7 @@
     "thirdPage": {
       "buttonText": "Kontynuuj",
       "description1": "Dotknij WalletConnect",
-      "description2": "Wybierz portfel Nuble Wallet",
+      "description2": "Wybierz portfel Astellr Wallet",
       "subtitle": "Zamiast skanowania:",
       "title": "Podczas korzystania z aplikacji Web3 na swoim telefonie"
     }

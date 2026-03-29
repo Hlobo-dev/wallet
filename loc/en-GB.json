@@ -1,7 +1,7 @@
 {
   "_": {
     "add": "Add",
-    "appName": "Nuble Wallet",
+    "appName": "Astellr Wallet",
     "balance": "Balance {0}",
     "cancel": "Cancel",
     "confirm": "Confirm",
@@ -154,7 +154,7 @@
     "buttonText": "Sounds good",
     "part1": "Your wallet now supports the {boldBlastNetwork}. The Ethereum L2 with native yield for ETH and stablecoins.",
     "part2": "With this integration, we've set the stage to add more Level 2 networks rapidly, while maintaining the most secure mobile wallet experience.",
-    "title": "Nuble Wallet Welcomes Blast!"
+    "title": "Astellr Wallet Welcomes Blast!"
   },
   "broadcast": {
     "sent": "Sent"
@@ -313,8 +313,8 @@
     "request_approval": "Request approval for transactions",
     "see_balance": "See your balances and activity",
     "unsupportedNetwork": "Unsupported network",
-    "unsupportedNetworkDescription": "This app uses the {unsupportedNetwork} network which is not supported at this time. Nuble Wallet currently supports apps on the Ethereum, Polygon, Optimism, Arbitrum and Solana networks.",
-    "unsupportedNetworksDescription": "This app uses {unsupportedNetworks} networks which are not supported at this time. Nuble Wallet currently supports apps on the Ethereum, Polygon, Optimism, Arbitrum and Solana networks."
+    "unsupportedNetworkDescription": "This app uses the {unsupportedNetwork} network which is not supported at this time. Astellr Wallet currently supports apps on the Ethereum, Polygon, Optimism, Arbitrum and Solana networks.",
+    "unsupportedNetworksDescription": "This app uses {unsupportedNetworks} networks which are not supported at this time. Astellr Wallet currently supports apps on the Ethereum, Polygon, Optimism, Arbitrum and Solana networks."
   },
   "connectedApps": {
     "app_details": {
@@ -662,7 +662,7 @@
     "import_wallet": "Import",
     "intro_pages": {
       "1": {
-        "subtitle": "Nuble Wallet",
+        "subtitle": "Astellr Wallet",
         "text": "Own your crypto, discover blockchains and secure your financial future.",
         "title": "Welcome to"
       },
@@ -673,7 +673,7 @@
       },
       "3": {
         "subtitle": "blockchains",
-        "text": "Nuble Wallet supports Bitcoin, Ethereum, Polygon, Doge and more. ",
+        "text": "Astellr Wallet supports Bitcoin, Ethereum, Polygon, Doge and more. ",
         "title": "Explore more"
       },
       "4": {
@@ -719,7 +719,7 @@
   "onboardingOutro": {
     "button": "Agree & Continue",
     "caption": "This wallet supports Bitcoin, Ethereum, Polygon, Solana and more.",
-    "footer": "By continuing, you agree to Nuble Wallet's\n",
+    "footer": "By continuing, you agree to Astellr Wallet's\n",
     "termsOfService": "Terms of Service",
     "title": "Your wallet is ready"
   },
@@ -1001,7 +1001,7 @@
   },
   "storeReview": {
     "alertMessage": "We'd love to know if you're having a great experience.",
-    "alertTitle": "Are you enjoying the Nuble Wallet App?",
+    "alertTitle": "Are you enjoying the Astellr Wallet App?",
     "nagativeAlertTitle": "We're sorry that you're not having a good time with this app.",
     "negativeAlertMessage": "Would you like to let us know how we can improve your experience?",
     "notReally": "Not really",
@@ -1327,7 +1327,7 @@
     "thirdPage": {
       "buttonText": "Continue",
       "description1": "Tap on WalletConnect",
-      "description2": "Select Nuble Wallet",
+      "description2": "Select Astellr Wallet",
       "subtitle": "Instead of scanning:",
       "title": "When using Web3 apps on your phone"
     }

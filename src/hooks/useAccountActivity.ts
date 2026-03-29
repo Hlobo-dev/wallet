@@ -11,11 +11,11 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { NUBLE_PLATFORM_URL } from '@/screens/Chat/chatConfig';
+import { ASTELLR_PLATFORM_URL } from '@/screens/Chat/chatConfig';
 import { getSnapTradeClient } from '@/services/snaptrade';
 import type { SnapTradeActivity } from '@/services/snaptrade';
 import { getPlaidClient } from '@/services/plaid';
-import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { useAstellrAuth } from '@/providers/AstellrAuthProvider';
 import { useBrokeragePositions } from '@/hooks/useBrokeragePositions';
 import { useWealthPositions } from '@/hooks/useWealthPositions';
 
@@ -329,7 +329,7 @@ export function useAccountActivity() {
   const [debugMsg, setDebugMsg] = useState('initializing…');
   const hasFetched = useRef(false);
 
-  const { getAccessToken, user } = useNubleAuth();
+  const { getAccessToken, user } = useAstellrAuth();
   const currentUserIdRef = useRef<string | null>(user?.id ?? null);
 
   // ── Reset state when user changes (multi-user isolation) ─────────────────
@@ -347,7 +347,7 @@ export function useAccountActivity() {
 
   // ── Helper: fetch from unified backend endpoint (like Vibe-Trading web) ─
   const fetchUnified = async (token: string): Promise<AccountActivityItem[]> => {
-    const url = `${NUBLE_PLATFORM_URL}/api/portfolio/activity?days=90&limit=200`;
+    const url = `${ASTELLR_PLATFORM_URL}/api/portfolio/activity?days=90&limit=200`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30_000);
 

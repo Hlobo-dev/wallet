@@ -23,8 +23,8 @@ const core = new Core({
 });
 
 const metadata = {
-  name: 'Nuble Wallet',
-  description: 'Nuble Wallet',
+  name: 'Astellr Wallet',
+  description: 'Astellr Wallet',
   url: '#',
   icons: ['https://www.kraken.com/_assets/icons/apple-touch-icon.png'],
 };

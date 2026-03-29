@@ -1,7 +1,7 @@
 {
   "_": {
     "add": "Ekle",
-    "appName": "Nuble Wallet",
+    "appName": "Astellr Wallet",
     "balance": "Bakiye {0}",
     "cancel": "İptal",
     "confirm": "Onayla",
@@ -185,7 +185,7 @@
     "buttonText": "Kulağa hoş geliyor",
     "part1": "Cüzdanınız artık {boldBlastNetwork} desteği de sunuyor. ETH ve stabil coin’ler için yerel getiriye sahip Ethereum L2.",
     "part2": "Bu entegrasyonla, en güvenli mobil cüzdan deneyimini korurken daha fazla Seviye 2 ağını hızla eklemek için zemin hazırladık.",
-    "title": "Nuble Wallet’a Blast Geliyor!"
+    "title": "Astellr Wallet’a Blast Geliyor!"
   },
   "broadcast": {
     "sent": "Verilen"
@@ -213,11 +213,11 @@
     "searchOnChain": "Zincir içinde ara"
   },
   "browserExploreWelcome": {
-    "body": "Kripto yolculuğunuzda sonraki adımı bugün atın. Artık Nuble Wallet uygulamanızdan ayrılmadan merkezi olmayan uygulamaları (dapp'lar) keşfedebilir ve bunlara bağlanabilirsiniz.",
+    "body": "Kripto yolculuğunuzda sonraki adımı bugün atın. Artık Astellr Wallet uygulamanızdan ayrılmadan merkezi olmayan uygulamaları (dapp'lar) keşfedebilir ve bunlara bağlanabilirsiniz.",
     "buttonText": "Kulağa hoş geliyor",
     "part1": "Keşfet sayfasına erişmek için ekranınızın alt kısmındaki yeni menü seçeneklerini kullanın",
     "part2": "Popüler dapp'ları ve yeni zincir içi fırsatları keşfedin veya daha fazlası için Arama çubuğunu kullanın",
-    "part3": "Nuble Wallet uygulamasından ayrılmadan dapp'lara kolayca bağlanın ve işlemlerinizi gerçekleştirin",
+    "part3": "Astellr Wallet uygulamasından ayrılmadan dapp'lara kolayca bağlanın ve işlemlerinizi gerçekleştirin",
     "title": "Zincir içi dünyasını keşfedin"
   },
   "bugTracking": {
@@ -225,7 +225,7 @@
     "content": "Gözlemlenebilirlik, temel verileri toplayarak cüzdan deneyiminizi izlememize ve iyileştirmemize olanak tanır. Bu durum, sorunları belirlememize, performansı optimize etmemize ve cüzdanınızın sorunsuz çalışmasını sağlamamıza yardımcı olur. Verileriniz anonim ve güvende! ",
     "disallow": "İzin verme",
     "skip": "Daha sonra sor",
-    "title": "Nuble Wallet'ı geliştirmemize yardımcı olun"
+    "title": "Astellr Wallet'ı geliştirmemize yardımcı olun"
   },
   "coins": {
     "allNetworks": "Tüm ağlar",
@@ -381,8 +381,8 @@
     "request_approval": "İşlemler için onay iste",
     "see_balance": "Bakiyelerinizi ve faaliyetlerinizi görüntüleyin",
     "unsupportedNetwork": "Desteklenmeyen ağ",
-    "unsupportedNetworkDescription": "Bu uygulama, şu anda desteklenmeyen {unsupportedNetwork} ağını kullanıyor. Nuble Wallet şu anda Ethereum, Polygon, OP Mainnet, Arbitrum ve Solana ağlarındaki uygulamaları desteklemektedir.",
-    "unsupportedNetworksDescription": "Bu uygulama şu anda desteklenmeyen {unsupportedNetworks} ağlarını kullanıyor. Nuble Wallet şu anda Ethereum, Polygon, OP Mainnet, Arbitrum ve Solana ağlarındaki uygulamaları desteklemektedir."
+    "unsupportedNetworkDescription": "Bu uygulama, şu anda desteklenmeyen {unsupportedNetwork} ağını kullanıyor. Astellr Wallet şu anda Ethereum, Polygon, OP Mainnet, Arbitrum ve Solana ağlarındaki uygulamaları desteklemektedir.",
+    "unsupportedNetworksDescription": "Bu uygulama şu anda desteklenmeyen {unsupportedNetworks} ağlarını kullanıyor. Astellr Wallet şu anda Ethereum, Polygon, OP Mainnet, Arbitrum ve Solana ağlarındaki uygulamaları desteklemektedir."
   },
   "connectedApps": {
     "app_details": {
@@ -701,7 +701,7 @@
       },
       "lockWallet": "Cüzdanı kilitle",
       "privacy": "Gizlilik",
-      "version": "Nuble Wallet Uzantısı {0}",
+      "version": "Astellr Wallet Uzantısı {0}",
       "walletSettings": "Cüzdan ayarları"
     },
     "skip": "Atla",
@@ -844,7 +844,7 @@
       "transferFee": "Transfer ücreti",
       "transferringTo": "Şuraya transfer ediliyor:",
       "unsupportedAssets": "Desteklenmeyen varlıklar",
-      "unsupportedAssetsDescription": "{assets} varlıkları şu anda Nuble Wallet'ta desteklenmemektedir"
+      "unsupportedAssetsDescription": "{assets} varlıkları şu anda Astellr Wallet'ta desteklenmemektedir"
     },
     "transferCta": {
       "body": "Hızlı bir şekilde kripto transfer etmek için Kraken hesabınızı bağlayın",
@@ -1090,7 +1090,7 @@
     "import_wallet": "İçe Aktar",
     "intro_pages": {
       "1": {
-        "subtitle": "Nuble Wallet",
+        "subtitle": "Astellr Wallet",
         "text": "Kripto para birimleri alın, blockchain'leri keşfedin ve finansal geleceğinizi güvence altına alın.",
         "title": "Kendi kontrol alanınıza"
       },
@@ -1101,7 +1101,7 @@
       },
       "3": {
         "subtitle": "blockchain'leriniz",
-        "text": "Nuble Wallet; Bitcoin, Ethereum, Polygon, Doge ve daha fazlasını destekler. ",
+        "text": "Astellr Wallet; Bitcoin, Ethereum, Polygon, Doge ve daha fazlasını destekler. ",
         "title": "Daha fazlasını keşfedin"
       },
       "4": {
@@ -1146,7 +1146,7 @@
   },
   "onboardingImportMethod": {
     "methodICloud": {
-      "desc": "Nuble Wallet için oluşturduğunuz iCloud yedeğinden içe aktar",
+      "desc": "Astellr Wallet için oluşturduğunuz iCloud yedeğinden içe aktar",
       "title": "iCloud'dan içe aktar"
     },
     "methodManual": {
@@ -1221,7 +1221,7 @@
   "onboardingOutro": {
     "button": "Onayla ve Devam Et",
     "caption": "Bu cüzdan Bitcoin, Ethereum, Polygon, Solana ve daha fazlasını destekler.",
-    "footer": "Devam ederek Nuble Wallet hizmet kullanım şartlarını\n",
+    "footer": "Devam ederek Astellr Wallet hizmet kullanım şartlarını\n",
     "termsOfService": "kabul etmiş olursunuz",
     "title": "Cüzdanınız hazır"
   },
@@ -1515,7 +1515,7 @@
   },
   "storeReview": {
     "alertMessage": "İyi bir deneyim yaşıyorsanız bunu duymaktan memnuniyet duyarız.",
-    "alertTitle": "Nuble Wallet Uygulamasından memnun musunuz?",
+    "alertTitle": "Astellr Wallet Uygulamasından memnun musunuz?",
     "nagativeAlertTitle": "Bu uygulamadan memnun olmadığınız için üzgünüz.",
     "negativeAlertMessage": "Deneyiminizi nasıl geliştirebileceğimizi bize bildirmek ister misiniz?",
     "notReally": "Pek değil",
@@ -1567,7 +1567,7 @@
         "title": "Köprü maliyeti"
       },
       "krakenFee": {
-        "hint": "Nuble Wallet, swap için herhangi bir ücret tahsil etmez. Kripto ve block zinciri teknolojisinin benimsenmesini desteklemek için bu hizmeti ücretsiz olarak sunuyoruz.",
+        "hint": "Astellr Wallet, swap için herhangi bir ücret tahsil etmez. Kripto ve block zinciri teknolojisinin benimsenmesini desteklemek için bu hizmeti ücretsiz olarak sunuyoruz.",
         "title": "Kraken ücreti",
         "value": "ÜCRETSİZ"
       },
@@ -1903,7 +1903,7 @@
     "backupWithICloudCompleted": "iCloud ile yedeklenmiş",
     "caption": "Cüzdanınızı yedeklemezseniz kriptolarınızı kaybetme riskine girersiniz. Kurtarma ifadenize erişimimiz yoktur ve yedekleme olmadan ifadenizi kurtarmanıza yardımcı olamayız.",
     "explainer": {
-      "desc": "Gizli kurtarma ifadesini kaybetmek, kriptoları kaybetmenin en yaygın yoludur. Nuble Wallet, birden fazla güvenli yedekleme yöntemi sunarak bu riski en aza indirir.",
+      "desc": "Gizli kurtarma ifadesini kaybetmek, kriptoları kaybetmenin en yaygın yoludur. Astellr Wallet, birden fazla güvenli yedekleme yöntemi sunarak bu riski en aza indirir.",
       "title": "Kayıp olasılığını azaltmak için kurtarılabilirliği artırın"
     },
     "iCloudDescCompletedShort": "Şifrelenmiş gizli kurtarma ifadesi",
@@ -2028,7 +2028,7 @@
       "title": "Şifre bulunamadı"
     },
     "supportHint": {
-      "link": "Nuble Wallet Destek Ekibi ↗",
+      "link": "Astellr Wallet Destek Ekibi ↗",
       "regular": "Sorunuz çözülmediyse şu adresi ziyaret ederek yardım alabilirsiniz: ",
       "regularWithManualBackup": "Sorununuz çözülmediyse 12-24 kelimelik Gizli Kurtarma İfadenizi içe aktarabilir veya şu adresi ziyaret ederek yardım alabilirsiniz: "
     },
@@ -2103,7 +2103,7 @@
     "thirdPage": {
       "buttonText": "Devam",
       "description1": "WalletConnect'e dokunun",
-      "description2": "Nuble Wallet'ı seçin",
+      "description2": "Astellr Wallet'ı seçin",
       "subtitle": "Tarama yapmak yerine:",
       "title": "Telefonunuzda Web3 uygulamalarını kullanırken"
     }

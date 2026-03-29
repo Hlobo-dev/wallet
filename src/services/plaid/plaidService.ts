@@ -6,10 +6,10 @@
  * Used for read-only tracking of wealth management accounts
  * (Morgan Stanley, Goldman Sachs, Merrill Lynch, etc.)
  *
- * Backend API: NUBLE_PLATFORM_URL/api/plaid/*
+ * Backend API: ASTELLR_PLATFORM_URL/api/plaid/*
  */
 
-import { NUBLE_PLATFORM_URL } from '@/screens/Chat/chatConfig';
+import { ASTELLR_PLATFORM_URL } from '@/screens/Chat/chatConfig';
 
 // =============================================================================
 // TYPES
@@ -108,7 +108,7 @@ export interface ApiResponse<T> {
 // CONFIGURATION
 // =============================================================================
 
-const API_BASE_URL = `${NUBLE_PLATFORM_URL}/api/plaid`;
+const API_BASE_URL = `${ASTELLR_PLATFORM_URL}/api/plaid`;
 const DEFAULT_TIMEOUT = 30000;
 
 // =============================================================================

@@ -1,9 +1,8 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Platform, StyleSheet } from 'react-native';
+import { Alert, Image, Platform, StyleSheet } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 
-import { GradientMask, GradientScreenView } from '@/components/Gradients';
-import { SvgIcon } from '@/components/SvgIcon';
+import { GradientScreenView } from '@/components/Gradients';
 import { useTheme } from '@/theme/themes';
 
 import { biometricUnlock } from '/helpers/biometric-unlock';
@@ -81,7 +80,7 @@ export const AppInBackground = ({ appState }: Props) => {
   return showPrivacyCover ? (
     <Container>
       <GradientScreenView style={[styles.hideApp, { backgroundColor: colors.background }]}>
-        <GradientMask element={<SvgIcon size={80} color="kraken" name="kraken" testID="LogoIcon" />} />
+        <Image source={require('@/assets/images/astellr-logo.png')} style={styles.logo} resizeMode="contain" testID="LogoIcon" />
       </GradientScreenView>
     </Container>
   ) : null;
@@ -93,5 +92,9 @@ const styles = StyleSheet.create({
     zIndex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  logo: {
+    width: 80,
+    height: 80,
   },
 });

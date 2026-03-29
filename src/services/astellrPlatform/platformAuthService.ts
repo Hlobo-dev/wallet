@@ -1,5 +1,5 @@
 /**
- * Nuble Platform Auth Service
+ * Astellr Platform Auth Service
  *
  * Pure functions (no React) that communicate with the ROKET-PLATFORM
  * (Vibe-Trading) backend for authentication, and with the ROKET-CHAT
@@ -15,7 +15,7 @@
  * - POST /api/v1/auths/platform-exchange → exchange platform JWT for chat JWT
  */
 
-import { NUBLE_CHAT_URL, NUBLE_PLATFORM_URL } from '@/screens/Chat/chatConfig';
+import { ASTELLR_CHAT_URL, ASTELLR_PLATFORM_URL } from '@/screens/Chat/chatConfig';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -53,7 +53,7 @@ export async function platformRegister(
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
-    res = await fetch(`${NUBLE_PLATFORM_URL}/api/auth/register`, {
+    res = await fetch(`${ASTELLR_PLATFORM_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -116,7 +116,7 @@ export async function platformLogin(
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
-    res = await fetch(`${NUBLE_PLATFORM_URL}/api/auth/login`, {
+    res = await fetch(`${ASTELLR_PLATFORM_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -169,7 +169,7 @@ export async function platformLogin(
 export async function platformRefreshToken(
   refreshToken: string,
 ): Promise<AuthTokens> {
-  const res = await fetch(`${NUBLE_PLATFORM_URL}/api/auth/refresh`, {
+  const res = await fetch(`${ASTELLR_PLATFORM_URL}/api/auth/refresh`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ refreshToken }),
@@ -194,7 +194,7 @@ export async function platformRefreshToken(
 export async function platformGetMe(
   accessToken: string,
 ): Promise<PlatformUser> {
-  const res = await fetch(`${NUBLE_PLATFORM_URL}/api/auth/me`, {
+  const res = await fetch(`${ASTELLR_PLATFORM_URL}/api/auth/me`, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
@@ -233,7 +233,7 @@ export async function exchangePlatformTokenForChatToken(
 ): Promise<string | null> {
   try {
     const res = await fetch(
-      `${NUBLE_CHAT_URL}/api/v1/auths/platform-exchange`,
+      `${ASTELLR_CHAT_URL}/api/v1/auths/platform-exchange`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -260,22 +260,22 @@ export async function exchangePlatformTokenForChatToken(
  *
  * Flow (embedded WebView — identical UX to VibeTradining web app):
  * 1. App opens a modal with a WebView pointing at
- *    `${NUBLE_PLATFORM_URL}/api/oauth/social/:provider?mobile=1&redirect_scheme=nublewallet`
+ *    `${ASTELLR_PLATFORM_URL}/api/oauth/social/:provider?mobile=1&redirect_scheme=astellrwallet`
  * 2. WebView shows the provider's auth page (Google, Apple, etc.) inline
  * 3. Provider redirects back to the backend callback
  * 4. Backend creates/finds user, generates JWT tokens
- * 5. Backend redirects to `nublewallet://oauth/callback?token=...&refreshToken=...`
+ * 5. Backend redirects to `astellrwallet://oauth/callback?token=...&refreshToken=...`
  * 6. WebView's onNavigationStateChange intercepts the scheme redirect
  * 7. App extracts the tokens and closes the modal — user never leaves the app
  */
-export const OAUTH_CALLBACK_SCHEME = 'nublewallet://oauth/callback';
+export const OAUTH_CALLBACK_SCHEME = 'astellrwallet://oauth/callback';
 
 /**
  * Build the OAuth URL for the given provider.
  * The WebView in PlatformLoginScreen will load this URL.
  */
 export function getOAuthURL(provider: 'google' | 'apple'): string {
-  return `${NUBLE_PLATFORM_URL}/api/oauth/social/${provider}?mobile=1&redirect_scheme=nublewallet`;
+  return `${ASTELLR_PLATFORM_URL}/api/oauth/social/${provider}?mobile=1&redirect_scheme=astellrwallet`;
 }
 
 /**
@@ -316,7 +316,7 @@ export async function platformGetMeFromOAuth(accessToken: string): Promise<Platf
   // Retry once after a short delay if rate limited (429)
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const res = await fetch(`${NUBLE_PLATFORM_URL}/api/auth/me`, {
+      const res = await fetch(`${ASTELLR_PLATFORM_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 

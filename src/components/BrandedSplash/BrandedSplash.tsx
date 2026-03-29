@@ -1,23 +1,22 @@
 /**
  * BrandedSplash — Full-screen splash matching the native BootSplash.
  *
- * Deep purple gradient background with the asterisk logo centered.
+ * Deep purple gradient background with the Astellr logo centered.
  * Use this anywhere a loading/splash state needs to be shown.
  */
 
 import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import Svg, { Circle, Defs, Line, LinearGradient, Rect, Stop } from 'react-native-svg';
+import { Dimensions, Image, StyleSheet, View } from 'react-native';
+import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
 const SplashLogo = () => (
-  <Svg width={52} height={52} viewBox="0 0 52 52" fill="none">
-    <Line x1={26} y1={8} x2={26} y2={44} stroke="#818cf7" strokeWidth={4} strokeLinecap="round" />
-    <Line x1={10} y1={17} x2={42} y2={35} stroke="#818cf7" strokeWidth={4} strokeLinecap="round" />
-    <Line x1={10} y1={35} x2={42} y2={17} stroke="#818cf7" strokeWidth={4} strokeLinecap="round" />
-    <Circle cx={26} cy={26} r={4} fill="#6366f1" />
-  </Svg>
+  <Image
+    source={require('@/assets/images/astellr-logo.png')}
+    style={{ width: 80, height: 80, transform: [{ rotate: '0deg' }] }}
+    resizeMode="contain"
+  />
 );
 
 const SplashBackground = () => (

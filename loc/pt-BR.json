@@ -1,7 +1,7 @@
 {
   "_": {
     "add": "Adicionar",
-    "appName": "Nuble Wallet",
+    "appName": "Astellr Wallet",
     "balance": "Saldo {0}",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
@@ -185,7 +185,7 @@
     "buttonText": "Ótimo",
     "part1": "Sua carteira agora suporta a {boldBlastNetwork}. O Ethereum L2 com rendimento nativo para ETH e stablecoins.",
     "part2": "Com essa integração, definimos o cenário para adicionar mais redes de nível 2 rapidamente, mantendo a experiência de carteira móvel mais segura.",
-    "title": "A Nuble Wallet dá boas-vindas a Blast!"
+    "title": "A Astellr Wallet dá boas-vindas a Blast!"
   },
   "broadcast": {
     "sent": "Enviado"
@@ -213,11 +213,11 @@
     "searchOnChain": "Buscar em cadeia"
   },
   "browserExploreWelcome": {
-    "body": "Dê o próximo passo em sua jornada de cripto hoje mesmo. Agora você pode descobrir e se conectar a aplicativos descentralizados (dapps) sem sair de sua Nuble Wallet.",
+    "body": "Dê o próximo passo em sua jornada de cripto hoje mesmo. Agora você pode descobrir e se conectar a aplicativos descentralizados (dapps) sem sair de sua Astellr Wallet.",
     "buttonText": "Ótimo",
     "part1": "Use as novas opções de menu na parte inferior de sua tela para acessar a página Explorar",
     "part2": "Explore dapps populares e novas oportunidades em cadeia ou use a barra de pesquisa para mais opções",
-    "part3": "Conecte-se facilmente a dapps e realize transações sem sair do aplicativo Nuble Wallet",
+    "part3": "Conecte-se facilmente a dapps e realize transações sem sair do aplicativo Astellr Wallet",
     "title": "Explore o mundo em cadeia"
   },
   "bugTracking": {
@@ -225,7 +225,7 @@
     "content": "A observabilidade nos permite monitorar e melhorar sua experiência com a carteira coletando dados essenciais. Isso nos ajuda a identificar problemas, otimizar o desempenho e garantir que a sua carteira funcione sem problemas. Seus dados estão anonimizados e seguros! ",
     "disallow": "Não permitir",
     "skip": "Pergunte-me mais tarde",
-    "title": "Ajude-nos a melhorar a Nuble Wallet"
+    "title": "Ajude-nos a melhorar a Astellr Wallet"
   },
   "coins": {
     "allNetworks": "Todas as redes",
@@ -381,8 +381,8 @@
     "request_approval": "Solicitar aprovação para transações",
     "see_balance": "Visualizar saldos e atividades",
     "unsupportedNetwork": "Rede não compatível",
-    "unsupportedNetworkDescription": "Este aplicativo usa a rede {unsupportedNetwork}, que não é compatível no momento. A Nuble Wallet atualmente oferece suporte a aplicativos nas redes Ethereum, Polygon, OP Mainnet, Arbitrum e Solana.",
-    "unsupportedNetworksDescription": "Este aplicativo usa as redes {unsupportedNetworks}, que não são compatíveis no momento. A Nuble Wallet atualmente oferece suporte a aplicativos nas redes Ethereum, Polygon, OP Mainnet, Arbitrum e Solana."
+    "unsupportedNetworkDescription": "Este aplicativo usa a rede {unsupportedNetwork}, que não é compatível no momento. A Astellr Wallet atualmente oferece suporte a aplicativos nas redes Ethereum, Polygon, OP Mainnet, Arbitrum e Solana.",
+    "unsupportedNetworksDescription": "Este aplicativo usa as redes {unsupportedNetworks}, que não são compatíveis no momento. A Astellr Wallet atualmente oferece suporte a aplicativos nas redes Ethereum, Polygon, OP Mainnet, Arbitrum e Solana."
   },
   "connectedApps": {
     "app_details": {
@@ -701,7 +701,7 @@
       },
       "lockWallet": "Bloquear carteira",
       "privacy": "Privacidade",
-      "version": "Extensão da Nuble Wallet {0}",
+      "version": "Extensão da Astellr Wallet {0}",
       "walletSettings": "Configurações da carteira"
     },
     "skip": "Pular",
@@ -844,7 +844,7 @@
       "transferFee": "Taxa de transferência",
       "transferringTo": "Transferindo para",
       "unsupportedAssets": "Ativos não suportados",
-      "unsupportedAssetsDescription": "{assets} não são suportados pela Nuble Wallet no momento"
+      "unsupportedAssetsDescription": "{assets} não são suportados pela Astellr Wallet no momento"
     },
     "transferCta": {
       "body": "Conecte sua conta Kraken para transferir cripto rapidamente",
@@ -1090,7 +1090,7 @@
     "import_wallet": "Importar",
     "intro_pages": {
       "1": {
-        "subtitle": "Nuble Wallet",
+        "subtitle": "Astellr Wallet",
         "text": "Adquira criptomoedas, descubra blockchains e proteja seu futuro financeiro.",
         "title": "Boas-vindas à"
       },
@@ -1101,7 +1101,7 @@
       },
       "3": {
         "subtitle": "blockchains",
-        "text": "A Nuble Wallet é compatível com Bitcoin, Ethereum, Polygon, Doge e muito mais. ",
+        "text": "A Astellr Wallet é compatível com Bitcoin, Ethereum, Polygon, Doge e muito mais. ",
         "title": "Explore mais"
       },
       "4": {
@@ -1146,7 +1146,7 @@
   },
   "onboardingImportMethod": {
     "methodICloud": {
-      "desc": "Importar de um backup iCloud que você criou para a Nuble Wallet",
+      "desc": "Importar de um backup iCloud que você criou para a Astellr Wallet",
       "title": "Importar do iCloud"
     },
     "methodManual": {
@@ -1222,7 +1222,7 @@
     "button": "Concordar e continuar",
     "caption": "Esta carteira é compatível com Bitcoin, Ethereum, Polygon, Solana e muito mais.",
     "footer": "Ao continuar, você concorda com os\n",
-    "termsOfService": "Termos de Serviço da Nuble Wallet",
+    "termsOfService": "Termos de Serviço da Astellr Wallet",
     "title": "Sua carteira está pronta"
   },
   "onboardingPushNotifications": {
@@ -1515,7 +1515,7 @@
   },
   "storeReview": {
     "alertMessage": "Adoraríamos saber se você está aproveitando a experiência.",
-    "alertTitle": "Você está gostando do Aplicativo Nuble Wallet?",
+    "alertTitle": "Você está gostando do Aplicativo Astellr Wallet?",
     "nagativeAlertTitle": "Lamentamos que você não esteja curtindo este aplicativo.",
     "negativeAlertMessage": "Gostaríamos de saber como podemos melhorar a sua experiência?",
     "notReally": "Não necessariamente",
@@ -1567,7 +1567,7 @@
         "title": "Custo de bridge"
       },
       "krakenFee": {
-        "hint": "A Nuble Wallet não cobra nenhuma taxa para fazer swaps. Oferecemos esse serviço gratuitamente para apoiar a adoção de tecnologias de blockchain e cripto.",
+        "hint": "A Astellr Wallet não cobra nenhuma taxa para fazer swaps. Oferecemos esse serviço gratuitamente para apoiar a adoção de tecnologias de blockchain e cripto.",
         "title": "Taxa da Kraken",
         "value": "SEM TAXA"
       },
@@ -1903,7 +1903,7 @@
     "backupWithICloudCompleted": "Backup feito com iCloud",
     "caption": "Se você não fizer o backup da sua carteira, você corre o risco de perder suas criptomoedas. Nós não temos acesso à sua frase de recuperação e não poderemos ajudá-lo a recuperá-la sem um backup.",
     "explainer": {
-      "desc": "A forma mais comum de perder suas criptomoedas é perder a frase secreta de recuperação. A Nuble Wallet minimiza o risco ao oferecer mais de um método de backup de segurança.",
+      "desc": "A forma mais comum de perder suas criptomoedas é perder a frase secreta de recuperação. A Astellr Wallet minimiza o risco ao oferecer mais de um método de backup de segurança.",
       "title": "Aumente a chance de recuperação para reduzir a chance de perdas"
     },
     "iCloudDescCompletedShort": "Sua frase secreta de recuperação criptografada",
@@ -2028,7 +2028,7 @@
       "title": "Nenhuma chave de acesso encontrada"
     },
     "supportHint": {
-      "link": "Suporte Nuble Wallet ↗",
+      "link": "Suporte Astellr Wallet ↗",
       "regular": "Se isso não funcionar, você pode obter ajuda acessando ",
       "regularWithManualBackup": "Se isso não funcionar, você pode importar sua frase secreta de recuperação de 12 a 24 palavras ou pode obter ajuda acessando "
     },
@@ -2103,7 +2103,7 @@
     "thirdPage": {
       "buttonText": "Continuar",
       "description1": "Toque no WalletConnect",
-      "description2": "Selecione Nuble Wallet",
+      "description2": "Selecione Astellr Wallet",
       "subtitle": "Ao invés de digitalizar:",
       "title": "Ao usar os aplicativos da Web3 no seu telefone"
     }

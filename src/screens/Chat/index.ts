@@ -1,2 +1,2 @@
 export { ChatScreen } from './ChatScreen';
-export { NUBLE_CHAT_URL, NUBLE_PLATFORM_URL } from './chatConfig';
+export { ASTELLR_CHAT_URL, ASTELLR_PLATFORM_URL } from './chatConfig';

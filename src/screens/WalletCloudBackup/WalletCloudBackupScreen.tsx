@@ -20,7 +20,7 @@ import { BROKERAGES, type BrokerageInfo } from '@/services/snaptrade';
 import { getSnapTradeClient } from '@/services/snaptrade';
 import { getPlaidClient } from '@/services/plaid';
 import { WEALTH_INSTITUTIONS, type WealthInstitution } from '@/services/plaid';
-import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { useAstellrAuth } from '@/providers/AstellrAuthProvider';
 import { usePlaidLink } from '@/hooks/usePlaidLink';
 import { hapticFeedback } from '@/utils/hapticFeedback';
 import { navigationStyle } from '@/utils/navigationStyle';
@@ -154,7 +154,7 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
   const snaptradeClient = getSnapTradeClient();
   const plaidClient = getPlaidClient();
   const { openURL } = useBrowser();
-  const { getAccessToken, user } = useNubleAuth();
+  const { getAccessToken, user } = useAstellrAuth();
   const { openPlaidLink } = usePlaidLink();
   const [, setOpenAccountSheet] = useGlobalState('openAccountSheet');
   const [connectingSlug, setConnectingSlug] = useState<string | null>(null);

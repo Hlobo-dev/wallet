@@ -14,7 +14,7 @@ import { BROKERAGES } from '@/services/snaptrade';
 import { getPlaidClient } from '@/services/plaid';
 import type { PlaidConnection } from '@/services/plaid';
 import { findWealthInstitution } from '@/services/plaid/wealthInstitutions';
-import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { useAstellrAuth } from '@/providers/AstellrAuthProvider';
 import { scopedKey, getCurrentUserId, USER_SCOPED_KEYS } from '@/utils/userScopedStorage';
 
 // ─── Unified type ────────────────────────────────────────────────────────────
@@ -115,7 +115,7 @@ function mapPlaidConnection(conn: PlaidConnection): ConnectedAccount {
 export const useConnectedAccounts = () => {
   const [accounts, setAccounts] = useState<ConnectedAccount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { getAccessToken, isAuthenticated, user } = useNubleAuth();
+  const { getAccessToken, isAuthenticated, user } = useAstellrAuth();
   const currentUserIdRef = useRef<string | null>(user?.id ?? null);
 
   // ── Reset state when user changes (multi-user isolation) ─────────────────
