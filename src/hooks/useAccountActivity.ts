@@ -329,7 +329,21 @@ export function useAccountActivity() {
   const [debugMsg, setDebugMsg] = useState('initializing…');
   const hasFetched = useRef(false);
 
-  const { getAccessToken } = useNubleAuth();
+  const { getAccessToken, user } = useNubleAuth();
+  const currentUserIdRef = useRef<string | null>(user?.id ?? null);
+
+  // ── Reset state when user changes (multi-user isolation) ─────────────────
+  useEffect(() => {
+    const newUserId = user?.id ?? null;
+    if (currentUserIdRef.current !== newUserId) {
+      console.log(`[useAccountActivity] User changed: ${currentUserIdRef.current} → ${newUserId}`);
+      currentUserIdRef.current = newUserId;
+      setAllActivities([]);
+      setIsLoadingTx(true);
+      setDebugMsg('user changed, re-fetching…');
+      hasFetched.current = false;
+    }
+  }, [user?.id]);
 
   // ── Helper: fetch from unified backend endpoint (like Vibe-Trading web) ─
   const fetchUnified = async (token: string): Promise<AccountActivityItem[]> => {
@@ -454,14 +468,14 @@ export function useAccountActivity() {
     setIsLoadingTx(false);
   }, [getAccessToken]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Fetch on mount ──────────────────────────────────────────────────────
+  // ── Fetch on mount or when user changes ─────────────────────────────────
   useEffect(() => {
     if (hasFetched.current) {
       return;
     }
     hasFetched.current = true;
     doFetch();
-  }, [doFetch]);
+  }, [doFetch, user?.id]);
 
   // ── Manual refetch ──────────────────────────────────────────────────────
   const refetch = useCallback(async () => {

@@ -154,7 +154,7 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
   const snaptradeClient = getSnapTradeClient();
   const plaidClient = getPlaidClient();
   const { openURL } = useBrowser();
-  const { getAccessToken } = useNubleAuth();
+  const { getAccessToken, user } = useNubleAuth();
   const { openPlaidLink } = usePlaidLink();
   const [, setOpenAccountSheet] = useGlobalState('openAccountSheet');
   const [connectingSlug, setConnectingSlug] = useState<string | null>(null);
@@ -170,10 +170,18 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
       setConnectingSlug(brokerage.slug);
 
       try {
-        // Ensure user is registered with SnapTrade
+        // Ensure user is registered with SnapTrade (using platform user ID for multi-user isolation)
         if (!(await snaptradeClient.isRegistered())) {
-          const deviceId = await DeviceInfo.getUniqueId();
-          const regResult = await snaptradeClient.registerUser(deviceId);
+          // Use the platform user ID so each user gets their own SnapTrade identity.
+          // Fall back to device ID only if not authenticated (shouldn't happen in practice).
+          let platformUserId: string;
+          if (user?.id) {
+            platformUserId = user.id;
+          } else {
+            const deviceId = await DeviceInfo.getUniqueId();
+            platformUserId = deviceId;
+          }
+          const regResult = await snaptradeClient.registerUser(platformUserId);
           if (!regResult.success) {
             handleError(new Error(regResult.error ?? 'SnapTrade registration failed'), 'ERROR_CONTEXT_PLACEHOLDER', 'generic');
             setConnectingSlug(null);
@@ -311,11 +319,13 @@ export const WalletCloudBackupScreen = ({ navigation, route }: NavigationProps<'
         activeOpacity={0.7}
         onPress={() => handleConnectWealth(institution)}
         disabled={isConnecting}>
-        {/* Fallback letter avatar — matching Vibe-Trading PlaidConnector style */}
-        <View style={[styles.brokerageAvatar, styles.avatarDefaultBg]}>
-          <Label type="boldBody" style={{ color: institution.color }}>
-            {institution.fallback}
-          </Label>
+        {/* Logo — matching Vibe-Trading PlaidConnector style */}
+        <View style={[styles.brokerageAvatar, institution.needsWhiteBg ? styles.avatarWhiteBg : styles.avatarDefaultBg]}>
+          <Image
+            source={institution.logo}
+            style={styles.brokerageLogoCover}
+            resizeMode="cover"
+          />
         </View>
 
         {/* Name */}

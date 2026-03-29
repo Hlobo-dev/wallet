@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getPlaidClient } from '@/services/plaid';
 import type { PlaidHolding } from '@/services/plaid';
 import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { scopedKey, getCurrentUserId, USER_SCOPED_KEYS } from '@/utils/userScopedStorage';
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -174,7 +175,7 @@ const INSTITUTION_COLORS: Record<string, string> = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const CACHE_KEY = 'wealth_positions_cache';
+const CACHE_BASE_KEY = USER_SCOPED_KEYS.WEALTH_POSITIONS_CACHE;
 
 function getAssetName(symbol: string, plaidName: string): string {
   const upper = symbol.toUpperCase();
@@ -203,7 +204,9 @@ function getInstitutionColor(institution: string): string {
 
 async function loadCache(): Promise<WealthHolding[]> {
   try {
-    const raw = await AsyncStorage.getItem(CACHE_KEY);
+    const userId = await getCurrentUserId();
+    const key = scopedKey(CACHE_BASE_KEY, userId);
+    const raw = await AsyncStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
@@ -212,7 +215,9 @@ async function loadCache(): Promise<WealthHolding[]> {
 
 async function saveCache(holdings: WealthHolding[]): Promise<void> {
   try {
-    await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(holdings));
+    const userId = await getCurrentUserId();
+    const key = scopedKey(CACHE_BASE_KEY, userId);
+    await AsyncStorage.setItem(key, JSON.stringify(holdings));
   } catch {
     // ignore
   }
@@ -236,7 +241,22 @@ export function useWealthPositions() {
   const lastFetchAt = useRef(0);
   const isFetching = useRef(false);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { getAccessToken, isAuthenticated } = useNubleAuth();
+  const { getAccessToken, isAuthenticated, user } = useNubleAuth();
+  const currentUserIdRef = useRef<string | null>(user?.id ?? null);
+
+  // ── Reset state when user changes (multi-user isolation) ─────────────────
+  useEffect(() => {
+    const newUserId = user?.id ?? null;
+    if (currentUserIdRef.current !== newUserId) {
+      console.log(`[useWealthPositions] User changed: ${currentUserIdRef.current} → ${newUserId}`);
+      currentUserIdRef.current = newUserId;
+      setHoldings([]);
+      setIsLoading(true);
+      fetchedRef.current = false;
+      lastFetchAt.current = 0;
+      isFetching.current = false;
+    }
+  }, [user?.id]);
 
   const fetchPositions = useCallback(async (silent = false) => {
     // Throttle: skip if another fetch is already in-flight or was too recent
@@ -332,6 +352,7 @@ export function useWealthPositions() {
   }, [getAccessToken]);
 
   // ── Initial load: cache → live fetch ──────────────────────────────────────
+  // Re-runs when user changes (multi-user isolation) or auth state changes.
   useEffect(() => {
     let cancelled = false;
 
@@ -351,7 +372,7 @@ export function useWealthPositions() {
     return () => {
       cancelled = true;
     };
-  }, [fetchPositions, isAuthenticated]);
+  }, [fetchPositions, isAuthenticated, user?.id]);
 
   // ── Foreground polling: refresh every 30s while the app is active ─────────
   useEffect(() => {

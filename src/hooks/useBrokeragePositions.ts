@@ -16,6 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { getSnapTradeClient } from '@/services/snaptrade';
 import type { BrokerageAccount, Position, SnapTradeSymbol } from '@/services/snaptrade';
+import { scopedKey, getCurrentUserId, USER_SCOPED_KEYS } from '@/utils/userScopedStorage';
+import { useNubleAuth } from '@/providers/NubleAuthProvider';
 
 // ─── Asset name map ──────────────────────────────────────────────────────────
 
@@ -160,7 +162,7 @@ export interface BrokerageHolding {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const CACHE_KEY = 'brokerage_positions_cache';
+const CACHE_BASE_KEY = USER_SCOPED_KEYS.BROKERAGE_POSITIONS_CACHE;
 
 /**
  * Extract base symbol from various formats:
@@ -277,7 +279,9 @@ function getFallbackBgColor(symbol: string): string {
 
 async function loadCache(): Promise<BrokerageHolding[]> {
   try {
-    const raw = await AsyncStorage.getItem(CACHE_KEY);
+    const userId = await getCurrentUserId();
+    const key = scopedKey(CACHE_BASE_KEY, userId);
+    const raw = await AsyncStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
@@ -286,7 +290,9 @@ async function loadCache(): Promise<BrokerageHolding[]> {
 
 async function saveCache(holdings: BrokerageHolding[]): Promise<void> {
   try {
-    await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(holdings));
+    const userId = await getCurrentUserId();
+    const key = scopedKey(CACHE_BASE_KEY, userId);
+    await AsyncStorage.setItem(key, JSON.stringify(holdings));
   } catch {
     // ignore
   }
@@ -338,6 +344,23 @@ export function useBrokeragePositions() {
   const lastFetchAt = useRef(0);
   const isFetching = useRef(false);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { user } = useNubleAuth();
+  const currentUserIdRef = useRef<string | null>(user?.id ?? null);
+
+  // ── Reset state when user changes (multi-user isolation) ─────────────────
+  useEffect(() => {
+    const newUserId = user?.id ?? null;
+    if (currentUserIdRef.current !== newUserId) {
+      console.log(`[useBrokeragePositions] User changed: ${currentUserIdRef.current} → ${newUserId}`);
+      currentUserIdRef.current = newUserId;
+      // Clear in-memory state so previous user's positions don't flash
+      setHoldings([]);
+      setIsLoading(true);
+      fetchedRef.current = false;
+      lastFetchAt.current = 0;
+      isFetching.current = false;
+    }
+  }, [user?.id]);
 
   const fetchPositions = useCallback(async (silent = false) => {
     // Throttle: skip if another fetch is already in-flight or was too recent
@@ -474,6 +497,7 @@ export function useBrokeragePositions() {
   }, []);
 
   // ── Initial load: cache → live fetch ──────────────────────────────────────
+  // Re-runs when user changes (multi-user isolation) or fetchPositions changes.
   useEffect(() => {
     let cancelled = false;
 
@@ -493,7 +517,7 @@ export function useBrokeragePositions() {
     return () => {
       cancelled = true;
     };
-  }, [fetchPositions]);
+  }, [fetchPositions, user?.id]);
 
   // ── Foreground polling: refresh every 30s while the app is active ─────────
   useEffect(() => {

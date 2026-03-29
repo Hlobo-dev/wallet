@@ -12,6 +12,7 @@ import { KrakenIcon } from '@/components/KrakenIcon';
 import { Label } from '@/components/Label';
 import { Touchable } from '@/components/Touchable';
 import { getRemoteLogoUrls } from '@/hooks/useStockLogo';
+import { findWealthInstitution } from '@/services/plaid/wealthInstitutions';
 
 // ─── Institution logo mapping ─────────────────────────────────────────────────
 
@@ -127,9 +128,25 @@ const InstitutionLogo = memo(({ name }: { name: string }) => {
   const logoUrls = useMemo(() => (ticker ? getRemoteLogoUrls(ticker) : []), [ticker]);
   const [urlIndex, setUrlIndex] = useState(0);
 
+  // Look up bundled wealth institution logo (Morgan Stanley, Goldman Sachs, etc.)
+  const wealthInst = useMemo(() => findWealthInstitution(name), [name]);
+
   // Use the bundled Kraken icon for Kraken accounts
   if (isKraken) {
     return <KrakenIcon size={PILL_ICON_SIZE} iconSize={12} />;
+  }
+
+  // Prefer bundled wealth institution logo (from Vibe-Trading /public/logos/)
+  if (wealthInst) {
+    return (
+      <View style={[pillStyles.logoContainer, wealthInst.needsWhiteBg ? { backgroundColor: '#ffffff' } : { backgroundColor: wealthInst.color }]}>
+        <Image
+          source={wealthInst.logo}
+          style={pillStyles.logoImage}
+          resizeMode="cover"
+        />
+      </View>
+    );
   }
 
   if (ticker && urlIndex < logoUrls.length) {

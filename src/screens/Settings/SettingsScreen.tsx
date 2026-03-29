@@ -6,9 +6,12 @@ import { LargeHeader } from '@/components/LargeHeader';
 import { useWalletBackupSettings } from '@/hooks/useWalletBackupSettings';
 import { useIsConnectedWithExchange } from '@/realm/krakenConnect/useIsConnectedWithExchange';
 import { useLanguage } from '@/realm/settings';
+import { useNubleAuth } from '@/providers/NubleAuthProvider';
 import { Routes } from '@/Routes';
 import { CurrencyBadge } from '@/screens/Settings/currency';
 import { navigationStyle } from '@/utils/navigationStyle';
+
+import { showAlert } from '/helpers/showAlert';
 
 import { AppLockBadge } from './appLock';
 import { BuildInfo } from './BuildInfo';
@@ -34,6 +37,19 @@ export const SettingsScreen = ({ navigation }: SettingsNavigationProps<'Settings
 
   const { isCloudBackupSupported } = useWalletBackupSettings();
   const isConnectedWithExchange = useIsConnectedWithExchange();
+  const { isAuthenticated, logout, user } = useNubleAuth();
+
+  const handleLogout = async () => {
+    const confirmed = await showAlert(
+      'Sign Out',
+      `Are you sure you want to sign out${user?.email ? ` of ${user.email}` : ''}? Your wallet will remain on this device.`,
+      'Sign Out',
+      'Cancel',
+    );
+    if (confirmed) {
+      await logout();
+    }
+  };
 
   return (
     <GradientScreenView>
@@ -99,6 +115,23 @@ export const SettingsScreen = ({ navigation }: SettingsNavigationProps<'Settings
         <SettingsItem title={loc.settings.advanced} icon="tool" onPress={() => navigate(Routes.AdvancedSettings)} testID="AdvancedList" />
         <SettingsItem title={loc.settings.support} icon="help" onPress={() => navigate(Routes.Support)} testID="SupportButton" />
         <SettingsItem title={loc.settings.about} icon="info-circle" onPress={() => navigate(Routes.About)} testID="AboutButton" />
+
+        {isAuthenticated && (
+          <>
+            <SettingsSectionHeader title="" />
+            <SettingsItem
+              title="Sign Out"
+              icon="plug-disconnected"
+              isFirst
+              isLast
+              isHighlighted
+              isWarningAction
+              onPress={handleLogout}
+              testID="LogoutButton"
+            />
+          </>
+        )}
+
         <BuildInfo />
       </ScrollView>
     </GradientScreenView>

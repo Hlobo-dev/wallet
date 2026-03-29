@@ -2,7 +2,9 @@
  * Hook that fetches and returns connected brokerage (SnapTrade) and wealth (Plaid) accounts.
  * Uses AsyncStorage to cache the results so the list appears immediately on re-open.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import type { ImageSourcePropType } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,7 +13,9 @@ import type { BrokerageConnection } from '@/services/snaptrade';
 import { BROKERAGES } from '@/services/snaptrade';
 import { getPlaidClient } from '@/services/plaid';
 import type { PlaidConnection } from '@/services/plaid';
+import { findWealthInstitution } from '@/services/plaid/wealthInstitutions';
 import { useNubleAuth } from '@/providers/NubleAuthProvider';
+import { scopedKey, getCurrentUserId, USER_SCOPED_KEYS } from '@/utils/userScopedStorage';
 
 // ─── Unified type ────────────────────────────────────────────────────────────
 
@@ -24,8 +28,8 @@ export interface ConnectedAccount {
   name: string;
   /** Type of connection */
   type: ConnectedAccountType;
-  /** Optional logo (bundled require() for brokerages, URI string for Plaid) */
-  logo?: number | string | null;
+  /** Optional logo (bundled require() for brokerages/wealth, URI string for Plaid) */
+  logo?: ImageSourcePropType | string | null;
   /** Whether the logo needs a white background */
   needsWhiteBg?: boolean;
   /** Total balance in USD, if available */
@@ -40,11 +44,13 @@ export interface ConnectedAccount {
   fallback?: string;
 }
 
-const CACHE_KEY = 'connected_accounts_cache';
+const CACHE_BASE_KEY = USER_SCOPED_KEYS.CONNECTED_ACCOUNTS_CACHE;
 
 async function loadCache(): Promise<ConnectedAccount[]> {
   try {
-    const raw = await AsyncStorage.getItem(CACHE_KEY);
+    const userId = await getCurrentUserId();
+    const key = scopedKey(CACHE_BASE_KEY, userId);
+    const raw = await AsyncStorage.getItem(key);
     if (raw) {
       return JSON.parse(raw);
     }
@@ -61,7 +67,9 @@ async function saveCache(accounts: ConnectedAccount[]): Promise<void> {
       ...a,
       logo: typeof a.logo === 'string' ? a.logo : undefined,
     }));
-    await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(serialisable));
+    const userId = await getCurrentUserId();
+    const key = scopedKey(CACHE_BASE_KEY, userId);
+    await AsyncStorage.setItem(key, JSON.stringify(serialisable));
   } catch {
     // ignore
   }
@@ -85,24 +93,41 @@ function mapBrokerageConnection(conn: BrokerageConnection): ConnectedAccount {
 }
 
 function mapPlaidConnection(conn: PlaidConnection): ConnectedAccount {
+  const institutionName = conn.institutionName ?? 'Wealth Account';
+  // Look up bundled logo from wealth institutions (same logos as Vibe-Trading)
+  const knownInst = findWealthInstitution(institutionName);
+
   return {
     id: `plaid_${conn.itemId}`,
-    name: conn.institutionName ?? 'Wealth Account',
+    name: institutionName,
     type: 'wealth',
-    logo: conn.institutionLogo,
-    needsWhiteBg: false,
+    // Prefer bundled logo over Plaid's remote logo URL for reliability
+    logo: knownInst?.logo ?? conn.institutionLogo ?? null,
+    needsWhiteBg: knownInst?.needsWhiteBg ?? false,
     balance: null,
     status: conn.status === 'active' ? 'active' : 'error',
     connectionId: conn.itemId,
-    brandColor: '#6b7280',
-    fallback: (conn.institutionName ?? 'WA').substring(0, 2).toUpperCase(),
+    brandColor: knownInst?.color ?? '#6b7280',
+    fallback: knownInst?.fallback ?? institutionName.substring(0, 2).toUpperCase(),
   };
 }
 
 export const useConnectedAccounts = () => {
   const [accounts, setAccounts] = useState<ConnectedAccount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { getAccessToken, isAuthenticated } = useNubleAuth();
+  const { getAccessToken, isAuthenticated, user } = useNubleAuth();
+  const currentUserIdRef = useRef<string | null>(user?.id ?? null);
+
+  // ── Reset state when user changes (multi-user isolation) ─────────────────
+  useEffect(() => {
+    const newUserId = user?.id ?? null;
+    if (currentUserIdRef.current !== newUserId) {
+      console.log(`[useConnectedAccounts] User changed: ${currentUserIdRef.current} → ${newUserId}`);
+      currentUserIdRef.current = newUserId;
+      setAccounts([]);
+      setIsLoading(true);
+    }
+  }, [user?.id]);
 
   const fetchAccounts = useCallback(async () => {
     setIsLoading(true);
@@ -156,6 +181,7 @@ export const useConnectedAccounts = () => {
   }, [getAccessToken]);
 
   // Load cache first, then fetch live
+  // Re-runs when user changes (multi-user isolation).
   useEffect(() => {
     let cancelled = false;
 
@@ -171,7 +197,7 @@ export const useConnectedAccounts = () => {
     return () => {
       cancelled = true;
     };
-  }, [fetchAccounts]);
+  }, [fetchAccounts, user?.id]);
 
   return {
     connectedAccounts: accounts,

@@ -57,8 +57,8 @@ export const ConnectedAccountItem = ({ account, isFirst, isLast, backgroundType,
   ];
 
   const renderAvatar = () => {
-    if (typeof account.logo === 'number') {
-      // Bundled image (require())
+    if (typeof account.logo === 'number' || (typeof account.logo === 'object' && account.logo !== null)) {
+      // Bundled image (require()) — number or resolved asset object
       return (
         <View style={[styles.avatarCircle, account.needsWhiteBg ? styles.avatarWhiteBg : styles.avatarDefaultBg]}>
           <Image source={account.logo} style={styles.avatarImage} resizeMode="cover" />

@@ -21,7 +21,6 @@ import { useWealthPositions } from '@/hooks/useWealthPositions';
 import type { WealthHolding } from '@/hooks/useWealthPositions';
 import { useDefiPositionsQuery } from '@/reactQuery/hooks/earn/useDefiPositionsQuery';
 import type { RealmDefi } from '@/realm/defi';
-import { useIsKrakenConnectCtaHidden } from '@/realm/krakenConnect/useIsKrakenConnectCtaHidden';
 import { useTokenPrices } from '@/realm/tokenPrice';
 import type { RealmToken } from '@/realm/tokens';
 import { sortTokensByFiatValue, useTokensFilteredByReputationAndNetwork } from '@/realm/tokens';
@@ -131,7 +130,6 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
   const { holdings: allBrokerageHoldings } = useBrokeragePositions();
   const { holdings: wealthHoldings } = useWealthPositions();
   const bottomSheetRef = useRef<BottomSheetRef>(null);
-  const hideConnectCTA = useIsKrakenConnectCtaHidden();
 
   // ── Brokerage account filter state ────────────────────────────────────
   const [selectedBrokerageAccount, setSelectedBrokerageAccount] = useState<string | null>(null);
@@ -474,7 +472,7 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
           return (
             <View>
               <ListHeader title="Brokerage" style={[headerStyle, styles.firstHeader]} />
-              <BrokerageEmptyPositions />
+              <BrokerageEmptyPositions onConnect={() => navigation.navigate(Routes.Settings, { screen: Routes.SettingsWalletCloudBackup, params: { mode: 'brokerage' } })} />
             </View>
           );
         case SectionName.WealthNoPositions:
@@ -484,7 +482,7 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
           return (
             <View>
               <ListHeader title="Wealth" style={[headerStyle, styles.scrollableHeaderStyle]} />
-              <WealthEmptyPositions />
+              <WealthEmptyPositions onConnect={() => navigation.navigate(Routes.Settings, { screen: Routes.SettingsWalletCloudBackup, params: { mode: 'wealth' } })} />
             </View>
           );
         default:
@@ -527,7 +525,7 @@ export const HomeAssetsPanel = ({ navigation }: HomeAssetsPanelProps) => {
 
   const snapPoints = useMemo(() => [minBottomSnapPoint, ...defaultSnapPoints], [defaultSnapPoints, minBottomSnapPoint]);
 
-  const showKrakenConnectCTA = !hideConnectCTA;
+  const showKrakenConnectCTA = true;
 
   const paddingBottom = useBottomElementSpacing(showKrakenConnectCTA ? 240 : 80);
 

@@ -34,6 +34,15 @@ import {
 } from '@/services/nublePlatform';
 
 import { NUBLE_PLATFORM_URL } from '@/screens/Chat/chatConfig';
+import { resetSnapTradeClient } from '@/services/snaptrade';
+import { resetPlaidClient } from '@/services/plaid';
+import {
+  setCurrentUserId,
+  clearCurrentUserId,
+  getCurrentUserId,
+  clearUserScopedCaches,
+  migrateUnscopedCaches,
+} from '@/utils/userScopedStorage';
 
 import type { AuthTokens, PlatformSession, PlatformUser } from '@/services/nublePlatform';
 
@@ -137,6 +146,25 @@ export const NubleAuthProvider: React.FC<React.PropsWithChildren> = ({ children 
   // ── Persist session to Keychain ────────────────────────────────────────
 
   const persistSession = useCallback(async (session: PlatformSession) => {
+    // ── Multi-user isolation: detect user switch ──────────────────────────
+    const previousUserId = await getCurrentUserId();
+    const newUserId = session.user.id;
+
+    if (previousUserId && previousUserId !== newUserId) {
+      // Different user logging in — clear the old user's cached data and
+      // reset in-memory service singletons so the new user starts fresh.
+      console.log(`[NubleAuth] User switch detected: ${previousUserId} → ${newUserId}`);
+      await clearUserScopedCaches(previousUserId);
+      resetSnapTradeClient();
+      resetPlaidClient();
+    }
+
+    // Set the new user as the active user for all scoped storage
+    await setCurrentUserId(newUserId);
+
+    // Migrate any old unscoped caches to the new user's scoped keys
+    await migrateUnscopedCaches(newUserId);
+
     setUser(session.user);
     setTokens(session.tokens);
     await Promise.all([
@@ -222,6 +250,8 @@ export const NubleAuthProvider: React.FC<React.PropsWithChildren> = ({ children 
 
         if (!cancelled) {
           if (currentUser) {
+            // Set the active user for scoped storage before anything else renders
+            await setCurrentUserId(currentUser.id);
             setUser(currentUser);
             setTokens(currentTokens);
           }
@@ -351,6 +381,16 @@ export const NubleAuthProvider: React.FC<React.PropsWithChildren> = ({ children 
         // Ignore — local cleanup is sufficient
       }
     }
+
+    // ── Multi-user isolation: clear all user-scoped caches ───────────────
+    await clearUserScopedCaches();
+
+    // Reset service singletons so the next user starts with clean state
+    resetSnapTradeClient();
+    resetPlaidClient();
+
+    // Clear the active user ID
+    await clearCurrentUserId();
 
     setUser(null);
     setTokens(null);

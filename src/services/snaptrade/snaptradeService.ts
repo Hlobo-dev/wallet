@@ -10,6 +10,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { NUBLE_PLATFORM_URL } from '@/screens/Chat/chatConfig';
+import { scopedKey, getCurrentUserId, USER_SCOPED_KEYS } from '@/utils/userScopedStorage';
 
 // ============================================================================
 // TYPES
@@ -190,7 +191,7 @@ export interface ApiResponse<T> {
 // CONFIGURATION
 // ============================================================================
 
-const CREDENTIALS_KEY = 'snaptrade_credentials';
+const CREDENTIALS_BASE_KEY = USER_SCOPED_KEYS.SNAPTRADE_CREDENTIALS;
 const API_BASE_URL = `${NUBLE_PLATFORM_URL}/api/snaptrade`;
 const DEFAULT_TIMEOUT = 30000;
 
@@ -208,7 +209,9 @@ export class SnapTradeClientService {
 
   async setCredentials(userId: string, userSecret: string): Promise<void> {
     this.userCredentials = { userId, userSecret };
-    await AsyncStorage.setItem(CREDENTIALS_KEY, JSON.stringify(this.userCredentials));
+    const platformUserId = await getCurrentUserId();
+    const key = scopedKey(CREDENTIALS_BASE_KEY, platformUserId);
+    await AsyncStorage.setItem(key, JSON.stringify(this.userCredentials));
   }
 
   async getCredentials(): Promise<{ userId: string; userSecret: string } | null> {
@@ -216,7 +219,9 @@ export class SnapTradeClientService {
       return this.userCredentials;
     }
     if (!this.credentialsLoaded) {
-      const stored = await AsyncStorage.getItem(CREDENTIALS_KEY);
+      const platformUserId = await getCurrentUserId();
+      const key = scopedKey(CREDENTIALS_BASE_KEY, platformUserId);
+      const stored = await AsyncStorage.getItem(key);
       this.credentialsLoaded = true;
       if (stored) {
         this.userCredentials = JSON.parse(stored);
@@ -229,7 +234,9 @@ export class SnapTradeClientService {
   async clearCredentials(): Promise<void> {
     this.userCredentials = null;
     this.credentialsLoaded = false;
-    await AsyncStorage.removeItem(CREDENTIALS_KEY);
+    const platformUserId = await getCurrentUserId();
+    const key = scopedKey(CREDENTIALS_BASE_KEY, platformUserId);
+    await AsyncStorage.removeItem(key);
   }
 
   async isRegistered(): Promise<boolean> {
