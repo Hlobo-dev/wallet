@@ -250,8 +250,7 @@ const AuthSheet: React.FC<{
   const valid =
     mode === 'login'
       ? email.trim().length > 0 && password.length >= 6
-      : email.trim().length > 0 && password.length >= 8 && firstName.trim().length > 0 &&
-        /[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password) && /[@$!%*?&]/.test(password);
+      : email.trim().length > 0 && password.length >= 8 && firstName.trim().length > 0;
 
   const submit = useCallback(async () => {
     if (!valid || loading) { return; }
@@ -297,13 +296,14 @@ const AuthSheet: React.FC<{
         pointerEvents="box-none"
       >
         <Animated.View
-          style={[s.sheet, { transform: [{ translateY }], paddingBottom: insets.bottom + 16, position: 'relative', maxHeight: Dimensions.get('window').height * 0.9 }]}
+          style={[s.sheet, { transform: [{ translateY }], paddingBottom: insets.bottom + 12, position: 'relative', maxHeight: Dimensions.get('window').height * 0.85 }]}
         >
           <View style={s.handle} />
           <ScrollView
             bounces={false}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ paddingBottom: 8 }}
           >
 
           {/* Title + subtitle — matches VibeTradining */}
@@ -328,10 +328,10 @@ const AuthSheet: React.FC<{
             )}
 
             <Text style={s.inputLabel}>Email</Text>
-            <TextInput style={s.input} placeholder="Enter your email" placeholderTextColor="#4a4e5e" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} autoComplete="email" editable={!loading} />
+            <TextInput style={s.input} placeholder="Enter your email" placeholderTextColor="#4a4e5e" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} autoComplete="off" textContentType="none" editable={!loading} />
 
             <Text style={s.inputLabel}>Password</Text>
-            <TextInput style={s.input} placeholder="Enter your password" placeholderTextColor="#4a4e5e" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete={mode === 'login' ? 'password' : 'new-password'} editable={!loading} />
+            <TextInput style={s.input} placeholder="Enter your password" placeholderTextColor="#4a4e5e" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete="off" textContentType="none" editable={!loading} />
             {mode === 'register' && (
               <Text style={s.passwordHint}>Min 8 chars, uppercase, lowercase, number &amp; special (@$!%*?&amp;)</Text>
             )}
@@ -1487,35 +1487,35 @@ const s = StyleSheet.create({
   handle: {
     width: 40, height: 4, borderRadius: 2,
     backgroundColor: 'rgba(255,255,255,0.2)',
-    alignSelf: 'center', marginBottom: 20,
+    alignSelf: 'center', marginBottom: 12,
   },
-  sheetTitle: { fontSize: 24, fontWeight: '700', color: '#FFF', marginBottom: 4, textAlign: 'center' },
-  sheetSubtitle: { fontSize: 14, color: '#9ca3af', textAlign: 'center', marginBottom: 24 },
+  sheetTitle: { fontSize: 22, fontWeight: '700', color: '#FFF', marginBottom: 2, textAlign: 'center' },
+  sheetSubtitle: { fontSize: 14, color: '#9ca3af', textAlign: 'center', marginBottom: 16 },
   nameRow: { flexDirection: 'row', gap: 12 },
   nameInput: { flex: 1 },
   inputLabel: { fontSize: 13, fontWeight: '600', color: '#d1d5db', marginBottom: 6 },
   input: {
     backgroundColor: '#171621', borderRadius: 10,
-    paddingHorizontal: 16, paddingVertical: 14,
-    fontSize: 16, color: '#FFF', marginBottom: 12,
+    paddingHorizontal: 16, paddingVertical: 12,
+    fontSize: 16, color: '#FFF', marginBottom: 10,
     borderWidth: 1, borderColor: '#1a1e2e',
   },
   sheetError: { color: '#FF6B6B', fontSize: 14, textAlign: 'center', marginBottom: 12 },
-  passwordHint: { color: '#6b7280', fontSize: 12, marginTop: -8, marginBottom: 12 },
-  sheetSubmit: { backgroundColor: '#FFF', borderRadius: 10, paddingVertical: 14, alignItems: 'center', marginTop: 4 },
+  passwordHint: { color: '#6b7280', fontSize: 12, marginTop: -6, marginBottom: 8 },
+  sheetSubmit: { backgroundColor: '#FFF', borderRadius: 10, paddingVertical: 12, alignItems: 'center', marginTop: 2 },
   sheetSubmitOff: { opacity: 0.35 },
   sheetSubmitText: { color: '#0d0a14', fontSize: 16, fontWeight: '600' },
-  divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
+  divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 14 },
   dividerLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: '#1a1e2e' },
   dividerText: { color: '#6b7280', fontSize: 13, marginHorizontal: 12 },
   socialRow: { flexDirection: 'row', gap: 12 },
   socialBtn: {
     flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
-    backgroundColor: '#171621', borderRadius: 10, paddingVertical: 14,
+    backgroundColor: '#171621', borderRadius: 10, paddingVertical: 12,
     borderWidth: 1, borderColor: '#1a1e2e',
   },
   socialLabel: { color: '#d1d5db', fontSize: 14, fontWeight: '500' },
-  toggle: { paddingVertical: 16, alignItems: 'center' },
+  toggle: { paddingVertical: 10, alignItems: 'center' },
   toggleText: { color: '#6b7280', fontSize: 14 },
   toggleLink: { color: '#FFF', fontWeight: '600' },
 });
